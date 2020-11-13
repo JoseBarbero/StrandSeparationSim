@@ -58,7 +58,7 @@ def split_instance(instance, size):
     
 
 
-def read_data(directory):
+def read_data_as_img(directory):
 
     # Read the data    
     data = read_from_directory(directory)
@@ -73,4 +73,30 @@ def read_data(directory):
         X.extend(splitted_data)
         Y.extend([tag] * len(splitted_data))
     
-    return (X, Y)
+    return (np.asarray(X), np.asarray(Y))       # TODO esto no es nada eficiente
+
+
+def read_data_structured(directory):
+
+    headers = ["Temperature", *range(-100, 100), "Class"]
+
+    df = pd.DataFrame(columns=headers)
+
+    instancelist = []
+
+    for filename in os.listdir(directory):
+        if filename.startswith("OPN"):
+            temp = int(filename.split("K")[0].split("at")[1])
+            hg_reference = int(filename.split("hg")[-1].split("-")[0])
+            _class = int(filename.split(".")[-1] == "pos")  # 1 = pos, 0 = neg
+            print(filename)
+            probs_df = pd.read_csv(os.path.join(directory, filename), sep='\t', names=range(-100, 100))
+            probs_df.insert(0, "Temperature", temp)
+            probs_df.insert(0, "Reference", "hg"+str(hg_reference))
+            probs_df.insert(len(probs_df.columns), "Class", _class)
+            
+            instancelist.append(probs_df)
+    
+    df = pd.concat(instancelist, axis=0, ignore_index=True)
+
+    return df
