@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import os
-
+import re
 
 def file_to_array(inputfile):
     """
@@ -21,16 +21,20 @@ def file_to_array(inputfile):
     return (data, tag)
 
 
-def read_from_directory(directory):
+def read_from_directory(directory, filter_str):
     """
     Gets the information on every file in a certain directory.
+
+    filter_str (str): Regular expression to filter files in the directory. 
 
     Returns:
         data: List containing tuples (data, class) of every file in that directory.
     """
+
     data = []
     for filename in os.listdir(directory):
-        if filename.startswith("OPN"):
+        if re.match(filter_str, filename):
+            print(filename)
             data.append(file_to_array(directory+"/"+filename))
     return data
 
@@ -58,45 +62,86 @@ def split_instance(instance, size):
     
 
 
-def read_data_as_img(directory):
+def read_data_as_img(directory, filter_str):
+    """
+    Reads csv data to numpy as if it was an image.
+
+    Args:
+        directory (str): Directory containing the files to read.
+        filter_str (str): Regular expression to filter files in the directory.
+
+    Returns:
+        tuple: (np.array, np.array): X, Y data
+    """
 
     # Read the data    
-    data = read_from_directory(directory)
+    data = read_from_directory(directory, filter_str)
     
     # Create instances with equal dimensions
     X = []
-    Y = []
+    y = []
     chunk_size = 200 # Pongo 200 para hacer los ejemplos cuadrados porque son 200 columnas
     
     for instance, tag in data:
         splitted_data = split_instance(instance, chunk_size)
         X.extend(splitted_data)
-        Y.extend([tag] * len(splitted_data))
+        y.extend([tag] * len(splitted_data))
     
-    return (np.asarray(X), np.asarray(Y))       # TODO esto no es nada eficiente
+    return (np.asarray(X), np.asarray(y))       # TODO esto no es nada eficiente
 
 
-def read_data_structured(directory):
+def read_data_structured(directory, filter_str):
 
-    headers = ["Temperature", *range(-100, 100), "Class"]
-
-    df = pd.DataFrame(columns=headers)
-
-    instancelist = []
+    X = []
+    y = []
 
     for filename in os.listdir(directory):
-        if filename.startswith("OPN"):
-            temp = int(filename.split("K")[0].split("at")[1])
-            hg_reference = int(filename.split("hg")[-1].split("-")[0])
-            _class = int(filename.split(".")[-1] == "pos")  # 1 = pos, 0 = neg
-            print(filename)
-            probs_df = pd.read_csv(os.path.join(directory, filename), sep='\t', names=range(-100, 100))
-            probs_df.insert(0, "Temperature", temp)
-            probs_df.insert(0, "Reference", "hg"+str(hg_reference))
-            probs_df.insert(len(probs_df.columns), "Class", _class)
-            
-            instancelist.append(probs_df)
-    
-    df = pd.concat(instancelist, axis=0, ignore_index=True)
+        if re.match(filter_str, filename):
+            instances = file_to_array(directory+"/"+filename)
+            X.extend(instances[0])
+            y.extend(np.array([instances[1]]*len(instances[0])))
 
-    return df
+    return (np.asarray(X), np.asarray(y))       # TODO esto no es nada eficiente
+
+
+def read_data_st(directory, partition, temperatures=list(range(310, 365, 5))):
+    """
+    Reads csv data to numpy stacking temperatures.
+
+    Args:
+        directory (str): Directory containing the files to read.
+
+    Returns:
+        tuple: (np.array, np.array): X, Y data
+    """
+    temperatures = [str(temp) for temp in temperatures]
+    data_pos = []
+    data_neg = []
+    for filename in os.listdir(directory):
+        if re.match(f"OPNat.*K.*{partition}.*", filename):
+            temp = filename.split("at")[1].split("K")[0]
+            if temp in temperatures:
+                tag = filename.split(".")[-1]
+                if tag == "pos":
+                    data_pos.append((temp, file_to_array(directory+"/"+filename)[0]))
+                elif tag == "neg":
+                    data_neg.append((temp, file_to_array(directory+"/"+filename)[0]))
+    
+    instances_pos = np.asarray([instances for temp, instances in sorted(data_pos)])
+    instances_neg = np.asarray([instances for temp, instances in sorted(data_neg)])
+
+
+    X = []
+    y = []
+
+    for row in range(instances_pos.shape[1]):
+        X.append(instances_pos[:,row,:])
+        y.append(1)
+
+    for row in range(instances_neg.shape[1]):
+        X.append(instances_neg[:,row,:])
+        y.append(0)
+
+    return np.asarray(X), np.asarray(y)
+    
+

@@ -1,7 +1,7 @@
 import keras
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Dropout, Flatten, Conv2D, MaxPooling2D, AveragePooling2D
-
+from sklearn import svm
 
 def lenet():
     model = keras.Sequential()
@@ -113,3 +113,5 @@ def widenet():
     model.compile(optimizer="adam", loss=keras.losses.BinaryCrossentropy(), metrics=["accuracy"])
 
     return model
+    
+    
