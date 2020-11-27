@@ -92,7 +92,7 @@ X_train = np.concatenate((X_train, X_val))
 y_train = np.concatenate((y_train, y_val))
 new_X_train, new_y_train = smote(X_train, y_train)
 model = ak.ImageClassifier(overwrite=True, max_trials=5, project_name="models/st_smote_trainval")
-model.fit(new_X_train, new_y_train, epochs=10)
+model.fit(new_X_train, new_y_train, epochs=5)
 predicted_y = model.predict(X_test)
 print(model.evaluate(X_test, y_test))
 

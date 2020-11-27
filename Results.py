@@ -1,6 +1,7 @@
 import autokeras as ak
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 from math import pi
 from sklearn.metrics import f1_score, roc_auc_score, accuracy_score, log_loss, fowlkes_mallows_score, cohen_kappa_score, precision_score, recall_score
 from ReadData import read_data_as_img, read_data_st
@@ -98,3 +99,15 @@ def make_spider_by_temp(models_dfs):
     plt.figlegend(model_df["temperature"], loc = 'upper left')
 
 
+def test_results(X_test, y_test, model):
+    y_test_pred = model.predict(X_test).round().astype(int)
+
+    print(f"\tPredicciones clase 0: {sum(y_test_pred.round().astype(int) == 0).sum()}")
+    print(f"\tPredicciones clase 1: {sum(y_test_pred.round().astype(int) == 1).sum()}")
+    print(f"\tInstancias clase 0: {np.count_nonzero(y_test == 0)}")
+    print(f"\tInstancias clase 0: {np.count_nonzero(y_test == 1)}")
+
+    print(f"\tF1 score: {f1_score(y_test, y_test_pred)}")
+    print(f"\tBinary crossentropy: {log_loss(y_test, y_test_pred, eps=1e-15)}")
+    print(f"\tAccuracy score: {accuracy_score(y_test, y_test_pred)}")    
+    print(f"\tAUC ROC: {roc_auc_score(y_test, y_test_pred)}")
