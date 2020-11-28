@@ -28,11 +28,11 @@ def widenet():
     
     model.add(AveragePooling2D())
     
-    model.add(Dropout(0.25))
+    model.add(Dropout(0.5))
     
     model.add(Flatten())
     
-    #model.add(Dropout(0.25))
+    model.add(Dropout(0.5))
 
     model.add(Dense(units=128, activation='relu'))
 
@@ -69,20 +69,23 @@ if __name__ == "__main__":
     X_train = X_train.reshape(*X_train.shape[:3], 1)
     X_test = X_test.reshape(*X_test.shape[:3], 1)
 
-    logfile = str(datetime.now()).replace(" ", "_").replace("-", "_").replace(":", "_").split(".")[0]
+    logfile = "logs/"+str(datetime.now()).replace(" ", "_").replace("-", "_").replace(":", "_").split(".")[0]+".log"
 
     model = widenet()
 
-    with open( "logs/"+logfile, 'w') as f:
+    with open(logfile, 'w') as f:
         with redirect_stdout(f):
             model.summary()
 
+            for layer in model.layers:
+                print(layer.get_config())
+
             model.fit(X_train, y_train,
-                shuffle=True,
-                batch_size=32,
-                epochs=25,
-                verbose=True,
-                validation_split=0.2)
+                        shuffle=True,
+                        batch_size=32,
+                        epochs=3,
+                        verbose=True,
+                        validation_split=0.2)
 
             test_results(X_train, y_train, model)
             test_results(X_test, y_test, model)
