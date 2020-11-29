@@ -100,12 +100,12 @@ def make_spider_by_temp(models_dfs):
 
 
 def test_results(X_test, y_test, model):
-    y_test_pred = model.predict(X_test).round().astype(int)
+    y_test_pred = model.predict(X_test)
 
     print(f"\tPredicciones clase 0: {sum(y_test_pred.round().astype(int) == 0).sum()}")
     print(f"\tPredicciones clase 1: {sum(y_test_pred.round().astype(int) == 1).sum()}")
     print(f"\tInstancias clase 0: {np.count_nonzero(y_test == 0)}")
-    print(f"\tInstancias clase 0: {np.count_nonzero(y_test == 1)}")
+    print(f"\tInstancias clase 1: {np.count_nonzero(y_test == 1)}")
 
     print(f"\tF1 score: {f1_score(y_test, y_test_pred)}")
     print(f"\tBinary crossentropy: {log_loss(y_test, y_test_pred, eps=1e-15)}")

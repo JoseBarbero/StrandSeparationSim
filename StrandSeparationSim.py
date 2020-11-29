@@ -22,11 +22,15 @@ from contextlib import redirect_stdout
 def widenet():
     model = keras.Sequential()
     
-    model.add(Conv2D(filters=100, kernel_size=(5, 10), activation='relu', input_shape=(11,200,1)))
+    model.add(Conv2D(filters=100, kernel_size=(3, 3), activation='relu', input_shape=(11,200,1)))
     
-    model.add(Conv2D(filters=50, kernel_size=(3, 10), activation='relu'))
+    model.add(Conv2D(filters=100, kernel_size=(3, 3), activation='relu'))
+
+    model.add(Conv2D(filters=100, kernel_size=(3, 3), activation='relu'))
+
+    model.add(Conv2D(filters=50, kernel_size=(1, 3), activation='relu'))
     
-    model.add(AveragePooling2D())
+    model.add(MaxPooling2D())
     
     model.add(Dropout(0.5))
     
@@ -83,10 +87,9 @@ if __name__ == "__main__":
             model.fit(X_train, y_train,
                         shuffle=True,
                         batch_size=32,
-                        epochs=3,
+                        epochs=25,
                         verbose=True,
                         validation_split=0.2)
 
             test_results(X_train, y_train, model)
             test_results(X_test, y_test, model)
-    
