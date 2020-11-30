@@ -100,7 +100,7 @@ def make_spider_by_temp(models_dfs):
 
 
 def test_results(X_test, y_test, model):
-    y_test_pred = model.predict(X_test)
+    y_test_pred = model.predict(X_test).round().astype(int)
 
     print(f"\tPredicciones clase 0: {sum(y_test_pred.round().astype(int) == 0).sum()}")
     print(f"\tPredicciones clase 1: {sum(y_test_pred.round().astype(int) == 1).sum()}")

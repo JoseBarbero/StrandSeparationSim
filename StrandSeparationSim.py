@@ -24,14 +24,6 @@ def widenet():
     
     model.add(Conv2D(filters=100, kernel_size=(3, 3), activation='relu', input_shape=(11,200,1)))
     
-    model.add(Conv2D(filters=100, kernel_size=(3, 3), activation='relu'))
-
-    model.add(Conv2D(filters=100, kernel_size=(3, 3), activation='relu'))
-
-    model.add(Conv2D(filters=50, kernel_size=(1, 3), activation='relu'))
-    
-    model.add(MaxPooling2D())
-    
     model.add(Dropout(0.5))
     
     model.add(Flatten())
@@ -69,7 +61,7 @@ if __name__ == "__main__":
 
     X_train = np.concatenate((X_train, X_val))
     y_train = np.concatenate((y_train, y_val))
-    X_train, y_train = smote(X_train, y_train)
+    #X_train, y_train = smote(X_train, y_train)
     X_train = X_train.reshape(*X_train.shape[:3], 1)
     X_test = X_test.reshape(*X_test.shape[:3], 1)
 
@@ -87,7 +79,7 @@ if __name__ == "__main__":
             model.fit(X_train, y_train,
                         shuffle=True,
                         batch_size=32,
-                        epochs=25,
+                        epochs=100,
                         verbose=True,
                         validation_split=0.2)
 
