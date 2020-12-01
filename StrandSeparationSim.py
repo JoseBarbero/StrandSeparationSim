@@ -35,7 +35,7 @@ def widenet():
 
     model.add(Flatten())
 
-    model.add(Dense(units=256, activation='relu'))
+    model.add(Dense(units=128, activation='relu'))
 
     model.add(Dense(1, activation = 'sigmoid'))
 
@@ -49,7 +49,7 @@ def widenet():
     # Adamax
     # Nadam
     # Ftrl
-    model.compile(optimizer="adam", loss=keras.losses.BinaryCrossentropy(), metrics=["accuracy"])
+    model.compile(optimizer="adam", loss=keras.losses.BinaryCrossentropy(), metrics=["accuracy", "AUC"])
 
     return model
 
@@ -84,7 +84,7 @@ if __name__ == "__main__":
             model.fit(X_train, y_train,
                         shuffle=True,
                         batch_size=32,
-                        epochs=100,
+                        epochs=1,
                         verbose=True,
                         validation_split=0.2)
 
