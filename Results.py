@@ -2,6 +2,7 @@ import autokeras as ak
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+from sklearn.metrics import roc_curve
 from math import pi
 from sklearn.metrics import f1_score, roc_auc_score, accuracy_score, log_loss, fowlkes_mallows_score, cohen_kappa_score, precision_score, recall_score
 from ReadData import read_data_as_img, read_data_st
@@ -99,16 +100,42 @@ def make_spider_by_temp(models_dfs):
     plt.figlegend(model_df["temperature"], loc = 'upper left')
 
 
+def plot_train_history(history, imgname):    
+    
+    fig, axs = plt.subplots(3)
+    
+    fig.set_size_inches(15, 20)
+    
+    fig.suptitle('Model train history', fontsize=22)
+    
+    axs[0].plot(history.history['accuracy'])
+    axs[0].plot(history.history['val_accuracy'])
+    axs[0].set_title('model accuracy')
+    axs[0].set(xlabel='epoch', ylabel='accuracy')
+    axs[0].legend(['train', 'val'], loc='best')
+    
+    axs[1].plot(history.history['loss'])
+    axs[1].plot(history.history['val_loss'])
+    axs[1].set_title('model loss')
+    axs[1].set(xlabel='epoch', ylabel='loss')
+    axs[1].legend(['train', 'val'], loc='best')
+    
+    axs[2].plot(history.history['auc'])
+    axs[2].plot(history.history['val_auc'])
+    axs[2].set_title('model auc')
+    axs[2].set(xlabel='epoch', ylabel='auc')
+    axs[2].legend(['train', 'val'], loc='best')
+    
+    fig.savefig(imgname)
+
+
+
 def test_results(X_test, y_test, model):
-    y_test_pred = model.predict(X_test)
-    y_test_pred_round = y_test_pred.round().astype(int)
+    test_bc, test_acc, test_auc = model.evaluate(X_test, y_test, verbose=False)
 
-    print(f"\tPredicciones clase 0: {sum(y_test_pred_round == 0).sum()}")
-    print(f"\tPredicciones clase 1: {sum(y_test_pred_round == 1).sum()}")
-    print(f"\tInstancias clase 0: {np.count_nonzero(y_test == 0)}")
-    print(f"\tInstancias clase 1: {np.count_nonzero(y_test == 1)}")
-
-    print(f"\tF1 score: {f1_score(y_test, y_test_pred_round)}")
-    print(f"\tBinary crossentropy: {log_loss(y_test, y_test_pred, eps=1e-15)}")
-    print(f"\tAccuracy score: {accuracy_score(y_test, y_test_pred_round)}")
-    print(f"\tAUC ROC: {roc_auc_score(y_test, y_test_pred)}")
+    print(f"\tAccuracy score:  {test_acc}")
+    print()
+    print(f"\tBinary crossentropy : {test_bc}")
+    print()
+    print(f"\tAUC ROC: {test_auc}")
+    print()

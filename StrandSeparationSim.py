@@ -4,12 +4,14 @@ import os
 import autokeras as ak
 import pandas as pd
 import matplotlib.pyplot as plt
+import sys
+import pickle
 import keras
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Dropout, Flatten, Conv2D, MaxPooling2D, AveragePooling2D, LayerNormalization
 from ReadData import read_data_as_img, read_data_structured, read_data_st
 from Preprocessing import ros, smote, adasyn
-from Results import report_results_imagedata, make_spider_by_temp, report_results_st, test_results
+from Results import report_results_imagedata, make_spider_by_temp, report_results_st, test_results, plot_train_history
 from keras import backend as K
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.models import load_model
@@ -39,16 +41,6 @@ def widenet():
 
     model.add(Dense(1, activation = 'sigmoid'))
 
-    
-    # Compile the model
-    # SGD
-    # RMSprop
-    # Adam
-    # Adadelta
-    # Adagrad
-    # Adamax
-    # Nadam
-    # Ftrl
     model.compile(optimizer="adam", loss=keras.losses.BinaryCrossentropy(), metrics=["accuracy", "AUC"])
 
     return model
@@ -64,29 +56,42 @@ if __name__ == "__main__":
     X_val, y_val = read_data_st(data_dir, "val")
     X_test, y_test = read_data_st(data_dir, "test")
 
-    X_train = np.concatenate((X_train, X_val))
-    y_train = np.concatenate((y_train, y_val))
+    #X_train = np.concatenate((X_train, X_val))
+    #y_train = np.concatenate((y_train, y_val))
     #X_train, y_train = smote(X_train, y_train)
     X_train = X_train.reshape(*X_train.shape[:3], 1)
     X_test = X_test.reshape(*X_test.shape[:3], 1)
 
-    logfile = "logs/"+str(datetime.now()).replace(" ", "_").replace("-", "_").replace(":", "_").split(".")[0]+".log"
+    if sys.argv[1] is None:
+        run_id = +str(datetime.now()).replace(" ", "_").replace("-", "_").replace(":", "_").split(".")[0]
+    else:
+        run_id = sys.argv[1]
+
+    log_file = "logs/"+run_id+".log"
+    hist_file = "logs/"+run_id+".pkl"
+    plot_file = "logs/"+run_id+".png"
 
     model = widenet()
 
-    with open(logfile, 'w') as f:
+    with open(log_file, 'w') as f:
         with redirect_stdout(f):
             model.summary()
 
             for layer in model.layers:
                 print(layer.get_config())
 
-            model.fit(X_train, y_train,
-                        shuffle=True,
-                        batch_size=32,
-                        epochs=1,
-                        verbose=True,
-                        validation_split=0.2)
-
+            history = model.fit(X_train, y_train,
+                                shuffle=True,
+                                batch_size=32,
+                                epochs=50,
+                                verbose=True,
+                                validation_data=(X_val, y_val))
+            print("Train results:")
             test_results(X_train, y_train, model)
+            print("Test results:")
             test_results(X_test, y_test, model)
+
+    with open(hist_file, 'wb') as file_pi:
+        pickle.dump(history.history, file_pi)
+
+    plot_train_history(history, plot_file)
