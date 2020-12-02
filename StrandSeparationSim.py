@@ -94,4 +94,4 @@ if __name__ == "__main__":
     with open(hist_file, 'wb') as file_pi:
         pickle.dump(history.history, file_pi)
 
-    plot_train_history(history, plot_file)
+    plot_train_history(history.history, plot_file)
