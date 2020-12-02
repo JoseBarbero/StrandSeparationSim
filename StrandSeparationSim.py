@@ -24,20 +24,20 @@ from contextlib import redirect_stdout
 def widenet():
     model = keras.Sequential()
     
-    model.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu', input_shape=(11,200,1)))
-    model.add(MaxPooling2D((2, 2)))
-    model.add(Dropout(0.25))
+    model.add(Conv2D(filters=32, kernel_size=(3, 3), activation='relu', input_shape=(11,200,1)))
+    #model.add(MaxPooling2D((2, 2)))
+    #model.add(Dropout(0.25))
 
-    model.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu'))
-    model.add(MaxPooling2D((2, 2)))
-    model.add(Dropout(0.25))
+    model.add(Conv2D(filters=32, kernel_size=(3, 3), activation='relu'))
+    #model.add(MaxPooling2D((2, 2)))
+    #model.add(Dropout(0.25))
 
-    model.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu'))
-    model.add(Dropout(0.25))
+    model.add(Conv2D(filters=32, kernel_size=(3, 3), activation='relu'))
+    #model.add(Dropout(0.25))
 
     model.add(Flatten())
 
-    model.add(Dense(units=128, activation='relu'))
+    model.add(Dense(units=1024, activation='relu'))
 
     model.add(Dense(1, activation = 'sigmoid'))
 
@@ -60,6 +60,7 @@ if __name__ == "__main__":
     #y_train = np.concatenate((y_train, y_val))
     #X_train, y_train = smote(X_train, y_train)
     X_train = X_train.reshape(*X_train.shape[:3], 1)
+    X_val = X_val.reshape(*X_val.shape[:3], 1)
     X_test = X_test.reshape(*X_test.shape[:3], 1)
 
     if sys.argv[1] is None:
