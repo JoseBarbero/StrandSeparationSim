@@ -113,6 +113,7 @@ def plot_train_history(history, imgname):
     axs[0].set_title('model accuracy')
     axs[0].set(xlabel='epoch', ylabel='accuracy')
     axs[0].legend(['train', 'val'], loc='best')
+    axs[0].set_ylim([0, 1])
     
     axs[1].plot(history['loss'])
     axs[1].plot(history['val_loss'])
@@ -125,6 +126,7 @@ def plot_train_history(history, imgname):
     axs[2].set_title('model auc')
     axs[2].set(xlabel='epoch', ylabel='auc')
     axs[2].legend(['train', 'val'], loc='best')
+    axs[2].set_ylim([0, 1])
     
     fig.savefig(imgname)
     plt.close()
