@@ -107,11 +107,24 @@ data_dir = "../data"
 # predicted_y = model.predict(X_test)
 # print(model.evaluate(X_test, y_test))
 
-# All temps stacking temperatures
+# # All temps stacking temperatures
+# X_train, y_train = read_data_st(data_dir, "train")
+# X_val, y_val = read_data_st(data_dir, "val")
+# X_test, y_test = read_data_st(data_dir, "test")
+
+# X_train = X_train.reshape(*X_train.shape[:3], 1)
+# X_val = X_val.reshape(*X_val.shape[:3], 1)
+# X_test = X_test.reshape(*X_test.shape[:3], 1)
+
+# model = ak.ImageClassifier(overwrite=True, max_trials=5, project_name="models/st", loss=keras.losses.BinaryCrossentropy(), metrics=["accuracy", "AUC"])
+# model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=20)
+# predicted_y = model.predict(X_test)
+
+# All temps stacking temperatures smote
 X_train, y_train = read_data_st(data_dir, "train")
 X_val, y_val = read_data_st(data_dir, "val")
 X_test, y_test = read_data_st(data_dir, "test")
-
+X_train, y_train = smote(X_train, y_train)
 X_train = X_train.reshape(*X_train.shape[:3], 1)
 X_val = X_val.reshape(*X_val.shape[:3], 1)
 X_test = X_test.reshape(*X_test.shape[:3], 1)
