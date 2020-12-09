@@ -104,7 +104,7 @@ def read_data_structured(directory, filter_str):
     return (np.asarray(X), np.asarray(y))       # TODO esto no es nada eficiente
 
 
-def read_data_st(directory, partition, temperatures=list(range(310, 365, 5))):
+def read_data_st(directory, partition, categories):
     """
     Reads csv data to numpy stacking temperatures.
 
@@ -114,33 +114,31 @@ def read_data_st(directory, partition, temperatures=list(range(310, 365, 5))):
     Returns:
         tuple: (np.array, np.array): X, Y data
     """
-    temperatures = [str(temp) for temp in temperatures]
-    data_pos = []
-    data_neg = []
-    for filename in os.listdir(directory):
-        if re.match(f"OPNat.*K.*{partition}.*", filename):
-            temp = filename.split("at")[1].split("K")[0]
-            if temp in temperatures:
+
+    X = []
+    y = []
+
+    for category in categories:
+        data_pos = []
+        data_neg = []
+        for filename in os.listdir(directory):
+            if re.match(f"{category}at.*K.*{partition}.*", filename):
+                temp = filename.split("at")[1].split("K")[0]
                 tag = filename.split(".")[-1]
                 if tag == "pos":
                     data_pos.append((temp, file_to_array(directory+"/"+filename)[0]))
                 elif tag == "neg":
                     data_neg.append((temp, file_to_array(directory+"/"+filename)[0]))
-    
-    instances_pos = np.asarray([instances for temp, instances in sorted(data_pos)])
-    instances_neg = np.asarray([instances for temp, instances in sorted(data_neg)])
+        instances_pos = np.asarray([instances for temp, instances in sorted(data_pos)])
+        instances_neg = np.asarray([instances for temp, instances in sorted(data_neg)])
 
+        for row in range(instances_pos.shape[1]):
+            X.append(instances_pos[:,row,:])
+            y.append(1)
 
-    X = []
-    y = []
-
-    for row in range(instances_pos.shape[1]):
-        X.append(instances_pos[:,row,:])
-        y.append(1)
-
-    for row in range(instances_neg.shape[1]):
-        X.append(instances_neg[:,row,:])
-        y.append(0)
+        for row in range(instances_neg.shape[1]):
+            X.append(instances_neg[:,row,:])
+            y.append(0)
 
     return np.asarray(X), np.asarray(y)
     

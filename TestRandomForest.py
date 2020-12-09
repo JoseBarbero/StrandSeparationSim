@@ -15,18 +15,27 @@ if __name__ == "__main__":
 
     data_dir = "../data"
     X_train, y_train = read_data_structured(data_dir, "OPNat.*train.*")
-    #X_val, y_val = read_data_st(data_dir, "val")
-    X_test, y_test = read_data_structured(data_dir, "OPNat.*test.*")
+    X_val, y_val = read_data_structured(data_dir, "OPNat.*val.*")
+    #X_test, y_test = read_data_structured(data_dir, "OPNat.*test.*")
 
     #X_train = np.concatenate((X_train, X_val))
     #y_train = np.concatenate((y_train, y_val))
     #X_train, y_train = SMOTE().fit_resample(X_train, y_train)
     
-    clf = RandomForestClassifier(random_state=seed, verbose=1, n_jobs=8)
+    clf = RandomForestClassifier(random_state=seed, verbose=1, n_jobs=8, max_depth=25)
+
     clf.fit(X_train, y_train)
 
-    y_test_pred = clf.predict(X_test)
+    y_train_pred = clf.predict(X_train)
+    y_val_pred = clf.predict(X_val)
 
-    test_results(X_train, y_train, clf)
-    test_results(X_test, y_test, clf)
+    print("Train:")
+    print(f"\tAccuracy {accuracy_score(y_train, y_train_pred)}")
+    print(f"\tBC {log_loss(y_train, y_train_pred)}")
+    print(f"\tAUC {roc_auc_score(y_train, y_train_pred)}")
+    print()
+    print("Val:")
+    print(f"\tAccuracy {accuracy_score(y_val, y_val_pred)}")
+    print(f"\tBC {log_loss(y_val, y_val_pred)}")
+    print(f"\tAUC {roc_auc_score(y_val, y_val_pred)}")
     
