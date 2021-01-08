@@ -110,6 +110,8 @@ def read_data_st(directory, partition, categories):
 
     Args:
         directory (str): Directory containing the files to read.
+        partition (str): train, test or val
+        categories (str) : A subset of ["OPN", "BUB10", "BUB12", "BUB8", "VRNORM"]
 
     Returns:
         tuple: (np.array, np.array): X, Y data
@@ -143,3 +145,73 @@ def read_data_st(directory, partition, categories):
     return np.asarray(X), np.asarray(y)
     
 
+def seq_to_array(seqfile):
+    X = []
+    basetovalue = {'A': 0.25, 'C': 0.5, 'G': 0.75, 'T': 1}
+    with open(seqfile, "r") as _file:
+        for line in _file:
+            line_values = []
+            for base in line[:-1]:
+                line_values.append(basetovalue.get(base.upper(), 0))     # Aquí no estoy diferenciando entre caps y no, por lo tanto no diferencio entre secuencia 3' y 5'.
+            X.append(line_values)
+    return np.asarray(X)
+
+
+
+def read_data_st_withseq(directory, partition, categories):
+    """
+    Reads csv data to numpy stacking temperatures.
+
+    Args:
+        directory (str): Directory containing the files to read.
+        partition (str): train, test or val.
+        categories (str) : A subset of ["OPN", "BUB10", "BUB12", "BUB8", "VRNORM"]
+
+    Returns:
+        tuple: (np.array, np.array): X, Y data.
+    """
+
+    X = []
+    y = []
+
+    for category in categories:
+        data_pos = []
+        data_neg = []
+        for filename in os.listdir(directory):
+            if re.match(f"{category}at.*K.*{partition}.*", filename):
+                temp = filename.split("at")[1].split("K")[0]
+                tag = filename.split(".")[-1]
+                genome = 'hg16' if partition in ['train', 'val'] else 'hg17'
+
+                seqfile = directory+'/onlyseq.TSS'+tag+'FineGrained.'+genome+'-'+partition+'.'+tag          # TODO Don't hardcode this
+                
+                seq_data = seq_to_array(seqfile)
+                prob_data = file_to_array(directory+"/"+filename)[0]
+
+                both_data = [prob_data, seq_data]
+
+                if tag == "pos":
+                    data_pos.append((temp, both_data))
+                elif tag == "neg":
+                    data_neg.append((temp, both_data))
+
+        instances_pos = np.asarray([instances for temp, instances in sorted(data_pos)])
+        instances_neg = np.asarray([instances for temp, instances in sorted(data_neg)])
+        instances_pos = np.swapaxes(instances_pos, 0, 2)
+        instances_neg = np.swapaxes(instances_neg, 0, 2)
+        instances_pos = np.moveaxis(instances_pos, 1, -1)
+        instances_neg = np.moveaxis(instances_neg, 1, -1)
+
+        # TODO This is pretty slow
+        for row in instances_pos:
+            X.append(row)
+            y.append(1)
+
+        for row in instances_neg:
+            X.append(row)
+            y.append(0)
+
+    X = np.asarray(X)
+    y = np.asarray(y)
+
+    return X, y
