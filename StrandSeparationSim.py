@@ -65,7 +65,7 @@ def channels_net():
     model.add(Dense(1, activation = 'sigmoid'))
 
     #model.compile(optimizer="adam", loss=keras.losses.BinaryCrossentropy(), metrics=["accuracy", "AUC"])
-    model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.000005), loss=keras.losses.BinaryCrossentropy(), metrics=["accuracy", "AUC"])
+    model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.00005), loss=keras.losses.BinaryCrossentropy(), metrics=["accuracy", "AUC"])
 
     return model
 
@@ -75,19 +75,26 @@ if __name__ == "__main__":
     seed = 42
     np.random.seed(seed)
 
-    data_dir = "../data/prueba"
-    categories = ["OPN"] #, "BUB10", "BUB12", "BUB8", "VRNORM"]
+    X_train_file = open('../data/serialized/X_train_withseq.pkl', 'rb')
+    y_train_file = open('../data/serialized/y_train_withseq.pkl', 'rb')
+    X_val_file = open('../data/serialized/X_val_withseq.pkl', 'rb')
+    y_val_file = open('../data/serialized/y_val_withseq.pkl', 'rb')
+    X_test_file = open('../data/serialized/X_test_withseq.pkl', 'rb')
+    y_test_file = open('../data/serialized/y_test_withseq.pkl', 'rb')
 
-    X_train, y_train = read_data_st_withseq(data_dir, "train", categories)
-    X_val, y_val = read_data_st_withseq(data_dir, "val", categories)
-    X_test, y_test = read_data_st_withseq(data_dir, "test", categories)
+    X_train = pickle.load(X_train_file)
+    y_train = pickle.load(y_train_file)
+    X_val = pickle.load(X_val_file)
+    y_val = pickle.load(y_val_file)
+    X_test = pickle.load(X_test_file)
+    y_test = pickle.load(y_test_file)
 
-    #X_train = np.concatenate((X_train, X_val))
-    #y_train = np.concatenate((y_train, y_val))
-    #X_train, y_train = smote(X_train, y_train)
-    #X_train = X_train.reshape(*X_train.shape[:3], 1)
-    #X_val = X_val.reshape(*X_val.shape[:3], 1)
-    #X_test = X_test.reshape(*X_test.shape[:3], 1)
+    X_train_file.close()
+    y_train_file.close()
+    X_val_file.close()
+    y_val_file.close()
+    X_test_file.close()
+    y_test_file.close()
 
     if len(sys.argv) < 2:
         run_id = str(datetime.now()).replace(" ", "_").replace("-", "_").replace(":", "_").split(".")[0]
@@ -111,8 +118,8 @@ if __name__ == "__main__":
 
             history = model.fit(X_train, y_train,
                                 shuffle=True,
-                                batch_size=32,
-                                epochs=10,
+                                batch_size=128,
+                                epochs=5,
                                 verbose=True,
                                 validation_data=(X_val, y_val))
             print("Train results:")
