@@ -65,7 +65,7 @@ def channels_net():
     model.add(Dense(1, activation = 'sigmoid'))
 
     #model.compile(optimizer="adam", loss=keras.losses.BinaryCrossentropy(), metrics=["accuracy", "AUC"])
-    model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.0005), loss=keras.losses.BinaryCrossentropy(), metrics=["accuracy", "AUC"])
+    model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.000005), loss=keras.losses.BinaryCrossentropy(), metrics=["accuracy", "AUC"])
 
     return model
 
