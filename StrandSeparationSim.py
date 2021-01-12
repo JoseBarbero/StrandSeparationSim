@@ -21,51 +21,27 @@ from datetime import datetime
 from contextlib import redirect_stdout
 
 
-def mynet():
+def channels_net():
     model = keras.Sequential()
     
-    model.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu', input_shape=(28,200,1)))
+    model.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu', input_shape=(28,200,9)))
     model.add(MaxPooling2D((2,2)))
-    #model.add(Dropout(0.5))
+    #model.add(Dropout(0.25))
 
     model.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu'))
     model.add(MaxPooling2D((2,2)))
-    #model.add(Dropout(0.5))
+    #model.add(Dropout(0.25))
 
     model.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu'))
-    #model.add(Dropout(0.5))
 
     model.add(Flatten())
 
-    model.add(Dense(units=1024))
+    model.add(Dense(units=128))
 
     model.add(Dense(1, activation = 'sigmoid'))
 
     model.compile(optimizer="adam", loss=keras.losses.BinaryCrossentropy(), metrics=["accuracy", "AUC"])
-    #model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.0005), loss=keras.losses.BinaryCrossentropy(), metrics=["accuracy", "AUC"])
-
-    return model
-
-
-def channels_net():
-    model = keras.Sequential()
-    
-    model.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu', input_shape=(28,200,2)))
-    model.add(MaxPooling2D((2,2)))
-
-    model.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu'))
-    model.add(MaxPooling2D((2,2)))
-
-    model.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu'))
-
-    model.add(Flatten())
-
-    model.add(Dense(units=1024))
-
-    model.add(Dense(1, activation = 'sigmoid'))
-
-    #model.compile(optimizer="adam", loss=keras.losses.BinaryCrossentropy(), metrics=["accuracy", "AUC"])
-    model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.00005), loss=keras.losses.BinaryCrossentropy(), metrics=["accuracy", "AUC"])
+    #model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.0001), loss=keras.losses.BinaryCrossentropy(), metrics=["accuracy", "AUC"])
 
     return model
 
@@ -75,12 +51,12 @@ if __name__ == "__main__":
     seed = 42
     np.random.seed(seed)
 
-    X_train_file = open('../data/serialized/X_train_withseq.pkl', 'rb')
-    y_train_file = open('../data/serialized/y_train_withseq.pkl', 'rb')
-    X_val_file = open('../data/serialized/X_val_withseq.pkl', 'rb')
-    y_val_file = open('../data/serialized/y_val_withseq.pkl', 'rb')
-    X_test_file = open('../data/serialized/X_test_withseq.pkl', 'rb')
-    y_test_file = open('../data/serialized/y_test_withseq.pkl', 'rb')
+    X_train_file = open('../data/serialized/X_train_withseqs_OPN.pkl', 'rb')
+    y_train_file = open('../data/serialized/y_train_withseqs_OPN.pkl', 'rb')
+    X_val_file = open('../data/serialized/X_val_withseqs_OPN.pkl', 'rb')
+    y_val_file = open('../data/serialized/y_val_withseqs_OPN.pkl', 'rb')
+    X_test_file = open('../data/serialized/X_test_withseqs_OPN.pkl', 'rb')
+    y_test_file = open('../data/serialized/y_test_withseqs_OPN.pkl', 'rb')
 
     X_train = pickle.load(X_train_file)
     y_train = pickle.load(y_train_file)
@@ -98,7 +74,6 @@ if __name__ == "__main__":
 
     if len(sys.argv) < 2:
         run_id = str(datetime.now()).replace(" ", "_").replace("-", "_").replace(":", "_").split(".")[0]
-        #run_id = "".join(categories)
     else:
         run_id = sys.argv[1]
         #run_id = "".join(categories)
@@ -118,8 +93,8 @@ if __name__ == "__main__":
 
             history = model.fit(X_train, y_train,
                                 shuffle=True,
-                                batch_size=128,
-                                epochs=5,
+                                batch_size=32,
+                                epochs=10,
                                 verbose=True,
                                 validation_data=(X_val, y_val))
             print("Train results:")
