@@ -51,12 +51,12 @@ if __name__ == "__main__":
     seed = 42
     np.random.seed(seed)
 
-    X_train_file = open('../data/serialized/X_train_withseqs_OPN.pkl', 'rb')
-    y_train_file = open('../data/serialized/y_train_withseqs_OPN.pkl', 'rb')
-    X_val_file = open('../data/serialized/X_val_withseqs_OPN.pkl', 'rb')
-    y_val_file = open('../data/serialized/y_val_withseqs_OPN.pkl', 'rb')
-    X_test_file = open('../data/serialized/X_test_withseqs_OPN.pkl', 'rb')
-    y_test_file = open('../data/serialized/y_test_withseqs_OPN.pkl', 'rb')
+    X_train_file = open('../data/serialized/X_train_withseqs_onehot_OPN.pkl', 'rb')
+    y_train_file = open('../data/serialized/y_train_withseqs_onehot_OPN.pkl', 'rb')
+    X_val_file = open('../data/serialized/X_val_withseqs_onehot_OPN.pkl', 'rb')
+    y_val_file = open('../data/serialized/y_val_withseqs_onehot_OPN.pkl', 'rb')
+    X_test_file = open('../data/serialized/X_test_withseqs_onehot_OPN.pkl', 'rb')
+    y_test_file = open('../data/serialized/y_test_withseqs_onehot_OPN.pkl', 'rb')
 
     X_train = pickle.load(X_train_file)
     y_train = pickle.load(y_train_file)
@@ -94,7 +94,7 @@ if __name__ == "__main__":
             history = model.fit(X_train, y_train,
                                 shuffle=True,
                                 batch_size=32,
-                                epochs=10,
+                                epochs=5,
                                 verbose=True,
                                 validation_data=(X_val, y_val))
             print("Train results:")
