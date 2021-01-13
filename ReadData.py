@@ -374,12 +374,10 @@ def read_data_channels(directory, partition, temperatures, categories=["OPN", "B
     
     instances_pos = np.asarray([instances for temp, instances in sorted(data_pos)])
     instances_neg = np.asarray([instances for temp, instances in sorted(data_neg)])
-    print(instances_neg.shape)
     instances_pos = np.swapaxes(instances_pos, 0, 2)
     instances_neg = np.swapaxes(instances_neg, 0, 2)
     instances_pos = np.moveaxis(instances_pos, 1, -1)
     instances_neg = np.moveaxis(instances_neg, 1, -1)
-    print(instances_neg.shape)
             
     # TODO This is pretty slow
     for row in instances_pos:

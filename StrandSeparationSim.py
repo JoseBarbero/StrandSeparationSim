@@ -24,7 +24,7 @@ from contextlib import redirect_stdout
 def channels_net():
     model = keras.Sequential()
     
-    model.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu', input_shape=(28,200,9)))
+    model.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu', input_shape=(28,200,13)))
     model.add(MaxPooling2D((2,2)))
     #model.add(Dropout(0.25))
 
@@ -51,12 +51,12 @@ if __name__ == "__main__":
     seed = 42
     np.random.seed(seed)
 
-    X_train_file = open('../data/serialized/X_train_withseqs_onehot_OPN.pkl', 'rb')
-    y_train_file = open('../data/serialized/y_train_withseqs_onehot_OPN.pkl', 'rb')
-    X_val_file = open('../data/serialized/X_val_withseqs_onehot_OPN.pkl', 'rb')
-    y_val_file = open('../data/serialized/y_val_withseqs_onehot_OPN.pkl', 'rb')
-    X_test_file = open('../data/serialized/X_test_withseqs_onehot_OPN.pkl', 'rb')
-    y_test_file = open('../data/serialized/y_test_withseqs_onehot_OPN.pkl', 'rb')
+    X_train_file = open('../data/serialized/X_train_channels.pkl', 'rb')
+    y_train_file = open('../data/serialized/y_train_channels.pkl', 'rb')
+    X_val_file = open('../data/serialized/X_val_channels.pkl', 'rb')
+    y_val_file = open('../data/serialized/y_val_channels.pkl', 'rb')
+    X_test_file = open('../data/serialized/X_test_channels.pkl', 'rb')
+    y_test_file = open('../data/serialized/y_test_channels.pkl', 'rb')
 
     X_train = pickle.load(X_train_file)
     y_train = pickle.load(y_train_file)
