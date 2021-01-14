@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import os
 import re
+from Bio.Seq import Seq
 
 def file_to_array(inputfile):
     """
