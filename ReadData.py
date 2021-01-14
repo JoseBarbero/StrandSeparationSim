@@ -456,7 +456,6 @@ def read_data_channels(directory, partition, temperatures, categories=["OPN", "B
     data_neg = []
 
     for temp in temperatures:
-        print(temp)
         for tag in ['pos', 'neg']:
             hg = '16' if partition in ['train', 'val'] else '17'
             
