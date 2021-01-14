@@ -3,6 +3,7 @@ import pandas as pd
 import os
 import re
 from Bio.Seq import Seq
+from datetime import datetime
 
 def file_to_array(inputfile):
     """
@@ -132,15 +133,6 @@ def read_data_st(directory, partition, categories):
                     data_pos.append((temp, file_to_array(directory+"/"+filename)[0]))
                 elif tag == "neg":
                     data_neg.append((temp, file_to_array(directory+"/"+filename)[0]))
-        
-        # Tengo muchas dudas de que esto esté bien.
-        # En teoría habría que coger las 28 temperaturas distintas de 1 misma instancia.
-        # Eso implicaría que la Y sería un vector de 1s y 0s en función de si se abre a esa temperatura.
-        #
-        # No me queda claro qué es lo que estoy haciendo ahora. Diría que se están cogiendo los datos de 28 instancias positivas a diferentes temperaturas y se le pone 1 sola etiqueta.
-        # No tiene por qué estar mal pero no sé si tiene tanto sentido como lo otro.
-        # 
-        # Es que las propias secuencias originales ya están etiquetadas como positivas y negativas. No entiendo.
 
         instances_pos = np.asarray([instances for temp, instances in sorted(data_pos)])
         instances_neg = np.asarray([instances for temp, instances in sorted(data_neg)])
@@ -160,7 +152,7 @@ def read_data_st(directory, partition, categories):
 def seq_to_array(seqfile):
     X_fw = []
     X_rv = []
-    basetovalue_fw = {'A': 0.25, 'T': 0.5, 'G': 0.75, 'C': 1}
+    basetovalue_fw = {'A': 1, 'T': 2, 'G': 3, 'C': 4}
     basetovalue_rv = {'A': basetovalue_fw['T'], 'T': basetovalue_fw['A'], 'G': basetovalue_fw['C'], 'C': basetovalue_fw['G']}
     with open(seqfile, "r") as _file:
         for line in _file:
@@ -189,128 +181,6 @@ def seq_to_onehot_array(seqfile):
             X_fw.append(line_values_fw)
             X_rv.append(line_values_rv)
     return np.asarray(X_fw), np.asarray(X_rv)
-
-
-def read_data_st_withseq(directory, partition, categories):
-    """
-    Reads csv data to numpy stacking temperatures. With the original sequence in a 2nd channel and the reversed sequence in the 3rd channel.
-
-    Args:
-        directory (str): Directory containing the files to read.
-        partition (str): train, test or val.
-        categories (str) : A subset of ["OPN", "BUB10", "BUB12", "BUB8", "VRNORM"]
-
-    Returns:
-        tuple: (np.array, np.array): X, Y data.
-    """
-
-    X = []
-    y = []
-
-    for category in categories:
-        data_pos = []
-        data_neg = []
-        for filename in os.listdir(directory):
-            if re.match(f"{category}at.*K.*{partition}.*", filename):
-                temp = filename.split("at")[1].split("K")[0]
-                tag = filename.split(".")[-1]
-                genome = 'hg16' if partition in ['train', 'val'] else 'hg17'
-
-                seqfile = directory+'/onlyseq.TSS'+tag+'FineGrained.'+genome+'-'+partition+'.'+tag          # TODO Don't hardcode this
-                
-                seq_data_fw = seq_to_array(seqfile)[0]
-                seq_data_rv = seq_to_array(seqfile)[1]
-
-                prob_data = file_to_array(directory+"/"+filename)[0]
-
-                both_data = [prob_data, seq_data_fw, seq_data_rv]
-
-                if tag == "pos":
-                    data_pos.append((temp, both_data))
-                elif tag == "neg":
-                    data_neg.append((temp, both_data))
-
-        instances_pos = np.asarray([instances for temp, instances in sorted(data_pos)])
-        instances_neg = np.asarray([instances for temp, instances in sorted(data_neg)])
-        instances_pos = np.swapaxes(instances_pos, 0, 2)
-        instances_neg = np.swapaxes(instances_neg, 0, 2)
-        instances_pos = np.moveaxis(instances_pos, 1, -1)
-        instances_neg = np.moveaxis(instances_neg, 1, -1)
-
-        # TODO This is pretty slow
-        for row in instances_pos:
-            X.append(row)
-            y.append(1)
-
-        for row in instances_neg:
-            X.append(row)
-            y.append(0)
-
-    X = np.asarray(X)
-    y = np.asarray(y)
-
-    return X, y
-
-
-def read_data_st_withseq_onehot(directory, partition, categories):
-    """
-    Reads csv data to numpy stacking temperatures. With the original sequence in a 2nd channel and the reversed sequence in the 3rd channel.
-
-    Args:
-        directory (str): Directory containing the files to read.
-        partition (str): train, test or val.
-        categories (str) : A subset of ["OPN", "BUB10", "BUB12", "BUB8", "VRNORM"]
-
-    Returns:
-        tuple: (np.array, np.array): X, Y data.
-    """
-
-    X = []
-    y = []
-
-    for category in categories:
-        data_pos = []
-        data_neg = []
-        for filename in os.listdir(directory):
-            if re.match(f"{category}at.*K.*{partition}.*", filename):
-                temp = filename.split("at")[1].split("K")[0]
-                tag = filename.split(".")[-1]
-                genome = 'hg16' if partition in ['train', 'val'] else 'hg17'
-
-                seqfile = directory+'/onlyseq.TSS'+tag+'FineGrained.'+genome+'-'+partition+'.'+tag          # TODO Don't hardcode this
-                
-                seq_data_fw, seq_data_rv = seq_to_onehot_array(seqfile)
-
-                prob_data = file_to_array(directory+"/"+filename)[0]
-                both_data = np.asarray([prob_data,
-                                        seq_data_fw[:, :, 0], seq_data_fw[:, :, 1], seq_data_fw[:, :, 2], seq_data_fw[:, :, 3],
-                                        seq_data_rv[:, :, 0], seq_data_rv[:, :, 1], seq_data_rv[:, :, 2], seq_data_rv[:, :, 3]])
-
-                if tag == "pos":
-                    data_pos.append((temp, both_data))
-                elif tag == "neg":
-                    data_neg.append((temp, both_data))
-
-        instances_pos = np.asarray([instances for temp, instances in sorted(data_pos)])
-        instances_neg = np.asarray([instances for temp, instances in sorted(data_neg)])
-        instances_pos = np.swapaxes(instances_pos, 0, 2)
-        instances_neg = np.swapaxes(instances_neg, 0, 2)
-        instances_pos = np.moveaxis(instances_pos, 1, -1)
-        instances_neg = np.moveaxis(instances_neg, 1, -1)
-
-        # TODO This is pretty slow
-        for row in instances_pos:
-            X.append(row)
-            y.append(1)
-
-        for row in instances_neg:
-            X.append(row)
-            y.append(0)
-
-    X = np.asarray(X)
-    y = np.asarray(y)
-
-    return X, y
 
 
 def seq_to_onehot_aminoacids(seqfile):
@@ -394,7 +264,88 @@ def seq_to_onehot_aminoacids(seqfile):
     return np.asarray(X_fw_rf_1), np.asarray(X_fw_rf_2), np.asarray(X_fw_rf_3), np.asarray(X_rv_rf_1), np.asarray(X_rv_rf_2), np.asarray(X_rv_rf_3)
 
 
-def read_data_channels(directory, partition, temperatures, categories=["OPN", "BUB8", "BUB10", "BUB12", "VRNORM"]):
+def seq_to_aminoacids(seqfile):
+
+    X_fw_rf_1 = []
+    X_rv_rf_1 = []
+    X_fw_rf_2 = []
+    X_rv_rf_2 = []
+    X_fw_rf_3 = []
+    X_rv_rf_3 = []
+    
+    codon_dict_fw = {'ATA':'I', 'ATC':'I', 'ATT':'I', 'ATG':'M',
+                     'ACA':'T', 'ACC':'T', 'ACG':'T', 'ACT':'T',
+                     'AAC':'N', 'AAT':'N', 'AAA':'K', 'AAG':'K',
+                     'AGC':'S', 'AGT':'S', 'AGA':'R', 'AGG':'R',
+                     'CTA':'L', 'CTC':'L', 'CTG':'L', 'CTT':'L',
+                     'CCA':'P', 'CCC':'P', 'CCG':'P', 'CCT':'P',
+                     'CAC':'H', 'CAT':'H', 'CAA':'Q', 'CAG':'Q',
+                     'CGA':'R', 'CGC':'R', 'CGG':'R', 'CGT':'R',
+                     'GTA':'V', 'GTC':'V', 'GTG':'V', 'GTT':'V',
+                     'GCA':'A', 'GCC':'A', 'GCG':'A', 'GCT':'A',
+                     'GAC':'D', 'GAT':'D', 'GAA':'E', 'GAG':'E',
+                     'GGA':'G', 'GGC':'G', 'GGG':'G', 'GGT':'G',
+                     'TCA':'S', 'TCC':'S', 'TCG':'S', 'TCT':'S',
+                     'TTC':'F', 'TTT':'F', 'TTA':'L', 'TTG':'L',
+                     'TAC':'Y', 'TAT':'Y', 'TAA':'_', 'TAG':'_',
+                     'TGC':'C', 'TGT':'C', 'TGA':'_', 'TGG':'W'}
+
+    aminoacid_dict = {'I': 1,
+                      'M': 2,
+                      'T': 3,
+                      'N': 4,
+                      'K': 5,
+                      'R': 6,
+                      'L': 7,
+                      'P': 8,
+                      'H': 9,
+                      'Q': 10,
+                      'R': 11,
+                      'V': 12,
+                      'A': 13,
+                      'D': 14,
+                      'E': 15,
+                      'G': 16,
+                      'S': 17,
+                      'F': 18,
+                      'Y': 19,
+                      '_': 20,
+                      'C': 21,
+                      'W': 22,
+                      '?': 0
+                      }
+
+    # Meto cada aminoacido por triplicado para cada codon.
+    # Cuando salen codones (al principio y al final) de menos de 3 bases, los meto tantas veces como bases tenga ese "codon"
+    with open(seqfile, "r") as _file:
+        for line in _file:
+            line = '??'+line[:-1]+'??'
+            line_values_fw_rf1 = []
+            line_values_fw_rf2 = []
+            line_values_fw_rf3 = []
+            line_values_rv_rf1 = []
+            line_values_rv_rf2 = []
+            line_values_rv_rf3 = []
+            for i in range(0, len(line), 3):
+                codon_rf1 = line[i:i+3]
+                codon_rf2 = line[i+1:i+4]
+                codon_rf3 = line[i+2:i+5]
+                line_values_fw_rf1.extend(np.tile(aminoacid_dict[codon_dict_fw.get(codon_rf1, '?')], (len(re.findall(r'[ACGT]', codon_rf1)), 1)))
+                line_values_fw_rf2.extend(np.tile(aminoacid_dict[codon_dict_fw.get(codon_rf2, '?')], (len(re.findall(r'[ACGT]', codon_rf2)), 1)))
+                line_values_fw_rf3.extend(np.tile(aminoacid_dict[codon_dict_fw.get(codon_rf3, '?')], (len(re.findall(r'[ACGT]', codon_rf3)), 1)))
+                line_values_rv_rf1.extend(np.tile(aminoacid_dict[codon_dict_fw.get(Seq(codon_rf1).complement(), '?')], (len(re.findall(r'[ACGT]', codon_rf1)), 1)))
+                line_values_rv_rf2.extend(np.tile(aminoacid_dict[codon_dict_fw.get(Seq(codon_rf2).complement(), '?')], (len(re.findall(r'[ACGT]', codon_rf2)), 1)))
+                line_values_rv_rf3.extend(np.tile(aminoacid_dict[codon_dict_fw.get(Seq(codon_rf3).complement(), '?')], (len(re.findall(r'[ACGT]', codon_rf3)), 1)))
+            X_fw_rf_1.append(line_values_fw_rf1)
+            X_fw_rf_2.append(line_values_fw_rf2)
+            X_fw_rf_3.append(line_values_fw_rf3)
+            X_rv_rf_1.append(line_values_fw_rf1)
+            X_rv_rf_2.append(line_values_fw_rf2)
+            X_rv_rf_3.append(line_values_fw_rf3)
+    return np.asarray(X_fw_rf_1), np.asarray(X_fw_rf_2), np.asarray(X_fw_rf_3), np.asarray(X_rv_rf_1), np.asarray(X_rv_rf_2), np.asarray(X_rv_rf_3)
+
+
+def read_data_channels_onehot(directory, partition, temperatures, categories=["OPN", "BUB8", "BUB10", "BUB12", "VRNORM"]):
     """
     Reads csv data to numpy stacking temperatures.
 
@@ -468,16 +419,88 @@ def read_data_channels(directory, partition, temperatures, categories=["OPN", "B
     instances_pos = np.moveaxis(instances_pos, 1, -1)
     instances_neg = np.moveaxis(instances_neg, 1, -1)
             
-    # TODO This is pretty slow
-    for row in instances_pos:
-        X.append(row)
-        y.append(1)
+    X = np.concatenate(instances_neg, instances_pos)
+    y = np.concatenate(np.zeros((instances_neg.shape[0])), np.ones(instances_pos.shape[0]))
 
-    for row in instances_neg:
-        X.append(row)
-        y.append(0)
+    return X, y
 
-    X = np.asarray(X)
-    y = np.asarray(y)
+
+def read_data_channels(directory, partition, temperatures, categories=["OPN", "BUB8", "BUB10", "BUB12", "VRNORM"]):
+    """
+    Reads csv data to numpy stacking temperatures.
+
+    Args:
+        directory (str): Directory containing the files to read.
+        partition (str): train, test or val.
+        temperatures (list): List of temperatures to read.
+        categories (str) : ["OPN", "BUB10", "BUB12", "BUB8", "VRNORM"]
+
+    Returns:
+        tuple: (np.array, np.array): X, Y data.
+    
+    Returned X extra info:
+    Size 28 (temperatures) x 200 (bases) x 13 (channels)
+        Channel 1: OPN probabilities.
+        Channel 2: BUB8 probabilities.
+        Channel 3: BUB10 probabilities.
+        Channel 4: BUB12 probabilities.
+        Channel 5: VRNORM probabilities.
+        Channels 6, 7, 8, 9: Forward sequence one-hot encoded.
+        Channels 10, 11, 12, 13: Reversed sequence one-hot encoded. 
+    """
+
+    X = []
+    y = []
+
+    data_pos = []
+    data_neg = []
+
+    for temp in temperatures:
+        print(temp)
+        for tag in ['pos', 'neg']:
+            hg = '16' if partition in ['train', 'val'] else '17'
+            
+            opn_file = directory+'/OPNat'+temp+'K.hg'+hg+'-'+partition+'.'+tag
+            bub8_file = directory+'/BUB8at'+temp+'K.hg'+hg+'-'+partition+'.'+tag
+            bub10_file = directory+'/BUB10at'+temp+'K.hg'+hg+'-'+partition+'.'+tag
+            bub12_file = directory+'/BUB12at'+temp+'K.hg'+hg+'-'+partition+'.'+tag
+            vrnorm_file = directory+'/VRNORMat'+temp+'K.hg'+hg+'-'+partition+'.'+tag
+            seq_file = directory+'/onlyseq.TSS'+tag+'FineGrained.hg'+hg+'-'+partition+'.'+tag
+
+            opn_data = file_to_array(opn_file)[0]
+            bub8_data = file_to_array(bub8_file)[0]
+            bub10_data = file_to_array(bub10_file)[0]
+            bub12_data = file_to_array(bub12_file)[0]
+            vrnorm_data = file_to_array(vrnorm_file)[0]
+            seq_data_fw, seq_data_rv = seq_to_array(seq_file)
+            aa_fw_rf1, aa_fw_rf2, aa_fw_rf3, aa_rv_rf1, aa_rv_rf2, aa_rv_rf3 = seq_to_aminoacids(seq_file)
+            
+            combined_data = np.asarray([opn_data,
+                                        bub8_data,
+                                        bub10_data,
+                                        bub12_data,
+                                        vrnorm_data,
+                                        seq_data_fw,
+                                        seq_data_rv,
+                                        aa_fw_rf1.reshape(aa_fw_rf1.shape[:-1]),
+                                        aa_fw_rf2.reshape(aa_fw_rf2.shape[:-1]),
+                                        aa_fw_rf3.reshape(aa_fw_rf3.shape[:-1]),
+                                        aa_rv_rf1.reshape(aa_rv_rf1.shape[:-1]),
+                                        aa_rv_rf2.reshape(aa_rv_rf2.shape[:-1]),
+                                        aa_rv_rf3.reshape(aa_rv_rf3.shape[:-1])])
+            if tag == "pos":
+                data_pos.append((temp, combined_data))
+            elif tag == "neg":
+                data_neg.append((temp, combined_data))
+    
+    instances_pos = np.asarray([instances for temp, instances in sorted(data_pos)])
+    instances_neg = np.asarray([instances for temp, instances in sorted(data_neg)])
+    instances_pos = np.swapaxes(instances_pos, 0, 2)
+    instances_neg = np.swapaxes(instances_neg, 0, 2)
+    instances_pos = np.moveaxis(instances_pos, 1, -1)
+    instances_neg = np.moveaxis(instances_neg, 1, -1)
+    
+    X = np.concatenate(instances_neg, instances_pos)
+    y = np.concatenate(np.zeros((instances_neg.shape[0])), np.ones(instances_pos.shape[0]))
 
     return X, y
