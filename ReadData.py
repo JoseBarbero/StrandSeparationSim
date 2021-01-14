@@ -449,13 +449,13 @@ def read_data_channels(directory, partition, temperatures, categories=["OPN", "B
                                             bub12_data,
                                             vrnorm_data,
                                             seq_data_fw[:, :, 0], seq_data_fw[:, :, 1], seq_data_fw[:, :, 2], seq_data_fw[:, :, 3],
-                                            seq_data_rv[:, :, 0], seq_data_rv[:, :, 1], seq_data_rv[:, :, 2], seq_data_rv[:, :, 3]],
+                                            seq_data_rv[:, :, 0], seq_data_rv[:, :, 1], seq_data_rv[:, :, 2], seq_data_rv[:, :, 3],
                                             aa_fw_rf1,
                                             aa_fw_rf2,
                                             aa_fw_rf3,
                                             aa_rv_rf1,
                                             aa_rv_rf2,
-                                            aa_rv_rf3)
+                                            aa_rv_rf3])
             if tag == "pos":
                 data_pos.append((temp, combined_data))
             elif tag == "neg":
