@@ -444,18 +444,18 @@ def read_data_channels(directory, partition, temperatures, categories=["OPN", "B
             aa_fw_rf1, aa_fw_rf2, aa_fw_rf3, aa_rv_rf1, aa_rv_rf2, aa_rv_rf3 = seq_to_onehot_aminoacids(seq_file)
             
             combined_data = np.asarray([opn_data,
-                                            bub8_data,
-                                            bub10_data,
-                                            bub12_data,
-                                            vrnorm_data,
-                                            seq_data_fw[:, :, 0], seq_data_fw[:, :, 1], seq_data_fw[:, :, 2], seq_data_fw[:, :, 3],
-                                            seq_data_rv[:, :, 0], seq_data_rv[:, :, 1], seq_data_rv[:, :, 2], seq_data_rv[:, :, 3],
-                                            aa_fw_rf1,
-                                            aa_fw_rf2,
-                                            aa_fw_rf3,
-                                            aa_rv_rf1,
-                                            aa_rv_rf2,
-                                            aa_rv_rf3])
+                                        bub8_data,
+                                        bub10_data,
+                                        bub12_data,
+                                        vrnorm_data,
+                                        *[seq_data_fw[:, :, i] for i in range(seq_data_fw.shape[2])],
+                                        *[seq_data_rv[:, :, i] for i in range(seq_data_rv.shape[2])],
+                                        *[aa_fw_rf1[:, :, i] for i in range(aa_fw_rf1.shape[2])],
+                                        *[aa_fw_rf2[:, :, i] for i in range(aa_fw_rf2.shape[2])],
+                                        *[aa_fw_rf3[:, :, i] for i in range(aa_fw_rf3.shape[2])],
+                                        *[aa_rv_rf1[:, :, i] for i in range(aa_rv_rf1.shape[2])],
+                                        *[aa_rv_rf2[:, :, i] for i in range(aa_rv_rf2.shape[2])],
+                                        *[aa_rv_rf3[:, :, i] for i in range(aa_rv_rf3.shape[2])]])
             if tag == "pos":
                 data_pos.append((temp, combined_data))
             elif tag == "neg":
