@@ -419,8 +419,8 @@ def read_data_channels_onehot(directory, partition, temperatures, categories=["O
     instances_pos = np.moveaxis(instances_pos, 1, -1)
     instances_neg = np.moveaxis(instances_neg, 1, -1)
             
-    X = np.concatenate(instances_neg, instances_pos)
-    y = np.concatenate(np.zeros((instances_neg.shape[0])), np.ones(instances_pos.shape[0]))
+    X = np.concatenate((instances_neg, instances_pos))
+    y = np.concatenate((np.zeros((instances_neg.shape[0])), np.ones(instances_pos.shape[0])))
 
     return X, y
 
@@ -499,7 +499,7 @@ def read_data_channels(directory, partition, temperatures, categories=["OPN", "B
     instances_pos = np.moveaxis(instances_pos, 1, -1)
     instances_neg = np.moveaxis(instances_neg, 1, -1)
     
-    X = np.concatenate(instances_neg, instances_pos)
-    y = np.concatenate(np.zeros((instances_neg.shape[0])), np.ones(instances_pos.shape[0]))
+    X = np.concatenate((instances_neg, instances_pos))
+    y = np.concatenate((np.zeros((instances_neg.shape[0])), np.ones(instances_pos.shape[0])))
 
     return X, y
