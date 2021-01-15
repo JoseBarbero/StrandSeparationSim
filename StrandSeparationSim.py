@@ -9,7 +9,7 @@ import pickle
 import keras
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Dropout, Flatten, Conv2D, MaxPooling2D, AveragePooling2D, LayerNormalization
-from ReadData import read_data_as_img, read_data_structured, read_data_st, read_data_st_withseq
+from ReadData import read_data_as_img, read_data_structured, read_data_st
 from Preprocessing import ros, smote, adasyn
 from Results import report_results_imagedata, make_spider_by_temp, report_results_st, test_results, plot_train_history
 from keras import backend as K
