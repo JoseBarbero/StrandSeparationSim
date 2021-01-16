@@ -18,7 +18,7 @@ for part in ['train', 'val', 'test']:
     # Train
     print('Reading '+part+' data... '+'['+datetime.now().strftime("%m/%d/%Y, %H:%M:%S")+']')
     
-    X, y = read_data_channels_onehot(data_dir, part, temperatures, categories)
+    X, y = read_data_channels(data_dir, part, temperatures, categories)
 
     print('Writing '+part+' data... '+'['+datetime.now().strftime("%m/%d/%Y, %H:%M:%S")+']')
     X_file = open('../data/serialized/X_'+part+'_channels.pkl', 'wb')
