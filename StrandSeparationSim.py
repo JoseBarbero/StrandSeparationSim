@@ -8,6 +8,7 @@ import sys
 import pickle
 import keras
 from keras.models import Sequential
+from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from keras.layers import Dense, Activation, Dropout, Flatten, Conv2D, MaxPooling2D, AveragePooling2D, LayerNormalization
 from ReadData import read_data_as_img, read_data_structured, read_data_st
 from Preprocessing import ros, smote, adasyn
@@ -90,13 +91,18 @@ if __name__ == "__main__":
 
             for layer in model.layers:
                 print(layer.get_config())
+            early_stopping_monitor = EarlyStopping( monitor='val_loss', min_delta=0, patience=5, 
+                                                    verbose=0, mode='auto', baseline=None,
+                                                    restore_best_weights=True)
+            reduce_lr_loss = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=7, verbose=1, epsilon=1e-4, mode='min')
 
             history = model.fit(X_train, y_train,
                                 shuffle=True,
                                 batch_size=32,
                                 epochs=5,
                                 verbose=True,
-                                validation_data=(X_val, y_val))
+                                validation_data=(X_val, y_val),
+                                callbacks=[early_stopping_monitor, reduce_lr_loss])
             print("Train results:")
             test_results(X_train, y_train, model)
             print("Test results:")
