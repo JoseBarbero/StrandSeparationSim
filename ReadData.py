@@ -503,3 +503,7 @@ def read_data_channels(directory, partition, temperatures, categories=["OPN", "B
     y = np.concatenate((np.zeros((instances_neg.shape[0])), np.ones(instances_pos.shape[0])))
 
     return X, y
+
+def seqfile_to_instances(seqfile):
+    with open(seqfile, 'r') as _seqfile:
+        return _seqfile.read().split('\n')[:-1]
