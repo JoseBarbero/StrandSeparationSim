@@ -9,7 +9,7 @@ import pickle
 import keras
 from keras.models import Sequential
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
-from keras.layers import Dense, Activation, Dropout, Flatten, Conv2D, MaxPooling2D, AveragePooling2D, LayerNormalization
+from keras.layers import Dense, Activation, Dropout, Flatten, Conv2D, MaxPooling2D, AveragePooling2D, LayerNormalization, Attention
 from ReadData import read_data_as_img, read_data_structured, read_data_st
 from Preprocessing import ros, smote, adasyn
 from Results import report_results_imagedata, make_spider_by_temp, report_results_st, test_results, plot_train_history
@@ -34,6 +34,8 @@ def channels_net():
     #model.add(Dropout(0.25))
 
     model.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu'))
+
+    model.add(Attention())
 
     model.add(Flatten())
 
