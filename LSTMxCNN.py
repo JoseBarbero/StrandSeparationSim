@@ -113,19 +113,20 @@ if __name__ == "__main__":
             X_train_cnn = X_train[:,:,:,:5]
             print(X_train_lstm.shape)
             print(X_train_cnn.shape)
-            model.fit([X_train_lstm, X_train_cnn], y_train, batch_size=100, epochs=100, verbose=2)
-
-            # history = model.fit([X_train_lstm, X_train_cnn], y_train,
-            #                     shuffle=True,
-            #                     batch_size=32,
-            #                     epochs=100,
-            #                     verbose=True,
-            #                     validation_data=(X_val, y_val),
-            #                     callbacks=[early_stopping_monitor, reduce_lr_loss])
+            
+            history = model.fit([X_train_lstm, X_train_cnn], y_train,
+                                shuffle=True,
+                                batch_size=32,
+                                epochs=100,
+                                verbose=True,
+                                validation_data=(X_val, y_val),
+                                callbacks=[early_stopping_monitor, reduce_lr_loss])
             print("Train results:")
-            test_results(X_train, y_train, model)
+            test_results([X_train_lstm, X_train_cnn], y_train, model)
             print("Test results:")
-            test_results(X_test, y_test, model)
+            X_test_lstm = X_test[:,1,:,5:9]
+            X_test_cnn = X_test[:,:,:,:5]
+            test_results([X_test_lstm, X_test_cnn], y_test, model)
 
     with open(hist_file, 'wb') as file_pi:
         pickle.dump(history.history, file_pi)
