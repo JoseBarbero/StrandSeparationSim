@@ -30,7 +30,7 @@ from keras.preprocessing import sequence
 def lstm_net():
 
     model = tf.keras.models.Sequential()
-    model.add(LSTM(32, return_sequences=True, input_shape=(200,4)))
+    model.add(LSTM(32, return_sequences=True, input_shape=(1, 200,4)))
     model.add(Attention(name='attention_weight'))
     model.add(Dense(256, activation='relu'))
     model.add(Dense(1, activation='sigmoid'))
