@@ -111,6 +111,9 @@ if __name__ == "__main__":
 
             X_train_lstm = X_train[:,1,:,5:9]
             X_train_cnn = X_train[:,:,:,:5]
+            X_val_lstm = X_val[:,1,:,5:9]
+            X_val_cnn = X_val[:,:,:,:5]
+            
             print(X_train_lstm.shape)
             print(X_train_cnn.shape)
             
@@ -119,7 +122,7 @@ if __name__ == "__main__":
                                 batch_size=32,
                                 epochs=100,
                                 verbose=True,
-                                validation_data=(X_val, y_val),
+                                validation_data=([X_val_lstm, X_val_cnn], y_val),
                                 callbacks=[early_stopping_monitor, reduce_lr_loss])
             print("Train results:")
             test_results([X_train_lstm, X_train_cnn], y_train, model)
