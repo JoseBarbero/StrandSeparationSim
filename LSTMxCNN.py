@@ -113,9 +113,8 @@ if __name__ == "__main__":
             X_train_cnn = X_train[:,:,:,:5]
             print(X_train_lstm.shape)
             print(X_train_cnn.shape)
-            model.compile(optimizer='adam',
-              loss='binary_crossentropy',
-              metrics=['accuracy'])
+            model.fit([X_train_lstm, X_train_cnn], y_train, batch_size=100, epochs=100, verbose=2)
+
             # history = model.fit([X_train_lstm, X_train_cnn], y_train,
             #                     shuffle=True,
             #                     batch_size=32,
