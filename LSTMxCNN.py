@@ -31,7 +31,7 @@ from keras.preprocessing import sequence
 def cnnxlstm():
     
     lstm = Sequential() 
-    lstm.add(LSTM(32, return_sequences=True, input_shape=(200,4,)))
+    lstm.add(LSTM(32, return_sequences=True, input_shape=(200,4)))
     lstm.add(Attention(name='attention_weight'))
     lstm.add(Dense(256, activation='relu'))
     lstm.add(Flatten())
