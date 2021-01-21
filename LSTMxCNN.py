@@ -58,7 +58,7 @@ def channels_net():
 def cnnxlstm():
     
     lstm = tf.keras.models.Sequential() 
-    lstm.add(LSTM(32, return_sequences=True))
+    lstm.add(LSTM(32, return_sequences=False))
     lstm.add(Attention(name='attention_weight'))
     lstm.add(Dense(256, activation='relu'))
     lstm.add(Flatten())
@@ -72,8 +72,8 @@ def cnnxlstm():
     cnn.add(Flatten())
 
     merged = tf.keras.layers.Concatenate()([lstm.output, cnn.output])
-    z = Dense(256, activation="relu")(merged)
-    z = Dense(1, activation="sigmoid")(z)
+    #z = Dense(256, activation="relu")(merged)
+    z = Dense(1, activation="sigmoid")(merged)
 
     model = Model(inputs=[lstm.input, cnn.input], outputs=z)
 
