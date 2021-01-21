@@ -30,7 +30,7 @@ from keras.preprocessing import sequence
 def lstm_net():
 
     model = tf.keras.models.Sequential()
-    model.add(LSTM(32, return_sequences=True))
+    model.add(LSTM(32, return_sequences=True, input_shape=(200,4)))
     model.add(Attention(name='attention_weight'))
     model.add(Dense(256, activation='relu'))
     model.add(Dense(1, activation='sigmoid'))
@@ -42,7 +42,7 @@ def lstm_net():
 def channels_net():
     model = keras.Sequential()
     
-    model.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu', input_shape=(28,200,13)))
+    model.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu', input_shape=(28,200,5)))
     model.add(MaxPooling2D((2,2)))
     model.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu'))
     model.add(MaxPooling2D((2,2)))
