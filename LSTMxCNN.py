@@ -136,7 +136,10 @@ if __name__ == "__main__":
                                                     restore_best_weights=True)
             reduce_lr_loss = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, verbose=1, min_delta=1e-4, mode='min')
 
-            history = model.fit(np.reshape([X_train[:,1,:,5:9], ([X_train[:,1,:,5:9].shape[0], 1, [X_train[:,1,:,5:9].shape[1], [X_train[:,1,:,5:9].shape[2]), X_train[:,:,:,:5]], y_train,
+            X_train_lstm = X_train[:,1,:,5:9]
+            X_train_lstm = X_train_lstm.reshape((X_train_lstm.shape[0], 1, X_train_lstm.shape[1], X_train_lstm.shape[2]))
+            X_train_cnn = X_train[:,:,:,:5]
+            history = model.fit([X_train_lstm, X_train_cnn], y_train,
                                 shuffle=True,
                                 batch_size=32,
                                 epochs=100,
