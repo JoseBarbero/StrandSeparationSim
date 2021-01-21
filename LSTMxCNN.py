@@ -139,6 +139,8 @@ if __name__ == "__main__":
             X_train_lstm = X_train[:,1,:,5:9]
             X_train_lstm = X_train_lstm.reshape((X_train_lstm.shape[0], 1, X_train_lstm.shape[1], X_train_lstm.shape[2]))
             X_train_cnn = X_train[:,:,:,:5]
+            print(X_train_lstm.shape)
+            print(X_train_cnn.shape)
             history = model.fit([X_train_lstm, X_train_cnn], y_train,
                                 shuffle=True,
                                 batch_size=32,
