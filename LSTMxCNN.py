@@ -13,7 +13,8 @@ from keras.models import Sequential, Model
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from keras.layers import Dense, Activation, Dropout, Flatten, Conv2D, MaxPooling2D, AveragePooling2D, LayerNormalization
 from keras.layers import Conv3D, MaxPooling3D, AveragePooling3D
-from keras.layers import LSTM, Concatenate
+from keras.layers import LSTM
+from keras.layers import concatenate
 from ReadData import read_data_as_img, read_data_structured, read_data_st, seq_to_array, seq_to_onehot_array
 from Preprocessing import ros, smote, adasyn
 from Results import report_results_imagedata, make_spider_by_temp, report_results_st, test_results, plot_train_history
@@ -27,52 +28,24 @@ from contextlib import redirect_stdout
 from keras.layers.embeddings import Embedding
 from keras.preprocessing import sequence
 
-def lstm_net():
-
-    model = tf.keras.models.Sequential()
-    model.add(LSTM(32, return_sequences=True, input_shape=(1, 200,4)))
-    model.add(Attention(name='attention_weight'))
-    model.add(Dense(256, activation='relu'))
-    model.add(Dense(1, activation='sigmoid'))
-    
-    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=["accuracy", "AUC"])
-
-    return model
-
-def channels_net():
-    model = keras.Sequential()
-    
-    model.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu', input_shape=(28,200,5)))
-    model.add(MaxPooling2D((2,2)))
-    model.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu'))
-    model.add(MaxPooling2D((2,2)))
-    model.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu'))
-    model.add(Flatten())
-    model.add(Dense(units=128))
-    model.add(Dense(1, activation = 'sigmoid'))
-
-    model.compile(optimizer="adam", loss=keras.losses.BinaryCrossentropy(), metrics=["accuracy", "AUC"])
-    
-    return model
-
 def cnnxlstm():
     
-    lstm = tf.keras.models.Sequential() 
-    lstm.add(LSTM(32, return_sequences=False))
+    lstm = Sequential() 
+    lstm.add(LSTM(32, return_sequences=True, input_shape=(200,4,)))
     lstm.add(Attention(name='attention_weight'))
     lstm.add(Dense(256, activation='relu'))
     lstm.add(Flatten())
 
-    cnn = tf.keras.models.Sequential()
-    cnn.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu', input_shape=(28,200,13)))
+    cnn = Sequential()
+    cnn.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu', input_shape=(28,200,5)))
     cnn.add(MaxPooling2D((2,2)))
     cnn.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu'))
     cnn.add(MaxPooling2D((2,2)))
     cnn.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu'))
     cnn.add(Flatten())
 
-    merged = tf.keras.layers.Concatenate()([lstm.output, cnn.output])
-    #z = Dense(256, activation="relu")(merged)
+    merged = concatenate([lstm.output, cnn.output])
+    z = Dense(256, activation="relu")(merged)
     z = Dense(1, activation="sigmoid")(merged)
 
     model = Model(inputs=[lstm.input, cnn.input], outputs=z)
