@@ -71,7 +71,7 @@ def cnnxlstm():
     cnn.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu'))
     cnn.add(Flatten())
 
-    merged = Concatenate()([lstm.output, cnn.output])
+    merged = tf.keras.layers.Concatenate()([lstm.output, cnn.output])
     z = Dense(256, activation="relu")(merged)
     z = Dense(1, activation="sigmoid")(z)
 
