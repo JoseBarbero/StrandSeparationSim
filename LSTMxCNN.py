@@ -57,13 +57,13 @@ def channels_net():
 
 def cnnxlstm():
     
-    lstm = Sequential() 
+    lstm = tf.keras.models.Sequential() 
     lstm.add(LSTM(32, return_sequences=True))
     lstm.add(Attention(name='attention_weight'))
     lstm.add(Dense(256, activation='relu'))
     lstm.add(Flatten())
 
-    cnn = Sequential()
+    cnn = tf.keras.models.Sequential()
     cnn.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu', input_shape=(28,200,13)))
     cnn.add(MaxPooling2D((2,2)))
     cnn.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu'))
