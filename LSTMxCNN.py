@@ -9,11 +9,11 @@ import pickle
 import keras
 import tensorflow as tf
 from attention import Attention
-from keras.models import Sequential
+from keras.models import Sequential, Model
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from keras.layers import Dense, Activation, Dropout, Flatten, Conv2D, MaxPooling2D, AveragePooling2D, LayerNormalization
 from keras.layers import Conv3D, MaxPooling3D, AveragePooling3D
-from keras.layers import LSTM
+from keras.layers import LSTM, Concatenate
 from ReadData import read_data_as_img, read_data_structured, read_data_st, seq_to_array, seq_to_onehot_array
 from Preprocessing import ros, smote, adasyn
 from Results import report_results_imagedata, make_spider_by_temp, report_results_st, test_results, plot_train_history
@@ -30,41 +30,87 @@ from keras.preprocessing import sequence
 def lstm_net():
 
     model = tf.keras.models.Sequential()
-    #model.add(Embedding(5, 4, input_length=200))
     model.add(LSTM(32, return_sequences=True))
     model.add(Attention(name='attention_weight'))
     model.add(Dense(256, activation='relu'))
     model.add(Dense(1, activation='sigmoid'))
+    
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=["accuracy", "AUC"])
 
     return model
-    
 
+def channels_net():
+    model = keras.Sequential()
+    
+    model.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu', input_shape=(28,200,13)))
+    model.add(MaxPooling2D((2,2)))
+    model.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu'))
+    model.add(MaxPooling2D((2,2)))
+    model.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu'))
+    model.add(Flatten())
+    model.add(Dense(units=128))
+    model.add(Dense(1, activation = 'sigmoid'))
+
+    model.compile(optimizer="adam", loss=keras.losses.BinaryCrossentropy(), metrics=["accuracy", "AUC"])
+    
+    return model
+
+def cnnxlstm():
+    
+    lstm = Sequential() 
+    lstm.add(LSTM(32, return_sequences=True))
+    lstm.add(Attention(name='attention_weight'))
+    lstm.add(Dense(256, activation='relu'))
+    lstm.add(Flatten())
+
+    cnn = Sequential()
+    cnn.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu', input_shape=(28,200,13)))
+    cnn.add(MaxPooling2D((2,2)))
+    cnn.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu'))
+    cnn.add(MaxPooling2D((2,2)))
+    cnn.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu'))
+    cnn.add(Flatten())
+
+    merged = Concatenate()([lstm.output, cnn.output])
+    z = Dense(256, activation="relu")(merged)
+    z = Dense(1, activation="sigmoid")(z)
+
+    model = Model(inputs=[lstm.input, cnn.input], outputs=z)
+
+    model.compile(optimizer='adam',
+                loss='binary_crossentropy',
+                metrics=['accuracy', "AUC"])
+
+    return model
+
+
+
+    
+     
 if __name__ == "__main__":
     seed = 42
     np.random.seed(seed)
 
-    X_train_pos = seq_to_onehot_array('../data/prueba/onlyseq.TSSposFineGrained.hg16-train.pos')[0].astype(np.float32)
-    X_train_neg = seq_to_onehot_array('../data/prueba/onlyseq.TSSnegFineGrained.hg16-train.neg')[0].astype(np.float32)
-    X_val_pos = seq_to_onehot_array('../data/prueba/onlyseq.TSSposFineGrained.hg16-val.pos')[0].astype(np.float32)
-    X_val_neg = seq_to_onehot_array('../data/prueba/onlyseq.TSSnegFineGrained.hg16-val.neg')[0].astype(np.float32)
-    X_test_pos = seq_to_onehot_array('../data/prueba/onlyseq.TSSposFineGrained.hg17-test.pos')[0].astype(np.float32)
-    X_test_neg = seq_to_onehot_array('../data/prueba/onlyseq.TSSnegFineGrained.hg17-test.neg')[0].astype(np.float32)
-    
-    y_train_pos = [1] * len(X_train_pos )
-    y_train_neg = [0] * len(X_train_neg )
-    y_val_pos = [1] * len(X_val_pos )
-    y_val_neg = [0] * len(X_val_neg )
-    y_test_pos = [1] * len(X_test_pos )
-    y_test_neg = [0] * len(X_test_neg )
+    X_train_file = open('../data/serialized/X_train_channels_onehot_noAA.pkl', 'rb')
+    y_train_file = open('../data/serialized/y_train_channels_onehot_noAA.pkl', 'rb')
+    X_val_file = open('../data/serialized/X_val_channels_onehot_noAA.pkl', 'rb')
+    y_val_file = open('../data/serialized/y_val_channels_onehot_noAA.pkl', 'rb')
+    X_test_file = open('../data/serialized/X_test_channels_onehot_noAA.pkl', 'rb')
+    y_test_file = open('../data/serialized/y_test_channels_onehot_noAA.pkl', 'rb')
 
-    X_train = np.concatenate((X_train_pos, X_train_neg))
-    X_val = np.concatenate((X_val_pos, X_val_neg))
-    X_test = np.concatenate((X_test_pos, X_test_neg))
+    X_train = pickle.load(X_train_file)
+    y_train = pickle.load(y_train_file)
+    X_val = pickle.load(X_val_file)
+    y_val = pickle.load(y_val_file)
+    X_test = pickle.load(X_test_file)
+    y_test = pickle.load(y_test_file)
 
-    y_train = np.concatenate((y_train_pos, y_train_neg))
-    y_val = np.concatenate((y_val_pos, y_val_neg))
-    y_test = np.concatenate((y_test_pos, y_test_neg))
+    X_train_file.close()
+    y_train_file.close()
+    X_val_file.close()
+    y_val_file.close()
+    X_test_file.close()
+    y_test_file.close()
 
 
     if len(sys.argv) < 2:
@@ -77,7 +123,7 @@ if __name__ == "__main__":
     hist_file = "logs/"+run_id+".pkl"
     plot_file = "logs/"+run_id+".png"
 
-    model = lstm_net()
+    model = cnnxlstm()
 
     with open(log_file, 'w') as f:
         with redirect_stdout(f):
@@ -90,7 +136,7 @@ if __name__ == "__main__":
                                                     restore_best_weights=True)
             reduce_lr_loss = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, verbose=1, min_delta=1e-4, mode='min')
 
-            history = model.fit(X_train, y_train,
+            history = model.fit([X_train[:,1,:,5:9], X_train[:,:,:,:5]], y_train,
                                 shuffle=True,
                                 batch_size=32,
                                 epochs=100,
