@@ -32,13 +32,13 @@ def lstmxlstm():
     
     lstm_seq = Sequential() 
     lstm_seq.add(LSTM(32, return_sequences=True, input_shape=(4, 200)))
-    lstm_seq.add(Attention(name='attention_weight_seq'))
+    #lstm_seq.add(Attention(name='_seq'))
     lstm_seq.add(Dense(64, activation='relu'))
     lstm_seq.add(Flatten())
 
     lstm_opn = Sequential() 
     lstm_opn.add(LSTM(32, return_sequences=True, input_shape=(200, 1)))
-    lstm_opn.add(Attention(name='attention_weight_opn'))
+    #lstm_opn.add(Attention(name='_opn'))
     lstm_opn.add(Dense(64, activation='relu'))
     lstm_opn.add(Flatten())
 
