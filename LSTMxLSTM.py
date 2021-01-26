@@ -37,7 +37,7 @@ def lstmxlstm():
     lstm_seq.add(Flatten())
 
     lstm_opn = Sequential() 
-    lstm_opn.add(LSTM(32, return_sequences=True, input_shape=(200,1)))
+    lstm_opn.add(LSTM(32, return_sequences=True, input_shape=(200,)))
     lstm_opn.add(Attention(name='attention_weight'))
     lstm_opn.add(Dense(64, activation='relu'))
     lstm_opn.add(Flatten())
@@ -59,12 +59,12 @@ if __name__ == "__main__":
     seed = 42
     np.random.seed(seed)
 
-    X_train_file = open('../data/serialized/X_train_channels_onehot_noAA.pkl', 'rb')
-    y_train_file = open('../data/serialized/y_train_channels_onehot_noAA.pkl', 'rb')
-    X_val_file = open('../data/serialized/X_val_channels_onehot_noAA.pkl', 'rb')
-    y_val_file = open('../data/serialized/y_val_channels_onehot_noAA.pkl', 'rb')
-    X_test_file = open('../data/serialized/X_test_channels_onehot_noAA.pkl', 'rb')
-    y_test_file = open('../data/serialized/y_test_channels_onehot_noAA.pkl', 'rb')
+    X_train_file = open('../data/serialized/X_train_channels_lstmxlstm.pkl', 'rb')
+    y_train_file = open('../data/serialized/y_train_channels_lstmxlstm.pkl', 'rb')
+    X_val_file = open('../data/serialized/X_val_channels_lstmxlstm.pkl', 'rb')
+    y_val_file = open('../data/serialized/y_val_channels_lstmxlstm.pkl', 'rb')
+    X_test_file = open('../data/serialized/X_test_channels_lstmxlstm.pkl', 'rb')
+    y_test_file = open('../data/serialized/y_test_channels_lstmxlstm.pkl', 'rb')
 
     X_train = pickle.load(X_train_file)
     y_train = pickle.load(y_train_file)
@@ -104,12 +104,30 @@ if __name__ == "__main__":
                                                     restore_best_weights=True)
             reduce_lr_loss = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, verbose=1, min_delta=1e-4, mode='min')
 
-            # TODO estoy cogiendo solo la primera temperatura por probar, pero esto hay que leerlo separando temperaturas.
-            X_train_seq = X_train[:,0,:,5:9]
-            X_train_opn = X_train[:,0,:,0]
-            X_val_seq = X_val[:,0,:,5:9]
-            X_val_opn = X_val[:,0,:,0]
+            X_train_opn = X_train[:, 0]
+            #X_train_bub8 = X_train[:, 1]
+            #X_train_bub10 = X_train[:, 2]
+            #X_train_bub12 = X_train[:, 3]
+            #X_train_vrnorm = X_train[:, 4]
+            X_train_seq = X_train[:, 5:9]
+            #X_train_seq_comp = X_train[:, 9:13]
             
+            X_val_opn = X_val[:, 0]
+            #X_val_bub8 = X_val[:, 1]
+            #X_val_bub10 = X_val[:, 2]
+            #X_val_bub12 = X_val[:, 3]
+            #X_val_vrnorm = X_val[:, 4]
+            X_val_seq = X_val[:, 5:9]
+            #X_val_seq_comp = X_val[:, 9:13]
+            
+            X_test_opn = X_test[:, 0]
+            #X_test_bub8 = X_test[:, 1]
+            #X_test_bub10 = X_test[:, 2]
+            #X_test_bub12 = X_test[:, 3]
+            #X_test_vrnorm = X_test[:, 4]
+            X_test_seq = X_test[:, 5:9]
+            #X_test_seq_comp = X_test[:, 9:13]
+
             print(X_train_seq.shape)
             print(X_train_opn.shape)
             
@@ -122,9 +140,9 @@ if __name__ == "__main__":
                                 callbacks=[early_stopping_monitor, reduce_lr_loss])
             print("Train results:")
             test_results([X_train_seq, X_train_opn], y_train, model)
+            
             print("Test results:")
-            X_test_seq = X_test[:,0,:,5:9]
-            X_test_opn = X_test[:,0,:,0]
+
             test_results([X_test_seq, X_test_opn], y_test, model)
 
     with open(hist_file, 'wb') as file_pi:
