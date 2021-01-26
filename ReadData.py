@@ -567,4 +567,4 @@ def read_data_channels_for_lstmxlstm(directory, partition, temperatures, categor
                             ]
                 X.append(combined_data)
                 y.append(1) if tag == 'pos' else y.append(0)
-    return X, y
+    return np.asarray(X), np.asarray(y)

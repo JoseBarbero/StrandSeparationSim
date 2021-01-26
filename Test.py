@@ -22,4 +22,7 @@ temperatures = ['308.0', '308.3', '308.6', '308.9',
 #print(np.asarray(seq_to_onehot_aminoacids(data_dir+'/onlyseq.TSSnegFineGrained.hg17-test.neg')).shape)
 
 
-read_data_channels_for_lstmxlstm(data_dir, 'test', temperatures, categories)
+X, y = read_data_channels_for_lstmxlstm(data_dir, 'test', temperatures, categories)
+
+print(X.shape)
+print(y.shape)

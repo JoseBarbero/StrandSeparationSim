@@ -115,7 +115,9 @@ if __name__ == "__main__":
     #X_test_vrnorm = X_test[:, 4]
     X_test_seq = X_test[:, 5:9]
     #X_test_seq_comp = X_test[:, 9:13]
-
+    
+    print(X_train_seq.shape)
+    print(X_train_opn.shape)
 
 
     model = lstmxlstm()
@@ -131,8 +133,7 @@ if __name__ == "__main__":
                                                     restore_best_weights=True)
             reduce_lr_loss = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, verbose=1, min_delta=1e-4, mode='min')
 
-            print(X_train_seq.shape)
-            print(X_train_opn.shape)
+
             
             history = model.fit([X_train_seq, X_train_opn], y_train,
                                 shuffle=True,
