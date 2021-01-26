@@ -28,28 +28,25 @@ from contextlib import redirect_stdout
 from keras.layers.embeddings import Embedding
 from keras.preprocessing import sequence
 
-def cnnxlstm():
+def lstmxlstm():
     
-    lstm = Sequential() 
-    lstm.add(LSTM(32, return_sequences=True, input_shape=(200,4)))
-    lstm.add(Attention(name='attention_weight'))
-    lstm.add(Dense(128, activation='relu'))
-    lstm.add(Flatten())
+    lstm_seq = Sequential() 
+    lstm_seq.add(LSTM(32, return_sequences=True, input_shape=(200,4)))
+    lstm_seq.add(Attention(name='attention_weight'))
+    lstm_seq.add(Dense(64, activation='relu'))
+    lstm_seq.add(Flatten())
 
-    cnn = Sequential()
-    cnn.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu', input_shape=(28,200,5)))
-    cnn.add(MaxPooling2D((2,2)))
-    cnn.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu'))
-    cnn.add(MaxPooling2D((2,2)))
-    cnn.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu'))
-    cnn.add(Dense(128, activation='relu'))
-    cnn.add(Flatten())
+    lstm_opn = Sequential() 
+    lstm_opn.add(LSTM(32, return_sequences=True, input_shape=(200,1)))
+    lstm_opn.add(Attention(name='attention_weight'))
+    lstm_opn.add(Dense(64, activation='relu'))
+    lstm_opn.add(Flatten())
 
-    merged = concatenate([lstm.output, cnn.output])
-    z = Dense(1024, activation="relu")(merged)
+    merged = concatenate([lstm_seq.output, lstm_opn.output])
+    z = Dense(128, activation="relu")(merged)
     z = Dense(1, activation="sigmoid")(merged)
 
-    model = Model(inputs=[lstm.input, cnn.input], outputs=z)
+    model = Model(inputs=[lstm_seq.input, lstm_opn.input], outputs=z)
 
     model.compile(optimizer='adam',
                 loss='binary_crossentropy',
@@ -57,9 +54,6 @@ def cnnxlstm():
 
     return model
 
-
-
-    
      
 if __name__ == "__main__":
     seed = 42
@@ -97,7 +91,7 @@ if __name__ == "__main__":
     hist_file = "logs/"+run_id+".pkl"
     plot_file = "logs/"+run_id+".png"
 
-    model = cnnxlstm()
+    model = lstmxlstm()
 
     with open(log_file, 'w') as f:
         with redirect_stdout(f):
@@ -110,27 +104,28 @@ if __name__ == "__main__":
                                                     restore_best_weights=True)
             reduce_lr_loss = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, verbose=1, min_delta=1e-4, mode='min')
 
-            X_train_lstm = X_train[:,1,:,5:9]
-            X_train_cnn = X_train[:,:,:,:5]
-            X_val_lstm = X_val[:,1,:,5:9]
-            X_val_cnn = X_val[:,:,:,:5]
+            # TODO estoy cogiendo solo la primera temperatura por probar, pero esto hay que leerlo separando temperaturas.
+            X_train_seq = X_train[:,0,:,5:9]
+            X_train_opn = X_train[:,0,:,0]
+            X_val_seq = X_val[:,0,:,5:9]
+            X_val_opn = X_val[:,0,:,0]
             
-            print(X_train_lstm.shape)
-            print(X_train_cnn.shape)
+            print(X_train_seq.shape)
+            print(X_train_opn.shape)
             
-            history = model.fit([X_train_lstm, X_train_cnn], y_train,
+            history = model.fit([X_train_seq, X_train_opn], y_train,
                                 shuffle=True,
                                 batch_size=32,
                                 epochs=100,
                                 verbose=True,
-                                validation_data=([X_val_lstm, X_val_cnn], y_val),
+                                validation_data=([X_val_seq, X_val_opn], y_val),
                                 callbacks=[early_stopping_monitor, reduce_lr_loss])
             print("Train results:")
-            test_results([X_train_lstm, X_train_cnn], y_train, model)
+            test_results([X_train_seq, X_train_opn], y_train, model)
             print("Test results:")
-            X_test_lstm = X_test[:,1,:,5:9]
-            X_test_cnn = X_test[:,:,:,:5]
-            test_results([X_test_lstm, X_test_cnn], y_test, model)
+            X_test_seq = X_test[:,0,:,5:9]
+            X_test_opn = X_test[:,0,:,0]
+            test_results([X_test_seq, X_test_opn], y_test, model)
 
     with open(hist_file, 'wb') as file_pi:
         pickle.dump(history.history, file_pi)

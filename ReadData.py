@@ -440,13 +440,13 @@ def read_data_channels(directory, partition, temperatures, categories=["OPN", "B
     
     Returned X extra info:
     Size 28 (temperatures) x 200 (bases) x 13 (channels)
-        Channel 1: OPN probabilities.
-        Channel 2: BUB8 probabilities.
-        Channel 3: BUB10 probabilities.
-        Channel 4: BUB12 probabilities.
-        Channel 5: VRNORM probabilities.
-        Channels 6, 7, 8, 9: Forward sequence one-hot encoded.
-        Channels 10, 11, 12, 13: Reversed sequence one-hot encoded. 
+        Channel 0: OPN probabilities.
+        Channel 1: BUB8 probabilities.
+        Channel 2: BUB10 probabilities.
+        Channel 3: BUB12 probabilities.
+        Channel 4: VRNORM probabilities.
+        Channels 5, 6, 7, 8: Forward sequence one-hot encoded.
+        Channels 9, 10, 11, 12: Reversed sequence one-hot encoded. 
     """
 
     X = []
@@ -509,10 +509,9 @@ def seqfile_to_instances(seqfile):
         return _seqfile.read().split('\n')[:-1]
 
 
-
-def read_data_channels_for_cnnxlstm(directory, partition, temperatures, categories=["OPN", "BUB8", "BUB10", "BUB12", "VRNORM"]):
+def read_data_channels_for_lstmxlstm(directory, partition, temperatures, categories=["OPN", "BUB8", "BUB10", "BUB12", "VRNORM"]):
     """
-    Reads csv data to numpy stacking temperatures.
+    Reads csv data to numpy NOT stacking temperatures.
 
     Args:
         directory (str): Directory containing the files to read.
@@ -524,21 +523,21 @@ def read_data_channels_for_cnnxlstm(directory, partition, temperatures, categori
         tuple: (np.array, np.array): X, Y data.
     
     Returned X extra info:
-    Size 28 (temperatures) x 200 (bases) x 13 (channels)
-        Channel 1: OPN probabilities.
-        Channel 2: BUB8 probabilities.
-        Channel 3: BUB10 probabilities.
-        Channel 4: BUB12 probabilities.
-        Channel 5: VRNORM probabilities.
-        Channels 6, 7, 8, 9: Forward sequence one-hot encoded.
-        Channels 10, 11, 12, 13: Reversed sequence one-hot encoded. 
+    Size 200 (bases) x 13 (channels)
+        Channel 0: OPN probabilities.
+        Channel 1: BUB8 probabilities.
+        Channel 2: BUB10 probabilities.
+        Channel 3: BUB12 probabilities.
+        Channel 4: VRNORM probabilities.
+        Channels 5, 6, 7, 8: Forward sequence one-hot encoded.
+        Channels 9, 10, 11, 12: Reversed sequence one-hot encoded. 
     """
 
     X = []
     y = []
 
-    data_pos = []
-    data_neg = []
+    instances_pos = []
+    instances_neg = []
 
     for temp in temperatures:
         for tag in ['pos', 'neg']:
@@ -557,37 +556,15 @@ def read_data_channels_for_cnnxlstm(directory, partition, temperatures, categori
             #bub12_data = file_to_array(bub12_file)[0]
             #vrnorm_data = file_to_array(vrnorm_file)[0]
             seq_data_fw, seq_data_rv = seq_to_onehot_array(seq_file)
-            #aa_fw_rf1, aa_fw_rf2, aa_fw_rf3, aa_rv_rf1, aa_rv_rf2, aa_rv_rf3 = seq_to_aminoacids(seq_file)
-            
-            combined_data = [opn_data,
-                                        #bub8_data,
-                                        #bub10_data,
-                                        #bub12_data,
-                                        #vrnorm_data,
-                                        seq_data_fw
-                                        #seq_data_rv,
-                                        #aa_fw_rf1.reshape(aa_fw_rf1.shape[:-1]),
-                                        #aa_fw_rf2.reshape(aa_fw_rf2.shape[:-1]),
-                                        #aa_fw_rf3.reshape(aa_fw_rf3.shape[:-1]),
-                                        #aa_rv_rf1.reshape(aa_rv_rf1.shape[:-1]),
-                                        #aa_rv_rf2.reshape(aa_rv_rf2.shape[:-1]),
-                                        #aa_rv_rf3.reshape(aa_rv_rf3.shape[:-1])
-                                        ]
-            if tag == "pos":
-                data_pos.append((temp, combined_data))
-            elif tag == "neg":
-                data_neg.append((temp, combined_data))
-            
-            print
-    
-    instances_pos = [instances for temp, instances in sorted(data_pos)]
-    instances_neg = [instances for temp, instances in sorted(data_neg)]
-    #instances_pos = np.swapaxes(instances_pos, 0, 2)
-    #instances_neg = np.swapaxes(instances_neg, 0, 2)
-    #instances_pos = np.moveaxis(instances_pos, 1, -1)
-    #instances_neg = np.moveaxis(instances_neg, 1, -1)
-    
-    X = (instances_neg, instances_pos)
-    y = ([0] * len(instances_neg), [1] * len(instances_pos))
-    
+            for i in range(len(seq_data_fw)):
+                combined_data = [opn_data[i],
+                            #bub8_data[i],
+                            #bub10_data[i],
+                            #bub12_data[i],
+                            #vrnorm_data[i],
+                            *seq_data_fw[i].swapaxes(0, 1),
+                            *seq_data_rv[i].swapaxes(0, 1)
+                            ]
+                X.append(combined_data)
+                y.append(1) if tag == 'pos' else y.append(0)
     return X, y
