@@ -91,6 +91,33 @@ if __name__ == "__main__":
     hist_file = "logs/"+run_id+".pkl"
     plot_file = "logs/"+run_id+".png"
 
+
+    X_train_opn = X_train[:, 0]
+    #X_train_bub8 = X_train[:, 1]
+    #X_train_bub10 = X_train[:, 2]
+    #X_train_bub12 = X_train[:, 3]
+    #X_train_vrnorm = X_train[:, 4]
+    X_train_seq = X_train[:, 5:9]
+    #X_train_seq_comp = X_train[:, 9:13]
+    
+    X_val_opn = X_val[:, 0]
+    #X_val_bub8 = X_val[:, 1]
+    #X_val_bub10 = X_val[:, 2]
+    #X_val_bub12 = X_val[:, 3]
+    #X_val_vrnorm = X_val[:, 4]
+    X_val_seq = X_val[:, 5:9]
+    #X_val_seq_comp = X_val[:, 9:13]
+    
+    X_test_opn = X_test[:, 0]
+    #X_test_bub8 = X_test[:, 1]
+    #X_test_bub10 = X_test[:, 2]
+    #X_test_bub12 = X_test[:, 3]
+    #X_test_vrnorm = X_test[:, 4]
+    X_test_seq = X_test[:, 5:9]
+    #X_test_seq_comp = X_test[:, 9:13]
+
+
+
     model = lstmxlstm()
 
     with open(log_file, 'w') as f:
@@ -103,30 +130,6 @@ if __name__ == "__main__":
                                                     verbose=1, mode='min', baseline=None,
                                                     restore_best_weights=True)
             reduce_lr_loss = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, verbose=1, min_delta=1e-4, mode='min')
-
-            X_train_opn = X_train[:, 0]
-            #X_train_bub8 = X_train[:, 1]
-            #X_train_bub10 = X_train[:, 2]
-            #X_train_bub12 = X_train[:, 3]
-            #X_train_vrnorm = X_train[:, 4]
-            X_train_seq = X_train[:, 5:9]
-            #X_train_seq_comp = X_train[:, 9:13]
-            
-            X_val_opn = X_val[:, 0]
-            #X_val_bub8 = X_val[:, 1]
-            #X_val_bub10 = X_val[:, 2]
-            #X_val_bub12 = X_val[:, 3]
-            #X_val_vrnorm = X_val[:, 4]
-            X_val_seq = X_val[:, 5:9]
-            #X_val_seq_comp = X_val[:, 9:13]
-            
-            X_test_opn = X_test[:, 0]
-            #X_test_bub8 = X_test[:, 1]
-            #X_test_bub10 = X_test[:, 2]
-            #X_test_bub12 = X_test[:, 3]
-            #X_test_vrnorm = X_test[:, 4]
-            X_test_seq = X_test[:, 5:9]
-            #X_test_seq_comp = X_test[:, 9:13]
 
             print(X_train_seq.shape)
             print(X_train_opn.shape)
