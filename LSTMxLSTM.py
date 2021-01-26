@@ -31,13 +31,13 @@ from keras.preprocessing import sequence
 def lstmxlstm():
     
     lstm_seq = Sequential() 
-    lstm_seq.add(LSTM(32, return_sequences=True, input_shape=(200,4)))
+    lstm_seq.add(LSTM(32, return_sequences=True, input_shape=(4, 200)))
     lstm_seq.add(Attention(name='attention_weight'))
     lstm_seq.add(Dense(64, activation='relu'))
     lstm_seq.add(Flatten())
 
     lstm_opn = Sequential() 
-    lstm_opn.add(LSTM(32, return_sequences=True, input_shape=(200,)))
+    lstm_opn.add(LSTM(32, return_sequences=True, input_shape=(200, 1)))
     lstm_opn.add(Attention(name='attention_weight'))
     lstm_opn.add(Dense(64, activation='relu'))
     lstm_opn.add(Flatten())
@@ -93,6 +93,7 @@ if __name__ == "__main__":
 
 
     X_train_opn = X_train[:, 0].reshape((*X_train[:, 0].shape, 1))
+    print(X_train_opn.shape)
     #X_train_bub8 = X_train[:, 1].reshape((*X_train[:, 1].shape, 1))
     #X_train_bub10 = X_train[:, 2].reshape((*X_train[:, 2].shape, 1))
     #X_train_bub12 = X_train[:, 3].reshape((*X_train[:, 3].shape, 1))
