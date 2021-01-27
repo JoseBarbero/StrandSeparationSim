@@ -31,44 +31,42 @@ from keras.preprocessing import sequence
 def lstmxlstm():
     
     lstm_seq = Sequential() 
-    lstm_seq.add(LSTM(32, return_sequences=True, input_shape=(4, 200)))
+    lstm_seq.add(LSTM(32, return_sequences=True, input_shape=(200, 4)))
     #lstm_seq.add(Dropout(0.5))
-    lstm_seq.add(Attention())
-    lstm_seq.add(Dense(256, activation='relu'))
-    #lstm_seq.add(Flatten())
-    lstm_seq.add(Dense(1, activation="sigmoid"))
-    #lstm_opn = Sequential() 
-    #lstm_opn.add(LSTM(8, return_sequences=True, input_shape=(200, 1)))
+    #lstm_seq.add(Attention(name='_seq'))
+    #lstm_seq.add(Dense(64, activation='relu'))
+    lstm_seq.add(Flatten())
+
+    lstm_opn = Sequential() 
+    lstm_opn.add(LSTM(32, return_sequences=True, input_shape=(200, 1)))
     #lstm_seq.add(Dropout(0.5))
     #lstm_opn.add(Attention(name='_opn'))
     #lstm_opn.add(Dense(64, activation='relu'))
-    #lstm_opn.add(Flatten())
+    lstm_opn.add(Flatten())
 
-    #merged = concatenate([lstm_seq.output, lstm_opn.output])
-    #z = Dense(32, activation="relu")(merged)
-    #z = Dense(1, activation="sigmoid")(merged)
+    merged = concatenate([lstm_seq.output, lstm_opn.output])
+    z = Dense(64, activation="relu")(merged)
+    z = Dense(1, activation="sigmoid")(merged)
 
-    #model = Model(inputs=[lstm_seq.input, lstm_opn.input], outputs=z)
-    lstm_seq.compile(loss='binary_crossentropy', optimizer='adam', metrics=["accuracy", "AUC"])
+    model = Model(inputs=[lstm_seq.input, lstm_opn.input], outputs=z)
 
-    #model.compile(optimizer='adam',
-    #            loss='binary_crossentropy',
-    #            metrics=['accuracy', "AUC"])
+    model.compile(optimizer='adam',
+                loss='binary_crossentropy',
+                metrics=['accuracy', "AUC"])
 
-    #return model
-    return lstm_seq
+    return model
 
      
 if __name__ == "__main__":
     seed = 42
     np.random.seed(seed)
 
-    X_train_file = open('../data/serialized/X_train_channels_lstmxlstm.pkl', 'rb')
-    y_train_file = open('../data/serialized/y_train_channels_lstmxlstm.pkl', 'rb')
-    X_val_file = open('../data/serialized/X_val_channels_lstmxlstm.pkl', 'rb')
-    y_val_file = open('../data/serialized/y_val_channels_lstmxlstm.pkl', 'rb')
-    X_test_file = open('../data/serialized/X_test_channels_lstmxlstm.pkl', 'rb')
-    y_test_file = open('../data/serialized/y_test_channels_lstmxlstm.pkl', 'rb')
+    X_train_file = open('../data/serialized/X_train_channels_onehot_noAA.pkl', 'rb')
+    y_train_file = open('../data/serialized/y_train_channels_onehot_noAA.pkl', 'rb')
+    X_val_file = open('../data/serialized/X_val_channels_onehot_noAA.pkl', 'rb')
+    y_val_file = open('../data/serialized/y_val_channels_onehot_noAA.pkl', 'rb')
+    X_test_file = open('../data/serialized/X_test_channels_onehot_noAA.pkl', 'rb')
+    y_test_file = open('../data/serialized/y_test_channels_onehot_noAA.pkl', 'rb')
 
     X_train = pickle.load(X_train_file)
     y_train = pickle.load(y_train_file)
@@ -95,7 +93,7 @@ if __name__ == "__main__":
     hist_file = "logs/"+run_id+".pkl"
     plot_file = "logs/"+run_id+".png"
 
-
+    '''
     X_train_opn = X_train[:, 0].reshape((*X_train[:, 0].shape, 1))
     print(X_train_opn.shape)
     #X_train_bub8 = X_train[:, 1].reshape((*X_train[:, 1].shape, 1))
@@ -120,7 +118,16 @@ if __name__ == "__main__":
     #X_test_vrnorm = X_test[:, 4].reshape((*X_test[:, 4].shape, 1))
     X_test_seq = X_test[:, 5:9]
     #X_test_seq_comp = X_test[:, 9:13]
+    '''
+    X_train_opn = X_train[:,1,:,0]
+    X_train_seq = X_train[:,1,:,5:9]
     
+    X_val_opn = X_val[:,1,:,0]
+    X_val_seq = X_val[:,1,:,5:9]
+    
+    X_test_opn = X_test[:,1,:,0]
+    X_test_seq = X_test[:,1,:,5:9]
+
     print(X_train_seq.shape)
     print(X_train_opn.shape)
 
@@ -140,21 +147,13 @@ if __name__ == "__main__":
 
 
             
-            # history = model.fit([X_train_seq, X_train_opn], y_train,
-            #                     shuffle=True,
-            #                     batch_size=512,
-            #                     epochs=100,
-            #                     verbose=True,
-            #                     validation_data=([X_val_seq, X_val_opn], y_val),
-            #                     callbacks=[early_stopping_monitor, reduce_lr_loss])
-            history = model.fit(X_train_seq, y_train,
+            history = model.fit([X_train_seq, X_train_opn], y_train,
                                 shuffle=True,
-                                batch_size=512,
+                                batch_size=128,
                                 epochs=100,
                                 verbose=True,
-                                validation_data=(X_val_seq, y_val),
+                                validation_data=([X_val_seq, X_val_opn], y_val),
                                 callbacks=[early_stopping_monitor, reduce_lr_loss])
-
             print("Train results:")
             test_results([X_train_seq, X_train_opn], y_train, model)
             
