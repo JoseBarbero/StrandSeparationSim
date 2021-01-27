@@ -107,6 +107,7 @@ if __name__ == "__main__":
     X_test_seq = X_test[:, 5:9]
     #X_test_seq_comp = X_test[:, 9:13]
     '''
+    print(X_train.shape)
     X_train = np.concatenate((X_train[:,:,5:9], X_train[:,:,0, None]), axis=2)
     
     X_val = np.concatenate((X_val[:,:,5:9], X_val[:,:,0, None]), axis=2)
