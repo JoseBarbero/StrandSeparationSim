@@ -49,13 +49,14 @@ def lstmxlstm():
     #z = Dense(1, activation="sigmoid")(merged)
 
     #model = Model(inputs=[lstm_seq.input, lstm_opn.input], outputs=z)
-    model = lstm_seq.compile(loss='binary_crossentropy', optimizer='adam', metrics=["accuracy", "AUC"])
+    lstm_seq.compile(loss='binary_crossentropy', optimizer='adam', metrics=["accuracy", "AUC"])
 
-    model.compile(optimizer='adam',
-                loss='binary_crossentropy',
-                metrics=['accuracy', "AUC"])
+    #model.compile(optimizer='adam',
+    #            loss='binary_crossentropy',
+    #            metrics=['accuracy', "AUC"])
 
-    return model
+    #return model
+    return lstm_seq
 
      
 if __name__ == "__main__":
