@@ -37,7 +37,7 @@ def lstmxlstm():
     #lstm_seq.add(Dense(32, activation='relu'))
     lstm_seq.add(Flatten())
 
-    #lstm_opn = Sequential() 
+    lstm_opn = Sequential() 
     lstm_opn.add(LSTM(32, return_sequences=True, go_backwards=True, input_shape=(200, 1)))
     #lstm_seq.add(Dropout(0.5))
     lstm_opn.add(Attention(name='attention_opn'))
@@ -61,12 +61,12 @@ if __name__ == "__main__":
     seed = 42
     np.random.seed(seed)
 
-    X_train_file = open('../data/serialized/X_train_channels_onehot_noAA.pkl', 'rb')
-    y_train_file = open('../data/serialized/y_train_channels_onehot_noAA.pkl', 'rb')
-    X_val_file = open('../data/serialized/X_val_channels_onehot_noAA.pkl', 'rb')
-    y_val_file = open('../data/serialized/y_val_channels_onehot_noAA.pkl', 'rb')
-    X_test_file = open('../data/serialized/X_test_channels_onehot_noAA.pkl', 'rb')
-    y_test_file = open('../data/serialized/y_test_channels_onehot_noAA.pkl', 'rb')
+    X_train_file = open('../data/serialized/X_train_channels_lstmxlstm.pkl', 'rb')
+    y_train_file = open('../data/serialized/y_train_channels_lstmxlstm.pkl', 'rb')
+    X_val_file = open('../data/serialized/X_val_channels_lstmxlstm.pkl', 'rb')
+    y_val_file = open('../data/serialized/y_val_channels_lstmxlstm.pkl', 'rb')
+    X_test_file = open('../data/serialized/X_test_channels_lstmxlstm.pkl', 'rb')
+    y_test_file = open('../data/serialized/y_test_channels_lstmxlstm.pkl', 'rb')
 
     X_train = pickle.load(X_train_file)
     y_train = pickle.load(y_train_file)
@@ -93,9 +93,8 @@ if __name__ == "__main__":
     hist_file = "logs/"+run_id+".pkl"
     plot_file = "logs/"+run_id+".png"
 
-    '''
-    X_train_opn = X_train[:, 0].reshape((*X_train[:, 0].shape, 1))
-    print(X_train_opn.shape)
+    
+    X_train_opn = X_train[:, 0]
     #X_train_bub8 = X_train[:, 1].reshape((*X_train[:, 1].shape, 1))
     #X_train_bub10 = X_train[:, 2].reshape((*X_train[:, 2].shape, 1))
     #X_train_bub12 = X_train[:, 3].reshape((*X_train[:, 3].shape, 1))
@@ -103,7 +102,7 @@ if __name__ == "__main__":
     X_train_seq = X_train[:, 5:9]
     #X_train_seq_comp = X_train[:, 9:13]
     
-    X_val_opn = X_val[:, 0].reshape((*X_val[:, 0].shape, 1))
+    X_val_opn = X_val[:, 0]
     #X_val_bub8 = X_val[:, 1].reshape((*X_val[:, 1].shape, 1))
     #X_val_bub10 = X_val[:, 2].reshape((*X_val[:, 2].shape, 1))
     #X_val_bub12 = X_val[:, 3].reshape((*X_val[:, 3].shape, 1))
@@ -111,22 +110,13 @@ if __name__ == "__main__":
     X_val_seq = X_val[:, 5:9]
     #X_val_seq_comp = X_val[:, 9:13]
     
-    X_test_opn = X_test[:, 0].reshape((*X_test[:, 0].shape, 1))
+    X_test_opn = X_test[:, 0]
     #X_test_bub8 = X_test[:, 1].reshape((*X_test[:, 1].shape, 1))
     #X_test_bub10 = X_test[:, 2].reshape((*X_test[:, 2].shape, 1))
     #X_test_bub12 = X_test[:, 3].reshape((*X_test[:, 3].shape, 1))
     #X_test_vrnorm = X_test[:, 4].reshape((*X_test[:, 4].shape, 1))
     X_test_seq = X_test[:, 5:9]
     #X_test_seq_comp = X_test[:, 9:13]
-    '''
-    X_train_opn = X_train[:,1,:,0]
-    X_train_seq = X_train[:,1,:,5:9]
-    
-    X_val_opn = X_val[:,1,:,0]
-    X_val_seq = X_val[:,1,:,5:9]
-    
-    X_test_opn = X_test[:,1,:,0]
-    X_test_seq = X_test[:,1,:,5:9]
 
     print(X_train_seq.shape)
     print(X_train_opn.shape)
