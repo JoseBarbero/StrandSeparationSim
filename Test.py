@@ -21,13 +21,8 @@ y_test = pickle.load(y_test_file)
 X_test_file.close()
 y_test_file.close()
 
-X_test_opn = X_test[:, 0].reshape((*X_test[:, 0].shape, 1))
-#X_test_bub8 = X_test[:, 1].reshape((*X_test[:, 1].shape, 1))
-#X_test_bub10 = X_test[:, 2].reshape((*X_test[:, 2].shape, 1))
-#X_test_bub12 = X_test[:, 3].reshape((*X_test[:, 3].shape, 1))
-#X_test_vrnorm = X_test[:, 4].reshape((*X_test[:, 4].shape, 1))
-X_test_seq = X_test[:, 5:9]
-#X_test_seq_comp = X_test[:, 9:13]
+X_test_opn = X_test[:,1,:,0]
+X_test_seq = X_test[:,1,:,5:9]
 
 print(X_test_seq.shape)
 print(X_test_opn.shape)

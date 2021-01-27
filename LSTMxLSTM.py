@@ -31,14 +31,14 @@ from keras.preprocessing import sequence
 def lstmxlstm():
     
     lstm_seq = Sequential() 
-    lstm_seq.add(LSTM(32, return_sequences=True, input_shape=(200, 4)))
+    lstm_seq.add(LSTM(32, return_sequences=True, go_backwards=True, input_shape=(200, 4)))
     #lstm_seq.add(Dropout(0.5))
     #lstm_seq.add(Attention(name='_seq'))
     #lstm_seq.add(Dense(64, activation='relu'))
     lstm_seq.add(Flatten())
 
     lstm_opn = Sequential() 
-    lstm_opn.add(LSTM(32, return_sequences=True, input_shape=(200, 1)))
+    lstm_opn.add(LSTM(32, return_sequences=True, go_backwards=True, input_shape=(200, 1)))
     #lstm_seq.add(Dropout(0.5))
     #lstm_opn.add(Attention(name='_opn'))
     #lstm_opn.add(Dense(64, activation='relu'))
