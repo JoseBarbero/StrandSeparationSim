@@ -34,14 +34,14 @@ def lstmxlstm():
     lstm_seq.add(LSTM(32, return_sequences=True, go_backwards=True, input_shape=(200, 4)))
     #lstm_seq.add(Dropout(0.5))
     lstm_seq.add(Attention(name='attention_seq'))
-    lstm_seq.add(Dense(32, activation='relu'))
+    #lstm_seq.add(Dense(32, activation='relu'))
     lstm_seq.add(Flatten())
 
     lstm_opn = Sequential() 
     lstm_opn.add(LSTM(32, return_sequences=True, go_backwards=True, input_shape=(200, 1)))
     #lstm_seq.add(Dropout(0.5))
     lstm_opn.add(Attention(name='attention_opn'))
-    lstm_opn.add(Dense(32, activation='relu'))
+    #lstm_opn.add(Dense(32, activation='relu'))
     lstm_opn.add(Flatten())
 
     merged = concatenate([lstm_seq.output, lstm_opn.output])
@@ -147,7 +147,7 @@ if __name__ == "__main__":
 
             history = model.fit([X_train_seq, X_train_opn], y_train,
                                 shuffle=True,
-                                batch_size=128,
+                                batch_size=32,
                                 epochs=100,
                                 verbose=True,
                                 validation_data=([X_val_seq, X_val_opn], y_val),
