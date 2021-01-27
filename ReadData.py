@@ -509,7 +509,7 @@ def seqfile_to_instances(seqfile):
         return _seqfile.read().split('\n')[:-1]
 
 
-def read_data_channels_for_lstmxlstm(directory, partition, temperatures, categories=["OPN", "BUB8", "BUB10", "BUB12", "VRNORM"]):
+def read_data_channels_for_lstmxlstm_dep(directory, partition, temperatures, categories=["OPN", "BUB8", "BUB10", "BUB12", "VRNORM"]):
     """
     Reads csv data to numpy NOT stacking temperatures.
 
@@ -568,3 +568,83 @@ def read_data_channels_for_lstmxlstm(directory, partition, temperatures, categor
                 X.append(combined_data)
                 y.append(1) if tag == 'pos' else y.append(0)
     return np.asarray(X), np.asarray(y)
+
+
+def read_data_channels_for_lstmxlstm(directory, partition, temperatures, categories=["OPN", "BUB8", "BUB10", "BUB12", "VRNORM"]):
+    """
+    Reads csv data to numpy stacking temperatures.
+
+    Args:
+        directory (str): Directory containing the files to read.
+        partition (str): train, test or val.
+        temperatures (list): List of temperatures to read.
+        categories (str) : ["OPN", "BUB10", "BUB12", "BUB8", "VRNORM"]
+
+    Returns:
+        tuple: (np.array, np.array): X, Y data.
+    
+    Returned X extra info:
+    Size 28 (temperatures) x 200 (bases) x 13 (channels)
+        Channel 1: OPN probabilities.
+        Channel 2: BUB8 probabilities.
+        Channel 3: BUB10 probabilities.
+        Channel 4: BUB12 probabilities.
+        Channel 5: VRNORM probabilities.
+        Channels 6, 7, 8, 9: Forward sequence one-hot encoded.
+        Channels 10, 11, 12, 13: Reversed sequence one-hot encoded. 
+    """
+
+    X = []
+    y = []
+
+    data_pos = []
+    data_neg = []
+
+    for temp in temperatures:
+        for tag in ['pos', 'neg']:
+            hg = '16' if partition in ['train', 'val'] else '17'
+            
+            opn_file = directory+'/OPNat'+temp+'K.hg'+hg+'-'+partition+'.'+tag
+            bub8_file = directory+'/BUB8at'+temp+'K.hg'+hg+'-'+partition+'.'+tag
+            bub10_file = directory+'/BUB10at'+temp+'K.hg'+hg+'-'+partition+'.'+tag
+            bub12_file = directory+'/BUB12at'+temp+'K.hg'+hg+'-'+partition+'.'+tag
+            vrnorm_file = directory+'/VRNORMat'+temp+'K.hg'+hg+'-'+partition+'.'+tag
+            seq_file = directory+'/onlyseq.TSS'+tag+'FineGrained.hg'+hg+'-'+partition+'.'+tag
+
+            opn_data = file_to_array(opn_file)[0]
+            bub8_data = file_to_array(bub8_file)[0]
+            bub10_data = file_to_array(bub10_file)[0]
+            bub12_data = file_to_array(bub12_file)[0]
+            vrnorm_data = file_to_array(vrnorm_file)[0]
+            seq_data_fw, seq_data_rv = seq_to_onehot_array(seq_file)
+            aa_fw_rf1, aa_fw_rf2, aa_fw_rf3, aa_rv_rf1, aa_rv_rf2, aa_rv_rf3 = seq_to_onehot_aminoacids(seq_file)
+            
+            combined_data = np.asarray([opn_data,
+                                        bub8_data,
+                                        bub10_data,
+                                        bub12_data,
+                                        vrnorm_data,
+                                        *[seq_data_fw[:, :, i] for i in range(seq_data_fw.shape[2])],
+                                        *[seq_data_rv[:, :, i] for i in range(seq_data_rv.shape[2])],
+                                        *[aa_fw_rf1[:, :, i] for i in range(aa_fw_rf1.shape[2])],
+                                        *[aa_fw_rf2[:, :, i] for i in range(aa_fw_rf2.shape[2])],
+                                        *[aa_fw_rf3[:, :, i] for i in range(aa_fw_rf3.shape[2])],
+                                        *[aa_rv_rf1[:, :, i] for i in range(aa_rv_rf1.shape[2])],
+                                        *[aa_rv_rf2[:, :, i] for i in range(aa_rv_rf2.shape[2])],
+                                        *[aa_rv_rf3[:, :, i] for i in range(aa_rv_rf3.shape[2])]])
+            if tag == "pos":
+                data_pos.extend(combined_data)
+            elif tag == "neg":
+                data_neg.extend(combined_data)
+    
+    instances_pos = np.asarray(data_pos)
+    instances_neg = np.asarray(data_neg)
+    instances_pos = np.swapaxes(instances_pos, 0, 2)
+    instances_neg = np.swapaxes(instances_neg, 0, 2)
+    instances_pos = np.moveaxis(instances_pos, 1, -1)
+    instances_neg = np.moveaxis(instances_neg, 1, -1)
+            
+    X = np.concatenate((instances_neg, instances_pos))
+    y = np.concatenate((np.zeros((instances_neg.shape[0])), np.ones(instances_pos.shape[0])))
+
+    return X, y

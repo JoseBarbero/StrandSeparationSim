@@ -5,8 +5,6 @@ import time
 from Bio.Seq import Seq
 from ReadData import *
 
-# Creo este script para no tener que procesar todo cada ejecución y poder guardarlo en unos pocos ficheros más manejables.
-
 data_dir = "../data/prueba"
 categories = ["OPN", "BUB8", "BUB10", "BUB12", "VRNORM"]
 temperatures = ['308.0', '308.3', '308.6', '308.9', 
@@ -16,13 +14,20 @@ temperatures = ['308.0', '308.3', '308.6', '308.9',
                 '312.2', '312.5', '312.8',
                 '315', '320', '325', '330', '335', '340', '345', '350', '355', '360']
 
-#X_test, y_test = read_data_channels(data_dir, 'test', temperatures, categories)
+X_test_file = open('../data/serialized/X_test_channels_onehot_noAA.pkl', 'rb')
+y_test_file = open('../data/serialized/y_test_channels_onehot_noAA.pkl', 'rb')
+X_test = pickle.load(X_test_file)
+y_test = pickle.load(y_test_file)
+X_test_file.close()
+y_test_file.close()
 
-#print(np.asarray(seq_to_onehot_array(data_dir+'/onlyseq.TSSnegFineGrained.hg17-test.neg')).shape)
-#print(np.asarray(seq_to_onehot_aminoacids(data_dir+'/onlyseq.TSSnegFineGrained.hg17-test.neg')).shape)
+X_test_opn = X_test[:, 0].reshape((*X_test[:, 0].shape, 1))
+#X_test_bub8 = X_test[:, 1].reshape((*X_test[:, 1].shape, 1))
+#X_test_bub10 = X_test[:, 2].reshape((*X_test[:, 2].shape, 1))
+#X_test_bub12 = X_test[:, 3].reshape((*X_test[:, 3].shape, 1))
+#X_test_vrnorm = X_test[:, 4].reshape((*X_test[:, 4].shape, 1))
+X_test_seq = X_test[:, 5:9]
+#X_test_seq_comp = X_test[:, 9:13]
 
-
-X, y = read_data_channels_for_lstmxlstm(data_dir, 'test', temperatures, categories)
-
-print(X.shape)
-print(y.shape)
+print(X_test_seq.shape)
+print(X_test_opn.shape)
