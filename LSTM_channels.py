@@ -28,27 +28,15 @@ from contextlib import redirect_stdout
 from keras.layers.embeddings import Embedding
 from keras.preprocessing import sequence
 
-def lstmxlstm():
+def lstm():
     
-    lstm_seq = Sequential() 
-    lstm_seq.add(LSTM(32, return_sequences=True, go_backwards=True, input_shape=(200, 4)))
+    model = Sequential() 
+    model.add(LSTM(32, return_sequences=True, go_backwards=True, input_shape=(200, 5)))
     #lstm_seq.add(Dropout(0.5))
-    lstm_seq.add(Attention(name='attention_seq'))
-    #lstm_seq.add(Dense(32, activation='relu'))
-    lstm_seq.add(Flatten())
+    model.add(Attention(name='attention_seq'))
+    model.add(Dense(256, activation="relu"))
+    model.add(Dense(1, activation="sigmoid"))
 
-    #lstm_opn = Sequential() 
-    lstm_opn.add(LSTM(32, return_sequences=True, go_backwards=True, input_shape=(200, 1)))
-    #lstm_seq.add(Dropout(0.5))
-    lstm_opn.add(Attention(name='attention_opn'))
-    #lstm_opn.add(Dense(32, activation='relu'))
-    lstm_opn.add(Flatten())
-
-    merged = concatenate([lstm_seq.output, lstm_opn.output])
-    z = Dense(128, activation="relu")(merged)
-    z = Dense(1, activation="sigmoid")(merged)
-
-    model = Model(inputs=[lstm_seq.input, lstm_opn.input], outputs=z)
 
     model.compile(optimizer='adam',
                 loss='binary_crossentropy',
@@ -119,20 +107,16 @@ if __name__ == "__main__":
     X_test_seq = X_test[:, 5:9]
     #X_test_seq_comp = X_test[:, 9:13]
     '''
-    X_train_opn = X_train[:,1,:,0]
-    X_train_seq = X_train[:,1,:,5:9]
+    X_train = np.concatenate((X_train[:,:,5:9]), (X_train[:,:,0, None]), axis=2)
     
-    X_val_opn = X_val[:,1,:,0]
-    X_val_seq = X_val[:,1,:,5:9]
+    X_val = np.concatenate((X_val[:,:,5:9]), (X_val[:,:,0, None]), axis=2)
     
-    X_test_opn = X_test[:,1,:,0]
-    X_test_seq = X_test[:,1,:,5:9]
+    X_test = np.concatenate((X_test[:,:,5:9]), (X_test[:,:,0, None]), axis=2)
 
-    print(X_train_seq.shape)
-    print(X_train_opn.shape)
+    print(X_train.shape)
 
 
-    model = lstmxlstm()
+    model = lstm()
 
     with open(log_file, 'w') as f:
         with redirect_stdout(f):
@@ -145,19 +129,19 @@ if __name__ == "__main__":
                                                     restore_best_weights=True)
             reduce_lr_loss = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, verbose=1, min_delta=1e-4, mode='min')
 
-            history = model.fit([X_train_seq, X_train_opn], y_train,
+            history = model.fit(X_train, y_train,
                                 shuffle=True,
                                 batch_size=32,
                                 epochs=100,
                                 verbose=True,
-                                validation_data=([X_val_seq, X_val_opn], y_val),
+                                validation_data=(X_val, y_val),
                                 callbacks=[early_stopping_monitor, reduce_lr_loss])
             print("Train results:")
-            test_results([X_train_seq, X_train_opn], y_train, model)
+            test_results(X_train, y_train, model)
             
             print("Test results:")
 
-            test_results([X_test_seq, X_test_opn], y_test, model)
+            test_results(X_test, y_test, model)
 
     with open(hist_file, 'wb') as file_pi:
         pickle.dump(history.history, file_pi)
