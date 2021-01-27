@@ -31,19 +31,19 @@ from keras.preprocessing import sequence
 def lstmxlstm():
     
     lstm_seq = Sequential() 
-    lstm_seq.add(LSTM(32, return_sequences=True, input_shape=(4, 200)))
+    lstm_seq.add(LSTM(8, return_sequences=True, input_shape=(4, 200)))
     #lstm_seq.add(Attention(name='_seq'))
     #lstm_seq.add(Dense(64, activation='relu'))
     lstm_seq.add(Flatten())
 
     lstm_opn = Sequential() 
-    lstm_opn.add(LSTM(32, return_sequences=True, input_shape=(200, 1)))
+    lstm_opn.add(LSTM(8, return_sequences=True, input_shape=(200, 1)))
     #lstm_opn.add(Attention(name='_opn'))
     #lstm_opn.add(Dense(64, activation='relu'))
     lstm_opn.add(Flatten())
 
     merged = concatenate([lstm_seq.output, lstm_opn.output])
-    z = Dense(128, activation="relu")(merged)
+    z = Dense(64, activation="relu")(merged)
     z = Dense(1, activation="sigmoid")(merged)
 
     model = Model(inputs=[lstm_seq.input, lstm_opn.input], outputs=z)
