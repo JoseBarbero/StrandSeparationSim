@@ -31,24 +31,25 @@ from keras.preprocessing import sequence
 def lstmxlstm():
     
     lstm_seq = Sequential() 
-    lstm_seq.add(LSTM(8, return_sequences=True, input_shape=(4, 200)))
-    lstm_seq.add(Dropout(0.5))
-    #lstm_seq.add(Attention(name='_seq'))
-    #lstm_seq.add(Dense(64, activation='relu'))
-    lstm_seq.add(Flatten())
-
-    lstm_opn = Sequential() 
-    lstm_opn.add(LSTM(8, return_sequences=True, input_shape=(200, 1)))
-    lstm_seq.add(Dropout(0.5))
+    lstm_seq.add(LSTM(32, return_sequences=True, input_shape=(4, 200)))
+    #lstm_seq.add(Dropout(0.5))
+    lstm_seq.add(Attention())
+    lstm_seq.add(Dense(256, activation='relu'))
+    #lstm_seq.add(Flatten())
+    lstm_seq.add(Dense(1, activation="sigmoid"))
+    #lstm_opn = Sequential() 
+    #lstm_opn.add(LSTM(8, return_sequences=True, input_shape=(200, 1)))
+    #lstm_seq.add(Dropout(0.5))
     #lstm_opn.add(Attention(name='_opn'))
     #lstm_opn.add(Dense(64, activation='relu'))
-    lstm_opn.add(Flatten())
+    #lstm_opn.add(Flatten())
 
-    merged = concatenate([lstm_seq.output, lstm_opn.output])
-    z = Dense(32, activation="relu")(merged)
-    z = Dense(1, activation="sigmoid")(merged)
+    #merged = concatenate([lstm_seq.output, lstm_opn.output])
+    #z = Dense(32, activation="relu")(merged)
+    #z = Dense(1, activation="sigmoid")(merged)
 
-    model = Model(inputs=[lstm_seq.input, lstm_opn.input], outputs=z)
+    #model = Model(inputs=[lstm_seq.input, lstm_opn.input], outputs=z)
+    model = lstm_seq.compile(loss='binary_crossentropy', optimizer='adam', metrics=["accuracy", "AUC"])
 
     model.compile(optimizer='adam',
                 loss='binary_crossentropy',
@@ -138,13 +139,21 @@ if __name__ == "__main__":
 
 
             
-            history = model.fit([X_train_seq, X_train_opn], y_train,
+            # history = model.fit([X_train_seq, X_train_opn], y_train,
+            #                     shuffle=True,
+            #                     batch_size=512,
+            #                     epochs=100,
+            #                     verbose=True,
+            #                     validation_data=([X_val_seq, X_val_opn], y_val),
+            #                     callbacks=[early_stopping_monitor, reduce_lr_loss])
+            history = model.fit(X_train_seq, y_train,
                                 shuffle=True,
                                 batch_size=512,
                                 epochs=100,
                                 verbose=True,
-                                validation_data=([X_val_seq, X_val_opn], y_val),
+                                validation_data=(X_val_seq, y_val),
                                 callbacks=[early_stopping_monitor, reduce_lr_loss])
+
             print("Train results:")
             test_results([X_train_seq, X_train_opn], y_train, model)
             
