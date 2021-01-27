@@ -137,7 +137,7 @@ if __name__ == "__main__":
 
             history = model.fit([X_train_seq, X_train_opn], y_train,
                                 shuffle=True,
-                                batch_size=32,
+                                batch_size=2048,
                                 epochs=100,
                                 verbose=True,
                                 validation_data=([X_val_seq, X_val_opn], y_val),
