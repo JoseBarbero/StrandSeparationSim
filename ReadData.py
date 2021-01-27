@@ -626,17 +626,16 @@ def read_data_channels_for_lstmxlstm(directory, partition, temperatures, categor
                                         *[seq_data_fw[:, :, i] for i in range(seq_data_fw.shape[2])],
                                         *[seq_data_rv[:, :, i] for i in range(seq_data_rv.shape[2])]
                                         ])
+            
+            combined_data = np.moveaxis(combined_data, 0, -1)
+
             if tag == "pos":
                 data_pos.extend(combined_data)
             elif tag == "neg":
                 data_neg.extend(combined_data)
-    
+
     instances_pos = np.asarray(data_pos)
     instances_neg = np.asarray(data_neg)
-    instances_pos = np.swapaxes(instances_pos, 0, 2)
-    instances_neg = np.swapaxes(instances_neg, 0, 2)
-    instances_pos = np.moveaxis(instances_pos, 1, -1)
-    instances_neg = np.moveaxis(instances_neg, 1, -1)
             
     X = np.concatenate((instances_neg, instances_pos))
     y = np.concatenate((np.zeros((instances_neg.shape[0])), np.ones(instances_pos.shape[0])))
