@@ -40,7 +40,7 @@ def titer():
     model.add(Flatten())
     model.add(Dense(1, activation = 'sigmoid'))
     
-    model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.0001), loss=keras.losses.BinaryCrossentropy(), metrics=["accuracy", "AUC"])
+    model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.001), loss=keras.losses.BinaryCrossentropy(), metrics=["accuracy", "AUC"])
 
     return model
 
