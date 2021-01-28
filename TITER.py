@@ -101,6 +101,7 @@ if __name__ == "__main__":
 
             X_train = np.swapaxes(X_train[:,:,5:9], 0, 1)
             X_train = X_train.reshape((*X_train.shape, 1))
+            print(X_train.shape)
             X_val = np.swapaxes(X_val[:,:,5:9], 0, 1)
             X_val = X_train.reshape((*X_val.shape, 1))
             X_test = np.swapaxes(X_test[:,:,5:9], 0, 1)
