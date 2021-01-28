@@ -34,9 +34,8 @@ def lstm():
     model.add(LSTM(32, return_sequences=True, go_backwards=True, input_shape=(200, 5)))
     #lstm_seq.add(Dropout(0.5))
     model.add(Attention(name='attention_seq'))
-    model.add(Dense(32, activation="relu"))
+    model.add(Dense(128, activation="relu"))
     model.add(Dense(1, activation="sigmoid"))
-
 
     model.compile(optimizer='adam',
                 loss='binary_crossentropy',
@@ -106,7 +105,7 @@ if __name__ == "__main__":
 
             history = model.fit(X_train, y_train,
                                 shuffle=True,
-                                batch_size=8192,
+                                batch_size=2048,
                                 epochs=100,
                                 verbose=True,
                                 validation_data=(X_val, y_val),
