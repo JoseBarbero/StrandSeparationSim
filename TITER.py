@@ -31,13 +31,13 @@ from keras.preprocessing import sequence
 def titer():
     model = Sequential()
 
-    model.add(Conv1D(filters=32, kernel_size=3, activation='relu', input_shape=(4, 200)))
-    model.add(MaxPooling1D())
-    model.add(Dropout(0.75))
+    #model.add(Conv1D(filters=32, kernel_size=3, activation='relu', input_shape=(4, 200)))
+    #model.add(MaxPooling1D())
+    #model.add(Dropout(0.9))
     model.add(LSTM(32, return_sequences=True, go_backwards=True))
-    model.add(Dropout(0.75))
-    model.add(Attention(name='att'))
-    model.add(Flatten())
+    #model.add(Dropout(0.9))
+    #model.add(Attention(name='att'))
+    #model.add(Flatten())
     model.add(Dense(1, activation = 'sigmoid'))
     
     model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.001), loss=keras.losses.BinaryCrossentropy(), metrics=["accuracy", "AUC"])
