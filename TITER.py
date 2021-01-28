@@ -95,10 +95,10 @@ if __name__ == "__main__":
 
             for layer in model.layers:
                 print(layer.get_config())
-            early_stopping_monitor = EarlyStopping( monitor='val_loss', min_delta=0, patience=20, 
+            early_stopping_monitor = EarlyStopping( monitor='val_loss', min_delta=0, patience=13, 
                                                     verbose=1, mode='min', baseline=None,
                                                     restore_best_weights=True)
-            reduce_lr_loss = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=10, verbose=1, min_delta=1e-4, mode='min')
+            reduce_lr_loss = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=6, verbose=1, min_delta=1e-4, mode='min')
 
             history = model.fit(np.concatenate((X_train, X_val)), np.concatenate((y_train, y_val)),
                                 shuffle=True,
