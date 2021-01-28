@@ -54,12 +54,12 @@ if __name__ == "__main__":
     seed = 42
     np.random.seed(seed)
 
-    X_train_file = open('../data/serialized/X_train_channels_lstmxlstm.pkl', 'rb')
-    y_train_file = open('../data/serialized/y_train_channels_lstmxlstm.pkl', 'rb')
-    X_val_file = open('../data/serialized/X_val_channels_lstmxlstm.pkl', 'rb')
-    y_val_file = open('../data/serialized/y_val_channels_lstmxlstm.pkl', 'rb')
-    X_test_file = open('../data/serialized/X_test_channels_lstmxlstm.pkl', 'rb')
-    y_test_file = open('../data/serialized/y_test_channels_lstmxlstm.pkl', 'rb')
+    X_train_file = open('../data/serialized/X_train_channels_onehot_noAA.pkl', 'rb')
+    y_train_file = open('../data/serialized/y_train_channels_onehot_noAA.pkl', 'rb')
+    X_val_file = open('../data/serialized/X_val_channels_onehot_noAA.pkl', 'rb')
+    y_val_file = open('../data/serialized/y_val_channels_onehot_noAA.pkl', 'rb')
+    X_test_file = open('../data/serialized/X_test_channels_onehot_noAA.pkl', 'rb')
+    y_test_file = open('../data/serialized/y_test_channels_onehot_noAA.pkl', 'rb')
 
     X_train = pickle.load(X_train_file)
     y_train = pickle.load(y_train_file)
@@ -107,9 +107,9 @@ if __name__ == "__main__":
             # X_test = np.swapaxes(X_test[:,:,5:9], 0, 1)
             # X_test = X_test.reshape((*X_test.shape, 1))
 
-            X_train = np.swapaxes(X_train[:,:,5:9], 1, -1)
-            X_val = np.swapaxes(X_val[:,:,5:9], 1, -1)
-            X_test = np.swapaxes(X_test[:,:,5:9], 1, -1)
+            X_train = np.swapaxes(X_train[:,1,:,5:9], 1, -1)
+            X_val = np.swapaxes(X_val[:,1,:,5:9], 1, -1)
+            X_test = np.swapaxes(X_test[:,1,:,5:9], 1, -1)
             
             history = model.fit(X_train, y_train,
                                 shuffle=True,
