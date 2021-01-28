@@ -36,7 +36,7 @@ def titer():
     model.add(Dropout(0.25))
     model.add(LSTM(4, return_sequences=True, go_backwards=False))
     model.add(Dropout(0.75))
-    model.add(Attention(name='att'))
+    #model.add(Attention(name='att'))
     model.add(Flatten())
     model.add(Dense(1, activation = 'sigmoid'))
     
@@ -73,23 +73,10 @@ if __name__ == "__main__":
     X_test_file.close()
     y_test_file.close()
 
-    # X_train = np.swapaxes(X_train[:,:,5:9], 0, 1)
-    # X_train = X_train.reshape((*X_train.shape, 1))
-    # print(X_train.shape)
-    # X_val = np.swapaxes(X_val[:,:,5:9], 0, 1)
-    # X_val = X_val.reshape((*X_val.shape, 1))
-    # X_test = np.swapaxes(X_test[:,:,5:9], 0, 1)
-    # X_test = X_test.reshape((*X_test.shape, 1))
-    print(X_train.shape)
     X_train = np.swapaxes(X_train[:,1,:,5:9], -2, -1)
-    print(X_train.shape)
-    print(X_val.shape)
     X_val = np.swapaxes(X_val[:,1,:,5:9], -2, -1)
-    print(X_val.shape)
-    print(X_test.shape)
     X_test = np.swapaxes(X_test[:,1,:,5:9], -2, -1)
-    print(X_test.shape)
-
+    
     if len(sys.argv) < 2:
         run_id = str(datetime.now()).replace(" ", "_").replace("-", "_").replace(":", "_").split(".")[0]
     else:
@@ -108,15 +95,15 @@ if __name__ == "__main__":
 
             for layer in model.layers:
                 print(layer.get_config())
-            early_stopping_monitor = EarlyStopping( monitor='val_loss', min_delta=0, patience=10, 
+            early_stopping_monitor = EarlyStopping( monitor='val_loss', min_delta=0, patience=50, 
                                                     verbose=1, mode='min', baseline=None,
                                                     restore_best_weights=True)
-            reduce_lr_loss = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, verbose=1, min_delta=1e-4, mode='min')
+            reduce_lr_loss = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=20, verbose=1, min_delta=1e-4, mode='min')
 
             history = model.fit(X_train, y_train,
                                 shuffle=True,
                                 batch_size=32,
-                                epochs=100,
+                                epochs=1000,
                                 verbose=True,
                                 validation_data=(X_val, y_val),
                                 callbacks=[early_stopping_monitor, reduce_lr_loss])
