@@ -31,7 +31,7 @@ from keras.preprocessing import sequence
 def titer():
     model = Sequential()
 
-    model.add(Conv2D(filters=32, kernel_size=(3, 3), activation='relu', input_shape=(200, 4)))
+    model.add(Conv2D(filters=32, kernel_size=(3, 3), activation='relu', input_shape=(4, 200)))
     model.add(MaxPooling2D())
     model.add(LSTM(32, return_sequences=True, go_backwards=False))
     model.add(Attention())
