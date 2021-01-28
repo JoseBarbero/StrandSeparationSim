@@ -31,7 +31,7 @@ from keras.preprocessing import sequence
 def lstm():
     
     model = Sequential() 
-    model.add(LSTM(32, return_sequences=True, go_backwards=True, input_shape=(200, 5)))
+    model.add(LSTM(32, return_sequences=True, go_backwards=True, input_shape=(200, 9)))
     #lstm_seq.add(Dropout(0.5))
     model.add(Attention(name='attention_seq'))
     model.add(Dense(128, activation="relu"))
@@ -81,11 +81,13 @@ if __name__ == "__main__":
     plot_file = "logs/"+run_id+".png"
 
     print(X_train.shape)
-    X_train = np.concatenate((X_train[:,:,5:9], X_train[:,:,0, None]), axis=2)
-    
-    X_val = np.concatenate((X_val[:,:,5:9], X_val[:,:,0, None]), axis=2)
-    
-    X_test = np.concatenate((X_test[:,:,5:9], X_test[:,:,0, None]), axis=2)
+
+    #X_train = np.concatenate((X_train[:,:,5:9], X_train[:,:,0, None]), axis=2)
+    #X_val = np.concatenate((X_val[:,:,5:9], X_val[:,:,0, None]), axis=2)
+    #X_test = np.concatenate((X_test[:,:,5:9], X_test[:,:,0, None]), axis=2)
+    X_train = X_train[:,:,:9]
+    X_val = X_val[:,:,:9]
+    X_test = X_test[:,:,:9]
 
     print(X_train.shape)
 
