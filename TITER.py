@@ -100,7 +100,7 @@ if __name__ == "__main__":
                                                     restore_best_weights=True)
             reduce_lr_loss = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=20, verbose=1, min_delta=1e-4, mode='min')
 
-            history = model.fit(np.concatenate(X_train, X_val), np.concatenate(y_train, y_val),
+            history = model.fit(np.concatenate((X_train, X_val)), np.concatenate((y_train, y_val)),
                                 shuffle=True,
                                 batch_size=32,
                                 epochs=1000,
