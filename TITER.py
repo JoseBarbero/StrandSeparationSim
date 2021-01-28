@@ -84,15 +84,15 @@ if __name__ == "__main__":
     # X_test = X_test.reshape((*X_test.shape, 1))
     print(X_train.shape)
     X_train = np.swapaxes(X_train[:,1,:,5:9], -2, -1)
-    X_train = X_train.reshape((1, *X_train.shape))
+    X_train = X_train.reshape((X_train.shape[0], 1, *X_train.shape[1:]))
     print(X_train.shape)
     print(X_val.shape)
     X_val = np.swapaxes(X_val[:,1,:,5:9], -2, -1)
-    X_val = X_val.reshape((1, *X_val.shape))
+    X_val = X_val.reshape((X_val.shape[0], 1, *X_val.shape[1:]))
     print(X_val.shape)
     print(X_test.shape)
     X_test = np.swapaxes(X_test[:,1,:,5:9], -2, -1)
-    X_test = X_test.reshape((1, *X_test.shape))
+    X_test = X_test.reshape((X_test.shape[0], 1, *X_test.shape[1:]))
     print(X_test.shape)
 
     if len(sys.argv) < 2:
