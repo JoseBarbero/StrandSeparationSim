@@ -100,12 +100,12 @@ if __name__ == "__main__":
                                                     restore_best_weights=True)
             reduce_lr_loss = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=20, verbose=1, min_delta=1e-4, mode='min')
 
-            history = model.fit(X_train, y_train,
+            history = model.fit(np.concatenate(X_train, X_val), np.concatenate(y_train, y_val),
                                 shuffle=True,
                                 batch_size=32,
                                 epochs=1000,
                                 verbose=True,
-                                validation_data=(X_val, y_val),
+                                #validation_data=(X_val, y_val),
                                 callbacks=[early_stopping_monitor, reduce_lr_loss])
             print("Train results:")
             test_results(X_train, y_train, model)
