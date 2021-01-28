@@ -106,6 +106,7 @@ if __name__ == "__main__":
                                 epochs=1000,
                                 verbose=True,
                                 #validation_data=(X_val, y_val),
+                                validation_split=0.15,
                                 callbacks=[early_stopping_monitor, reduce_lr_loss])
             print("Train results:")
             test_results(X_train, y_train, model)
