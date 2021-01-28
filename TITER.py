@@ -107,9 +107,9 @@ if __name__ == "__main__":
             # X_test = np.swapaxes(X_test[:,:,5:9], 0, 1)
             # X_test = X_test.reshape((*X_test.shape, 1))
 
-            X_train = np.swapaxes(X_train[:,:,5:9], 0, 1)
-            X_val = np.swapaxes(X_val[:,:,5:9], 0, 1)
-            X_test = np.swapaxes(X_test[:,:,5:9], 0, 1)
+            X_train = np.swapaxes(X_train[:,:,5:9], 1, -1)
+            X_val = np.swapaxes(X_val[:,:,5:9], 1, -1)
+            X_test = np.swapaxes(X_test[:,:,5:9], 1, -1)
             
             history = model.fit(X_train, y_train,
                                 shuffle=True,
