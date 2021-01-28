@@ -31,7 +31,7 @@ from keras.preprocessing import sequence
 def titer():
     model = Sequential()
 
-    model.add(Conv2D(filters=32, kernel_size=(3, 3), activation='relu', input_shape=(200, 4)))
+    model.add(Conv2D(filters=32, kernel_size=(3, 3), activation='relu', input_shape=(200, 4, 1)))
     model.add(MaxPooling2D())
     model.add(LSTM(32, return_sequences=True, go_backwards=False))
     model.add(Attention())
@@ -99,13 +99,17 @@ if __name__ == "__main__":
                                                     restore_best_weights=True)
             reduce_lr_loss = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, verbose=1, min_delta=1e-4, mode='min')
 
+            # X_train = np.swapaxes(X_train[:,:,5:9], 0, 1)
+            # X_train = X_train.reshape((*X_train.shape, 1))
+            # print(X_train.shape)
+            # X_val = np.swapaxes(X_val[:,:,5:9], 0, 1)
+            # X_val = X_train.reshape((*X_val.shape, 1))
+            # X_test = np.swapaxes(X_test[:,:,5:9], 0, 1)
+            # X_test = X_test.reshape((*X_test.shape, 1))
+
             X_train = np.swapaxes(X_train[:,:,5:9], 0, 1)
-            X_train = X_train.reshape((*X_train.shape, 1))
-            print(X_train.shape)
             X_val = np.swapaxes(X_val[:,:,5:9], 0, 1)
-            X_val = X_train.reshape((*X_val.shape, 1))
             X_test = np.swapaxes(X_test[:,:,5:9], 0, 1)
-            X_test = X_test.reshape((*X_test.shape, 1))
             
             history = model.fit(X_train, y_train,
                                 shuffle=True,
