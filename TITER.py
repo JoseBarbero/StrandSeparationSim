@@ -86,10 +86,14 @@ if __name__ == "__main__":
     X_train = np.swapaxes(X_train[:,1,:,5:9], -2, -1)
     X_train = X_train.reshape((*X_train.shape, 1))
     print(X_train.shape)
+    print(X_val.shape)
     X_val = np.swapaxes(X_val[:,1,:,5:9], -2, -1)
     X_val = X_val.reshape((*X_val.shape, 1))
+    print(X_val.shape)
+    print(X_test.shape)
     X_test = np.swapaxes(X_test[:,1,:,5:9], -2, -1)
     X_test = X_test.reshape((*X_test.shape, 1))
+    print(X_test.shape)
 
     if len(sys.argv) < 2:
         run_id = str(datetime.now()).replace(" ", "_").replace("-", "_").replace(":", "_").split(".")[0]
