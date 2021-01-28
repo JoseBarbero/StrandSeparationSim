@@ -33,9 +33,9 @@ def titer():
 
     model.add(Conv1D(filters=128, kernel_size=3, activation='relu', input_shape=(8, 200)))
     model.add(MaxPooling1D(3))
-    model.add(Dropout(0.95))
+    model.add(Dropout(0.8))
     model.add(LSTM(256, return_sequences=True, go_backwards=False))
-    model.add(Dropout(0.95))
+    model.add(Dropout(0.8))
     #model.add(Attention(name='att'))
     model.add(Flatten())
     model.add(Dense(1, activation = 'sigmoid'))
