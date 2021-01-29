@@ -31,7 +31,7 @@ from keras.preprocessing import sequence
 def titer():
     model = Sequential()
 
-    model.add(Conv1D(filters=32, kernel_size=3, activation='relu', input_shape=(4, 200)))
+    model.add(Conv1D(filters=32, kernel_size=3, activation='relu', input_shape=(200, 4)))
     model.add(MaxPooling1D(2))
     model.add(Dropout(0.25))
     model.add(Flatten())
@@ -71,9 +71,13 @@ if __name__ == "__main__":
     X_test_file.close()
     y_test_file.close()
 
-    X_train = np.swapaxes(X_train[:,1,:,5:9], -2, -1)
-    X_val = np.swapaxes(X_val[:,1,:,5:9], -2, -1)
-    X_test = np.swapaxes(X_test[:,1,:,5:9], -2, -1)
+    #X_train = np.swapaxes(X_train[:,1,:,5:9], -2, -1)
+    #X_val = np.swapaxes(X_val[:,1,:,5:9], -2, -1)
+    #X_test = np.swapaxes(X_test[:,1,:,5:9], -2, -1)
+
+    X_train = X_train[:,1,:,5:9]
+    X_val = X_val[:,1,:,5:9]
+    X_test = X_test[:,1,:,5:9]
     
     if len(sys.argv) < 2:
         run_id = str(datetime.now()).replace(" ", "_").replace("-", "_").replace(":", "_").split(".")[0]
