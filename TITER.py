@@ -31,9 +31,9 @@ from keras.preprocessing import sequence
 def titer():
     model = Sequential()
 
-    model.add(Conv1D(filters=128, kernel_size=3, activation='relu', input_shape=(8, 200)))
+    model.add(Conv1D(filters=128, kernel_size=3, activation='relu', input_shape=(200, 8)))
     model.add(MaxPooling1D(3))
-    model.add(Dropout(0.8))
+    model.add(Dropout(0.25))
     model.add(LSTM(256, return_sequences=True, go_backwards=False))
     model.add(Dropout(0.8))
     #model.add(Attention(name='att'))
@@ -73,9 +73,9 @@ if __name__ == "__main__":
     X_test_file.close()
     y_test_file.close()
 
-    X_train = np.swapaxes(X_train[:,1,:,5:13], -2, -1)
-    X_val = np.swapaxes(X_val[:,1,:,5:13], -2, -1)
-    X_test = np.swapaxes(X_test[:,1,:,5:13], -2, -1)
+    X_train = X_train[:,1,:,5:13]
+    X_val = X_val[:,1,:,5:13]
+    X_test = X_test[:,1,:,5:13]
     
     if len(sys.argv) < 2:
         run_id = str(datetime.now()).replace(" ", "_").replace("-", "_").replace(":", "_").split(".")[0]
@@ -103,7 +103,7 @@ if __name__ == "__main__":
             history = model.fit(X_train, y_train,
                                 shuffle=True,
                                 batch_size=32,
-                                epochs=1000,
+                                epochs=50,
                                 verbose=True,
                                 validation_data=(X_val, y_val),
                                 callbacks=[early_stopping_monitor, reduce_lr_loss])
