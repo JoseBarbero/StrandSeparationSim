@@ -32,8 +32,8 @@ def titer():
     model = Sequential()
 
     model.add(Conv1D(filters=32, kernel_size=3, activation='relu', input_shape=(200, 4)))
-    model.add(MaxPooling1D(2))
-    model.add(Dropout(0.25))
+    model.add(MaxPooling1D(3))
+    model.add(Dropout(0.5))
     model.add(Flatten())
     model.add(Dense(128))
     model.add(Dense(1, activation = 'sigmoid'))
