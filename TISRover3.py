@@ -50,6 +50,7 @@ def tisrover():
     model.add(MaxPooling1D(2))
     model.add(Dropout(0.2))
 
+    model.add(Flatten())
     model.add(Dense(128))
     model.add(Dropout(0.5))
     model.add(Dense(1, activation = 'sigmoid'))
