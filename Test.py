@@ -24,9 +24,12 @@ X_test_file.close()
 y_test_file.close()
 
 print(X_test.shape)
-#X_test = X_test[:,1,:,5:13]
-
+X_test_seq = X_test[:,1,:,5:13]
+print(X_test_seq.shape)
 # La idea aquí es apilar las temperaturas en el último eje, como un canal más en vez de como lineas de una imagen
 X_test_probs = np.moveaxis(X_test[:,:,:,0], 1, 2) 
 
 print(X_test_probs.shape)
+
+X_test = np.concatenate((X_test_seq, X_test_probs), axis=2)
+print(X_test.shape)
