@@ -16,13 +16,17 @@ temperatures = ['308.0', '308.3', '308.6', '308.9',
 
 X_test_file = open('../data/serialized/X_test_channels_onehot_noAA.pkl', 'rb')
 y_test_file = open('../data/serialized/y_test_channels_onehot_noAA.pkl', 'rb')
+
 X_test = pickle.load(X_test_file)
 y_test = pickle.load(y_test_file)
+
 X_test_file.close()
 y_test_file.close()
 
-X_test_opn = X_test[:,1,:,0]
-X_test_seq = X_test[:,1,:,5:9]
+print(X_test.shape)
+#X_test = X_test[:,1,:,5:13]
 
-print(X_test_seq.shape)
-print(X_test_opn.shape)
+# La idea aquí es apilar las temperaturas en el último eje, como un canal más en vez de como lineas de una imagen
+X_test_probs = np.moveaxis(X_test[:,:,:,0], 1, 2) 
+
+print(X_test.shape)
