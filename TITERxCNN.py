@@ -93,14 +93,6 @@ if __name__ == "__main__":
     X_val_cnn = X_val[:,:,:,:5]
     X_test_titer = X_test[:,1,:,5:13]
     X_test_cnn = X_test[:,:,:,:5]
-
-    print(X_train_titer.shape)
-    print(X_val_titer.shape)
-    print(X_test_titer.shape)
-
-    print(X_train_cnn.shape)
-    print(X_val_cnn.shape)
-    print(X_test_cnn.shape)
     
     if len(sys.argv) < 2:
         run_id = str(datetime.now()).replace(" ", "_").replace("-", "_").replace(":", "_").split(".")[0]

@@ -98,7 +98,7 @@ def titerxcnn():
     z = Dropout(0.5)(merged)
     z = Dense(1, activation="sigmoid")(merged)
 
-    model = Model(inputs=[titer.input, cnn.input], outputs=z)
+    model = Model(inputs=[tisrover.input, cnn.input], outputs=z)
 
     model.compile(optimizer='adam',
                 loss='binary_crossentropy',
@@ -135,11 +135,11 @@ if __name__ == "__main__":
     X_test_file.close()
     y_test_file.close()
 
-    X_train_titer = X_train[:,1,:,5:13]
+    X_train_tisrover = X_train[:,1,:,5:13]
     X_train_cnn = X_train[:,:,:,:5]
-    X_val_titer = X_val[:,1,:,5:13]
+    X_val_tisrover = X_val[:,1,:,5:13]
     X_val_cnn = X_val[:,:,:,:5]
-    X_test_titer = X_test[:,1,:,5:13]
+    X_test_tisrover = X_test[:,1,:,5:13]
     X_test_cnn = X_test[:,:,:,:5]
     
     if len(sys.argv) < 2:
@@ -165,17 +165,17 @@ if __name__ == "__main__":
                                                     restore_best_weights=True)
             reduce_lr_loss = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, verbose=1, min_delta=1e-4, mode='min')
 
-            history = model.fit(X_train, y_train,
+            history = model.fit((X_train_tisrover, X_train_cnn), y_train,
                                 shuffle=True,
                                 batch_size=32,
                                 epochs=50,
                                 verbose=True,
-                                validation_data=(X_val, y_val),
+                                validation_data=((X_val_tisrover, X_val_cnn), y_val),
                                 callbacks=[early_stopping_monitor, reduce_lr_loss])
             print("Train results:")
-            test_results(X_train, y_train, model)
+            test_results((X_train_tisrover, X_train_cnn), y_train, model)
             print("Test results:")
-            test_results(X_test, y_test, model)
+            test_results((X_test_tisrover, X_test_cnn), y_test, model)
 
     with open(hist_file, 'wb') as file_pi:
         pickle.dump(history.history, file_pi)
