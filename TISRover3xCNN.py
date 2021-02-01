@@ -28,38 +28,7 @@ from contextlib import redirect_stdout
 from keras.layers.embeddings import Embedding
 from keras.preprocessing import sequence
 
-def tisrover():
-    model = Sequential()
-
-    model.add(Conv1D(filters=50, kernel_size=3, activation='relu', input_shape=(200, 8)))
-    model.add(Dropout(0.2))
-
-    model.add(Conv1D(filters=62, kernel_size=3, activation='relu'))
-    model.add(MaxPooling1D(2))
-    model.add(Dropout(0.2))
-
-    model.add(Conv1D(filters=75, kernel_size=3, activation='relu'))
-    model.add(MaxPooling1D(2))
-    model.add(Dropout(0.2))
-
-    model.add(Conv1D(filters=87, kernel_size=3, activation='relu'))
-    model.add(MaxPooling1D(2))
-    model.add(Dropout(0.2))
-
-    model.add(Conv1D(filters=100, kernel_size=3, activation='relu'))
-    model.add(MaxPooling1D(2))
-    model.add(Dropout(0.2))
-
-    model.add(Flatten())
-    model.add(Dense(128))
-    model.add(Dropout(0.5))
-    model.add(Dense(1, activation = 'sigmoid'))
-    
-    model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.001), loss=keras.losses.BinaryCrossentropy(), metrics=["accuracy", "AUC"])
-
-    return model
-
-def titerxcnn():
+def tisroverxcnn():
     
     tisrover = Sequential()
 
@@ -155,7 +124,7 @@ if __name__ == "__main__":
     hist_file = "logs/"+run_id+".pkl"
     plot_file = "logs/"+run_id+".png"
 
-    model = tisrover()
+    model = tisroverxcnn()
 
     with open(log_file, 'w') as f:
         with redirect_stdout(f):
