@@ -49,6 +49,7 @@ def titerxcnn():
     cnn.add(Flatten())
 
     merged = concatenate([titer.output, cnn.output])
+    z = Flatten()(merged)
     z = Dense(1024, activation="relu")(merged)
     z = Dense(1, activation="sigmoid")(merged)
 
