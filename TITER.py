@@ -36,7 +36,7 @@ def titer():
     model.add(Dropout(0.25))
     model.add(LSTM(256, return_sequences=True, go_backwards=False))
     model.add(Dropout(0.8))
-    #model.add(Attention(name='att'))
+    model.add(Attention(name='att'))
     model.add(Flatten())
     model.add(Dense(1, activation = 'sigmoid'))
     
