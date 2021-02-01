@@ -125,17 +125,17 @@ if __name__ == "__main__":
                                                     restore_best_weights=True)
             reduce_lr_loss = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, verbose=1, min_delta=1e-4, mode='min')
 
-            history = model.fit(X_train, y_train,
+            history = model.fit((X_train_titer, X_train_cnn), y_train,
                                 shuffle=True,
                                 batch_size=32,
                                 epochs=50,
                                 verbose=True,
-                                validation_data=(X_val, y_val),
+                                validation_data=(X_val_titer, X_val_cnn),
                                 callbacks=[early_stopping_monitor, reduce_lr_loss])
             print("Train results:")
-            test_results(X_train, y_train, model)
+            test_results((X_train_titer, X_train_cnn), y_train, model)
             print("Test results:")
-            test_results(X_test, y_test, model)
+            test_results((X_test_titer, X_test_cnn), y_test, model)
 
     with open(hist_file, 'wb') as file_pi:
         pickle.dump(history.history, file_pi)
