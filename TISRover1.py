@@ -43,8 +43,6 @@ def tisrover():
     model.add(MaxPooling1D(3))
     model.add(Dropout(0.2))
 
-    model.add(Attention(name='att'))
-
     model.add(Flatten())
     model.add(Dense(512))
     model.add(Dropout(0.2))
