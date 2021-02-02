@@ -32,10 +32,10 @@ def onlyprobs():
 
     probs = Sequential()
 
-    probs.add(Conv2D(filters=50, kernel_size=(2, 2), activation='relu', input_shape=(28,200,5)))
+    probs.add(Conv3D(filters=50, kernel_size=(2, 2, 2), activation='relu', input_shape=(28,200,5)))
     probs.add(Dropout(0.2))
     
-    probs.add(Conv2D(filters=62, kernel_size=(2, 2), activation='relu'))
+    probs.add(Conv3D(filters=62, kernel_size=(2, 2, 2), activation='relu'))
     probs.add(MaxPooling2D((2,2)))
     probs.add(Dropout(0.2))
     
@@ -47,8 +47,8 @@ def onlyprobs():
     probs.add(MaxPooling2D((2,2)))
     probs.add(Dropout(0.2))
     
-    probs.add(Conv1D(filters=100, kernel_size=2, activation='relu'))
-    probs.add(MaxPooling2D((2,2)))
+    probs.add(Conv2D(filters=100, kernel_size=(1, 2), activation='relu'))
+    probs.add(MaxPooling2D((1,2)))
     probs.add(Dropout(0.2))
     
     probs.add(Flatten())
@@ -71,12 +71,12 @@ if __name__ == "__main__":
     seed = 42
     np.random.seed(seed)
 
-    X_train_file = open('../../data/serialized/X_train_channels_onehot_noAA.pkl', 'rb')
-    y_train_file = open('../../data/serialized/y_train_channels_onehot_noAA.pkl', 'rb')
-    X_val_file = open('../../data/serialized/X_val_channels_onehot_noAA.pkl', 'rb')
-    y_val_file = open('../../data/serialized/y_val_channels_onehot_noAA.pkl', 'rb')
-    X_test_file = open('../../data/serialized/X_test_channels_onehot_noAA.pkl', 'rb')
-    y_test_file = open('../../data/serialized/y_test_channels_onehot_noAA.pkl', 'rb')
+    X_train_file = open('../data/serialized/X_train_channels_onehot_noAA.pkl', 'rb')
+    y_train_file = open('../data/serialized/y_train_channels_onehot_noAA.pkl', 'rb')
+    X_val_file = open('../data/serialized/X_val_channels_onehot_noAA.pkl', 'rb')
+    y_val_file = open('../data/serialized/y_val_channels_onehot_noAA.pkl', 'rb')
+    X_test_file = open('../data/serialized/X_test_channels_onehot_noAA.pkl', 'rb')
+    y_test_file = open('../data/serialized/y_test_channels_onehot_noAA.pkl', 'rb')
 
     X_train = pickle.load(X_train_file)
     y_train = pickle.load(y_train_file)
