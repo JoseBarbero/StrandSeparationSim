@@ -64,7 +64,7 @@ def onlyprobs():
                 loss='binary_crossentropy',
                 metrics=['accuracy', "AUC"])
 
-    return model
+    return probs
     
      
 if __name__ == "__main__":
