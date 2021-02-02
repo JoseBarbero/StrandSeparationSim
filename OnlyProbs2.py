@@ -32,13 +32,16 @@ def onlyprobs():
 
     probs = Sequential()
 
-    probs.add(Conv3D(filters=50, kernel_size=(2, 2, 2), activation='relu', input_shape=(28,200,5)))
+    probs.add(Conv2D(filters=50, kernel_size=(2, 2), activation='relu', input_shape=(28,200,5)))
     probs.add(Dropout(0.2))
     
-    probs.add(Conv3D(filters=62, kernel_size=(2, 2, 2), activation='relu'))
+    probs.add(Conv2D(filters=62, kernel_size=(2, 2), activation='relu'))
+    probs.add(Dropout(0.2))
+    
+    probs.add(Conv2D(filters=75, kernel_size=(2, 2), activation='relu'))
     probs.add(MaxPooling2D((2,2)))
     probs.add(Dropout(0.2))
-    
+
     probs.add(Conv2D(filters=75, kernel_size=(2, 2), activation='relu'))
     probs.add(MaxPooling2D((2,2)))
     probs.add(Dropout(0.2))
@@ -47,8 +50,8 @@ def onlyprobs():
     probs.add(MaxPooling2D((2,2)))
     probs.add(Dropout(0.2))
     
-    probs.add(Conv2D(filters=100, kernel_size=(1, 2), activation='relu'))
-    probs.add(MaxPooling2D((1,2)))
+    probs.add(Conv1D(filters=100, kernel_size=2, activation='relu'))
+    probs.add(MaxPooling2D((2,2)))
     probs.add(Dropout(0.2))
     
     probs.add(Flatten())
