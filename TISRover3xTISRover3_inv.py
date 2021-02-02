@@ -114,10 +114,13 @@ if __name__ == "__main__":
 
     X_train_tisrover = X_train[:,1,:,5:13]
     X_train_cnn = np.moveaxis(X_train[:,:,:,:5], 1, 2)
+    print(X_train_cnn.shape)
     X_val_tisrover = X_val[:,1,:,5:13]
     X_val_cnn = np.moveaxis(X_val[:,:,:,:5], 1, 2)
+    print(X_val_cnn.shape)
     X_test_tisrover = X_test[:,1,:,5:13]
-    X_test_cnn = np.moveaxis(X_test[:,:,:,:5], 1 ,2)
+    X_test_cnn = np.moveaxis(X_test[:,:,:,:5], 1 , 2)
+    print(X_test_cnn.shape)
     
     if len(sys.argv) < 2:
         run_id = str(datetime.now()).replace(" ", "_").replace("-", "_").replace(":", "_").split(".")[0]
