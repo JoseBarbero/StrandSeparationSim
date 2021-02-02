@@ -28,42 +28,54 @@ from contextlib import redirect_stdout
 from keras.layers.embeddings import Embedding
 from keras.preprocessing import sequence
 
-def tisroverxcnn():
+def tisrover3xtisrover3():
     
-    tisrover = Sequential()
+    seq = Sequential()
+    seq.add(Conv1D(filters=50, kernel_size=3, activation='relu', input_shape=(200, 8)))
+    seq.add(Dropout(0.2))
+    seq.add(Conv1D(filters=62, kernel_size=3, activation='relu'))
+    seq.add(MaxPooling1D(2))
+    seq.add(Dropout(0.2))
+    seq.add(Conv1D(filters=75, kernel_size=3, activation='relu'))
+    seq.add(MaxPooling1D(2))
+    seq.add(Dropout(0.2))
+    seq.add(Conv1D(filters=87, kernel_size=3, activation='relu'))
+    seq.add(MaxPooling1D(2))
+    seq.add(Dropout(0.2))
+    seq.add(Conv1D(filters=100, kernel_size=3, activation='relu'))
+    seq.add(MaxPooling1D(2))
+    seq.add(Dropout(0.2))
+    seq.add(Flatten())
+    seq.add(Dense(128))
+    seq.add(Dropout(0.5))
+    seq.add(Flatten())
 
-    tisrover.add(Conv1D(filters=70, kernel_size=3, activation='relu', input_shape=(200, 8)))
-    tisrover.add(MaxPooling1D(3))
-    tisrover.add(Dropout(0.2))
-
-    tisrover.add(Conv1D(filters=100, kernel_size=3, activation='relu'))
-    tisrover.add(MaxPooling1D(3))
-    tisrover.add(Dropout(0.2))
+    probs = Sequential()
+    probs.add(Conv2D(filters=50, kernel_size=(3, 3), activation='relu', input_shape=(28,200,5)))
+    probs.add(Dropout(0.2))
+    probs.add(Conv2D(filters=62, kernel_size=(3, 3), activation='relu'))
+    probs.add(MaxPooling2D((2,2)))
+    probs.add(Dropout(0.2))
+    probs.add(Conv2D(filters=75, kernel_size=(3, 3), activation='relu'))
+    probs.add(MaxPooling2D((2,2)))
+    probs.add(Dropout(0.2))
+    probs.add(Conv2D(filters=87, kernel_size=(3, 3), activation='relu'))
+    probs.add(MaxPooling2D((2,2)))
+    probs.add(Dropout(0.2))
+    probs.add(Conv2D(filters=100, kernel_size=(3, 3), activation='relu'))
+    probs.add(MaxPooling2D((2,2)))
+    probs.add(Dropout(0.2))
+    probs.add(Flatten())
+    probs.add(Dense(128, activation='relu'))
+    probs.add(Dropout(0.5))
+    probs.add(Flatten())
     
-    tisrover.add(Conv1D(filters=150, kernel_size=3, activation='relu'))
-    tisrover.add(MaxPooling1D(3))
-    tisrover.add(Dropout(0.2))
-
-    tisrover.add(Flatten())
-    tisrover.add(Dense(512))
-    tisrover.add(Dropout(0.2))
-    tisrover.add(Flatten())
-
-    cnn = Sequential()
-    cnn.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu', input_shape=(28,200,5)))
-    cnn.add(MaxPooling2D((2,2)))
-    cnn.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu'))
-    cnn.add(MaxPooling2D((2,2)))
-    cnn.add(Conv2D(filters=32, kernel_size=(2, 2), activation='relu'))
-    cnn.add(Dense(128, activation='relu'))
-    cnn.add(Flatten())
-
-    merged = concatenate([tisrover.output, cnn.output])
+    merged = concatenate([seq.output, probs.output])
     z = Dense(1024, activation="relu")(merged)
     z = Dropout(0.5)(merged)
     z = Dense(1, activation="sigmoid")(merged)
 
-    model = Model(inputs=[tisrover.input, cnn.input], outputs=z)
+    model = Model(inputs=[seq.input, probs.input], outputs=z)
 
     model.compile(optimizer='adam',
                 loss='binary_crossentropy',
@@ -117,7 +129,7 @@ if __name__ == "__main__":
     hist_file = "logs/"+run_id+".pkl"
     plot_file = "logs/"+run_id+".png"
 
-    model = tisroverxcnn()
+    model = tisrover3xtisrover3()
 
     with open(log_file, 'w') as f:
         with redirect_stdout(f):
