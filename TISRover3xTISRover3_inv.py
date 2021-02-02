@@ -63,7 +63,7 @@ def tisrover3xtisrover3():
     probs.add(MaxPooling2D((2,2)))
     probs.add(Dropout(0.2))
     probs.add(Conv1D(filters=100, kernel_size=2, activation='relu'))
-    probs.add(MaxPooling2D((2,2)))
+    probs.add(MaxPooling1D(2))
     probs.add(Dropout(0.2))
     probs.add(Flatten())
     probs.add(Dense(128, activation='relu'))
