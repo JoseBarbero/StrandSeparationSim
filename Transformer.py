@@ -10,6 +10,7 @@ Description: Implement a Transformer block as a Keras layer and use it for text 
 """
 
 import tensorflow as tf
+import numpy as np
 from tensorflow import keras
 from tensorflow.keras import layers
 
