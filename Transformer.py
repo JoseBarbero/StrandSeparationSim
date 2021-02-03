@@ -73,7 +73,7 @@ class TransformerBlock(layers.Layer):
 def transformer1():
 
     model = tf.keras.models.Sequential()
-    model.add(TransformerBlock(8, 256, 256))
+    model.add(TransformerBlock(8, 32, 256))
     model.add(GlobalAveragePooling1D())
     model.add(Dropout(0.2))
     model.add(Dense(256, activation='relu'))
