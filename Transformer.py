@@ -144,8 +144,8 @@ if __name__ == "__main__":
         with redirect_stdout(f):
             #model.summary()
 
-            for layer in model.layers:
-                print(layer.get_config())
+            #for layer in model.layers:
+                #print(layer.get_config())
             early_stopping_monitor = EarlyStopping( monitor='val_loss', min_delta=0, patience=10, 
                                                     verbose=1, mode='min', baseline=None,
                                                     restore_best_weights=True)
