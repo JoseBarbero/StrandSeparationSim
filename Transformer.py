@@ -21,7 +21,7 @@ import tensorflow as tf
 from Attention import Attention
 from keras.models import Sequential, Model
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
-from keras.layers import Dense, Activation, Dropout, Flatten, Conv1D, Conv2D, MaxPooling1D, MaxPooling2D, AveragePooling2D, LayerNormalization
+from keras.layers import Dense, Activation, Dropout, Flatten, Conv1D, Conv2D, MaxPooling1D, MaxPooling2D, AveragePooling2D, LayerNormalization, GlobalAveragePooling1D
 from keras.layers import Conv3D, MaxPooling3D, AveragePooling3D
 from keras.layers import LSTM
 from keras.layers import concatenate
