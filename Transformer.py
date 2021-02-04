@@ -75,14 +75,14 @@ def transformer0():
     
     #Transformer block
     model.add(TransformerBlock(8, 32, 32))
-    model.add(TransformerBlock(8, 32, 32))
+    #model.add(TransformerBlock(8, 32, 32))
     
     model.add(MaxPooling1D(2))
     model.add(Dropout(0.2))
     model.add(Dense(256, activation='relu'))
     model.add(Dropout(0.2))
     model.add(Dense(1, activation='sigmoid'))
-    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=["accuracy", "AUC"])
+    model.compile(loss='binary_crossentropy', optimizer=keras.optimizers.Adam(learning_rate=0.00001), metrics=["accuracy", "AUC"])
 
     return model
 
