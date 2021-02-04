@@ -88,7 +88,9 @@ def transformer0():
     model.add(Dense(1, activation='sigmoid'))
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=["accuracy", "AUC"])
 
-def transformer1():
+    return model
+
+def transformer_example():
 
     model = tf.keras.models.Sequential()
     model.add(TransformerBlock(8, 32, 256))
@@ -102,18 +104,16 @@ def transformer1():
     return model
 
 
-def transformer2():
+def transformer1():
 
-    inputs = layers.Input(shape=(200,8))
-    transformer_block = TransformerBlock(8, 256, 1024)
-    x = transformer_block(inputs)
-    x = layers.GlobalAveragePooling1D()(x)
-    x = layers.Dropout(0.1)(x)
-    x = layers.Dense(20, activation="relu")(x)
-    x = layers.Dropout(0.1)(x)
-    outputs = layers.Dense(1, activation="sigmoid")(x)
-
-    model = keras.Model(inputs=inputs, outputs=outputs)
+    model = tf.keras.models.Sequential()
+    model.add(TransformerBlock(8, 32, 32))
+    model.add(TransformerBlock(8, 32, 32))
+    model.add(Dropout(0.2))
+    model.add(Dense(256, activation='relu'))
+    model.add(Dropout(0.2))
+    model.add(Dense(1, activation='sigmoid'))
+    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=["accuracy", "AUC"])
 
     return model
 
