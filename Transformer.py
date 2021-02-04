@@ -69,6 +69,24 @@ class TransformerBlock(layers.Layer):
         ffn_output = self.dropout2(ffn_output, training=training)
         return self.layernorm2(out1 + ffn_output)
 
+def transformer0():
+    
+    model = tf.keras.models.Sequential()
+    
+    #Transformer block
+    model.add(TransformerBlock(8, 32, 128))
+    model.add(layers.MultiHeadAttention(32, 4))
+    model.add(Dense(128))
+    model.add(Dropout(0.2))
+    model.add(Dense(4))
+        
+    
+    model.add(MaxPooling1D(2))
+    model.add(Dropout(0.2))
+    model.add(Dense(256, activation='relu'))
+    model.add(Dropout(0.2))
+    model.add(Dense(1, activation='sigmoid'))
+    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=["accuracy", "AUC"])
 
 def transformer1():
 
@@ -138,7 +156,7 @@ if __name__ == "__main__":
     hist_file = "logs/"+run_id+".pkl"
     plot_file = "logs/"+run_id+".png"
 
-    model = transformer1()
+    model = transformer0()
 
     with open(log_file, 'w') as f:
         with redirect_stdout(f):
