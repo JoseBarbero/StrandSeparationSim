@@ -74,11 +74,8 @@ def transformer0():
     model = tf.keras.models.Sequential()
     
     #Transformer block
-    model.add(layers.MultiHeadAttention(32, 4))
-    model.add(Dense(128))
-    model.add(Dropout(0.2))
-    model.add(Dense(4))
-        
+    model.add(TransformerBlock(8, 32, 32))
+    model.add(TransformerBlock(8, 32, 32))
     
     model.add(MaxPooling1D(2))
     model.add(Dropout(0.2))
