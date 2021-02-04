@@ -77,7 +77,7 @@ def transformer0():
     model.add(TransformerBlock(8, 32, 32))
     #model.add(TransformerBlock(8, 32, 32))
     
-    model.add(MaxPooling1D(2))
+    model.add(GlobalAveragePooling1D())
     model.add(Dropout(0.2))
     model.add(Dense(256, activation='relu'))
     model.add(Dropout(0.2))
