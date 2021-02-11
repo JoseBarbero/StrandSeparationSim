@@ -27,10 +27,7 @@ def lstmattxtisrover3():
     seq.add(Flatten())
     seq.add(Dense(units=64, activation='relu'))
     seq.add(Dropout(0.5))
-    seq.add(Flatten())
-    seq.add(Dense(units=64, activation='relu'))
-    seq.add(Dropout(0.5))
-    seq.add(Flatten())
+    #seq.add(Flatten())
 
     probs = Sequential()
     probs.add(Conv2D(filters=50, kernel_size=(2, 2), activation='relu', input_shape=(28,200,5)))
