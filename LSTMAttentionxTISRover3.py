@@ -102,7 +102,7 @@ if __name__ == "__main__":
     hist_file = "logs/"+run_id+".pkl"
     plot_file = "logs/"+run_id+".png"
 
-    model = lstm_att()
+    model = lstmattxtisrover3()
     model.build(X_train.shape)
     model.summary()
     
