@@ -18,7 +18,7 @@ from keras_self_attention import SeqSelfAttention
 def lstmattxtisrover3():
     seq = Sequential()
     
-    seq.add(Bidirectional(LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=(200,4))))
+    seq.add(Bidirectional(LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=(200,8))))
     seq.add(Dropout(0.75))
     seq.add(SeqSelfAttention(units=64, attention_activation='sigmoid'))
     seq.add(Dropout(0.75))
