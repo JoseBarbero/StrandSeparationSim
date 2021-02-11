@@ -1,13 +1,3 @@
-"""
-Title: Text classification with Transformer
-Author: [Apoorv Nandan](https://twitter.com/NandanApoorv)
-Date created: 2020/05/10
-Last modified: 2020/05/10
-Description: Implement a Transformer block as a Keras layer and use it for text classification.
-"""
-"""
-## Setup
-"""
 import numpy as np
 import re
 import os
@@ -17,11 +7,10 @@ import matplotlib.pyplot as plt
 import sys
 import pickle
 import keras
-import tensorflow as tf
-from Attention import Attention
+import tensorflow as tf 
 from keras.models import Sequential, Model
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
-from keras.layers import Dense, Activation, Dropout, Flatten, Conv1D, Conv2D, MaxPooling1D, MaxPooling2D, AveragePooling2D, LayerNormalization, GlobalAveragePooling1D
+from keras.layers import Dense, Activation, Dropout, Flatten, Conv1D, Conv2D, MaxPooling1D, MaxPooling2D, AveragePooling2D, LayerNormalization
 from keras.layers import Conv3D, MaxPooling3D, AveragePooling3D
 from keras.layers import LSTM
 from keras.layers import concatenate
@@ -37,67 +26,28 @@ from datetime import datetime
 from contextlib import redirect_stdout
 from keras.layers.embeddings import Embedding
 from keras.preprocessing import sequence
-import tensorflow as tf
-import numpy as np
-import pickle 
-from tensorflow import keras
-from tensorflow.keras import layers
+from keras_self_attention import SeqSelfAttention
 
+def titeratt():
+    model = Sequential()
 
-"""
-## Implement a Transformer block as a layer
-"""
-
-
-class TransformerBlock(layers.Layer):
-    def __init__(self, embed_dim, num_heads, ff_dim, rate=0.1):
-        super(TransformerBlock, self).__init__()
-        self.att = layers.MultiHeadAttention(num_heads=num_heads, key_dim=embed_dim)
-        self.ffn = keras.Sequential(
-            [layers.Dense(ff_dim, activation="relu"), layers.Dense(embed_dim),]
-        )
-        self.layernorm1 = layers.LayerNormalization(epsilon=1e-6)
-        self.layernorm2 = layers.LayerNormalization(epsilon=1e-6)
-        self.dropout1 = layers.Dropout(rate)
-        self.dropout2 = layers.Dropout(rate)
-
-    def call(self, inputs, training):
-        attn_output = self.att(inputs, inputs)
-        attn_output = self.dropout1(attn_output, training=training)
-        out1 = self.layernorm1(inputs + attn_output)
-        ffn_output = self.ffn(out1)
-        ffn_output = self.dropout2(ffn_output, training=training)
-        return self.layernorm2(out1 + ffn_output)
-
-def transformer_example():
-
-    model = tf.keras.models.Sequential()
-    model.add(TransformerBlock(8, 32, 256))
-    model.add(GlobalAveragePooling1D())
-    model.add(Dropout(0.2))
-    model.add(Dense(256, activation='relu'))
-    model.add(Dropout(0.2))
-    model.add(Dense(1, activation='sigmoid'))
-    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=["accuracy", "AUC"])
-
-    return model
-
-
-def transformer2():
-    inputs = layers.Input(shape=(200,8))
-    transformer_block = TransformerBlock(8, 256, 1024)
-    x = transformer_block(inputs)
-    x = layers.GlobalAveragePooling1D()(x)
-    x = layers.Dropout(0.1)(x)
-    x = layers.Dense(20, activation="relu")(x)
-    x = layers.Dropout(0.1)(x)
-    outputs = layers.Dense(1, activation="sigmoid")(x)
-
-    model = keras.Model(inputs=inputs, outputs=outputs)
+    model.add(Conv1D(filters=128, kernel_size=3, activation='relu', input_shape=(200, 8)))
+    model.add(MaxPooling1D(3))
+    model.add(Dropout(0.25))
+    model.add(LSTM(256, return_sequences=True, go_backwards=False))
+    model.add(SeqSelfAttention(units=128, attention_activation='sigmoid'))
+    model.add(Dropout(0.8))
+    model.add(Flatten())
+    model.add(Dense(1, activation = 'sigmoid'))
     
+    model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.001), loss=keras.losses.BinaryCrossentropy(), metrics=["accuracy", "AUC"])
+
     return model
 
 
+
+    
+     
 if __name__ == "__main__":
     seed = 42
     np.random.seed(seed)
@@ -126,10 +76,6 @@ if __name__ == "__main__":
     X_train = X_train[:,:,:4]
     X_val = X_val[:,:,:4]
     X_test = X_test[:,:,:4]
-
-    print(X_train.shape)
-    print(X_val.shape)
-    print(X_test.shape)
     
     if len(sys.argv) < 2:
         run_id = str(datetime.now()).replace(" ", "_").replace("-", "_").replace(":", "_").split(".")[0]
@@ -141,14 +87,14 @@ if __name__ == "__main__":
     hist_file = "logs/"+run_id+".pkl"
     plot_file = "logs/"+run_id+".png"
 
-    model = transformer0()
+    model = titeratt()
 
     with open(log_file, 'w') as f:
         with redirect_stdout(f):
             #model.summary()
 
-            #for layer in model.layers:
-                #print(layer.get_config())
+            for layer in model.layers:
+                print(layer.get_config())
             early_stopping_monitor = EarlyStopping( monitor='val_loss', min_delta=0, patience=10, 
                                                     verbose=1, mode='min', baseline=None,
                                                     restore_best_weights=True)
@@ -163,6 +109,8 @@ if __name__ == "__main__":
                                 callbacks=[early_stopping_monitor, reduce_lr_loss])
             print("Train results:")
             test_results(X_train, y_train, model)
+            print("Val results:")
+            test_results(X_val, X_val, model)
             print("Test results:")
             test_results(X_test, y_test, model)
 

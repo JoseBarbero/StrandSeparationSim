@@ -22,10 +22,18 @@ def tisrover():
     x = layers.Conv1D(filters=62, kernel_size=3, activation='relu')(x)
     x = layers.MaxPooling1D(2)(x)
     x = layers.Dropout(0.2)(x)
+
+    x = layers.MultiHeadAttention(num_heads=4, key_dim=8)(x,x)
+
     x = layers.Conv1D(filters=75, kernel_size=3, activation='relu')(x)
     x = layers.MaxPooling1D(2)(x)
     x = layers.Dropout(0.2)(x)
-    x = layers.MultiHeadAttention(num_heads=4, key_dim=8)(x,x)
+    x = layers.Conv1D(filters=87, kernel_size=3, activation='relu')(x)
+    x = layers.MaxPooling1D(2)(x)
+    x = layers.Dropout(0.2)(x)
+    x = layers.Conv1D(filters=100, kernel_size=3, activation='relu')(x)
+    x = layers.MaxPooling1D(2)(x)
+    x = layers.Dropout(0.2)(x)
     x = layers.Flatten()(x)
     x = layers.Dense(128)(x)
     x = layers.Dropout(0.5)(x)
@@ -90,7 +98,7 @@ if __name__ == "__main__":
 
             history = model.fit(X_train, y_train,
                                 shuffle=True,
-                                batch_size=32,
+                                batch_size=16,
                                 epochs=50,
                                 verbose=True,
                                 validation_data=(X_val, y_val),

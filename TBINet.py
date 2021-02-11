@@ -1,65 +1,64 @@
 import numpy as np
 import re
 import os
-import autokeras as ak
 import pandas as pd
-import matplotlib.pyplot as plt
 import sys
 import pickle
-import keras
 import tensorflow as tf
-from Attention import Attention
-from keras.models import Sequential, Model
-from keras.callbacks import EarlyStopping, ReduceLROnPlateau
-from keras.layers import Dense, Activation, Dropout, Flatten, Conv1D, Conv2D, MaxPooling1D, MaxPooling2D, AveragePooling2D, LayerNormalization
-from keras.layers import Conv3D, MaxPooling3D, AveragePooling3D
-from keras.layers import LSTM
-from keras.layers import concatenate
 from ReadData import read_data_as_img, read_data_structured, read_data_st, seq_to_array, seq_to_onehot_array
-from Preprocessing import ros, smote, adasyn
 from Results import report_results_imagedata, make_spider_by_temp, report_results_st, test_results, plot_train_history
-from keras import backend as K
-from sklearn.model_selection import train_test_split
-from tensorflow.keras.models import load_model
-from keras import Sequential
-from sklearn.metrics import f1_score, roc_auc_score, accuracy_score, log_loss, fowlkes_mallows_score, cohen_kappa_score, precision_score, recall_score
 from datetime import datetime
 from contextlib import redirect_stdout
-from keras.layers.embeddings import Embedding
-from keras.preprocessing import sequence
+from tensorflow import keras
+from tensorflow.keras import layers
+from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 
-def tisrover():
-    model = Sequential()
 
-    model.add(Conv1D(filters=50, kernel_size=3, activation='relu', input_shape=(200, 8)))
-    model.add(Dropout(0.2))
+def tbinet():
+    sequence_input = keras.layers.Input(shape=(200,4))
 
-    model.add(Conv1D(filters=62, kernel_size=3, activation='relu'))
-    model.add(MaxPooling1D(2))
-    model.add(Dropout(0.2))
+    # Convolutional Layer
+    output = keras.layers.Conv1D(50,kernel_size=3,padding="valid",activation="relu")(sequence_input)
+    output = keras.layers.MaxPooling1D(pool_size=3, strides=3)(output)
+    output = keras.layers.Dropout(0.2)(output)
 
-    model.add(Conv1D(filters=75, kernel_size=3, activation='relu'))
-    model.add(MaxPooling1D(2))
-    model.add(Dropout(0.2))
+    output = keras.layers.Conv1D(32,kernel_size=3,padding="valid",activation="relu")(sequence_input)
+    output = keras.layers.MaxPooling1D(pool_size=3, strides=3)(output)
+    output = keras.layers.Dropout(0.2)(output)
 
-    model.add(Conv1D(filters=87, kernel_size=3, activation='relu'))
-    model.add(MaxPooling1D(2))
-    model.add(Dropout(0.2))
+    output = keras.layers.Conv1D(24,kernel_size=3,padding="valid",activation="relu")(sequence_input)
+    output = keras.layers.MaxPooling1D(pool_size=3, strides=3)(output)
+    output = keras.layers.Dropout(0.2)(output)
 
-    model.add(Conv1D(filters=100, kernel_size=3, activation='relu'))
-    model.add(MaxPooling1D(2))
-    model.add(Dropout(0.2))
+    #Attention Layer
+    attention = keras.layers.Dense(1)(output)
+    attention = keras.layers.Permute((2, 1))(attention)
+    attention = keras.layers.Activation('softmax')(attention)
+    attention = keras.layers.Permute((2, 1))(attention)
+    attention = keras.layers.Lambda(lambda x: keras.backend.mean(x, axis=2), name='attention',output_shape=(75,))(attention)
+    attention = keras.layers.RepeatVector(24)(attention)
+    attention = keras.layers.Permute((2,1))(attention)
+    output = keras.layers.multiply([output, attention])
 
-    model.add(Flatten())
-    model.add(Dense(128))
-    model.add(Dropout(0.5))
-    model.add(Dense(1, activation = 'sigmoid'))
-    
-    model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.001), loss=keras.losses.BinaryCrossentropy(), metrics=["accuracy", "AUC"])
+    #BiLSTM Layer
+    output = keras.layers.Bidirectional(keras.layers.LSTM(320,return_sequences=True))(output)
+    output = keras.layers.Dropout(0.5)(output)
+
+    flat_output = keras.layers.Flatten()(output)
+
+    #FC Layer
+    FC_output = keras.layers.Dense(1024)(flat_output)
+    FC_output = keras.layers.Activation('relu')(FC_output)
+
+    #Output Layer
+    output = keras.layers.Dense(1)(FC_output)
+    output = keras.layers.Activation('sigmoid')(output)
+
+    model = keras.Model(inputs=sequence_input, outputs=output)
+
+    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=["accuracy", "AUC"])
 
     return model
-
-
 
     
      
@@ -88,6 +87,10 @@ if __name__ == "__main__":
     X_test_file.close()
     y_test_file.close()
 
+    X_train = X_train[:,:,:4]
+    X_val = X_val[:,:,:4]
+    X_test = X_test[:,:,:4]
+    
     if len(sys.argv) < 2:
         run_id = str(datetime.now()).replace(" ", "_").replace("-", "_").replace(":", "_").split(".")[0]
     else:
@@ -98,7 +101,7 @@ if __name__ == "__main__":
     hist_file = "logs/"+run_id+".pkl"
     plot_file = "logs/"+run_id+".png"
 
-    model = tisrover()
+    model = tbinet()
 
     with open(log_file, 'w') as f:
         with redirect_stdout(f):

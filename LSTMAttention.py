@@ -1,68 +1,35 @@
 import numpy as np
 import re
 import os
-import autokeras as ak
 import pandas as pd
-import matplotlib.pyplot as plt
 import sys
 import pickle
-import keras
-import tensorflow as tf
-from Attention import Attention
-from keras.models import Sequential, Model
-from keras.callbacks import EarlyStopping, ReduceLROnPlateau
-from keras.layers import Dense, Activation, Dropout, Flatten, Conv1D, Conv2D, MaxPooling1D, MaxPooling2D, AveragePooling2D, LayerNormalization
-from keras.layers import Conv3D, MaxPooling3D, AveragePooling3D
-from keras.layers import LSTM
-from keras.layers import concatenate
 from ReadData import read_data_as_img, read_data_structured, read_data_st, seq_to_array, seq_to_onehot_array
-from Preprocessing import ros, smote, adasyn
 from Results import report_results_imagedata, make_spider_by_temp, report_results_st, test_results, plot_train_history
-from keras import backend as K
-from sklearn.model_selection import train_test_split
-from tensorflow.keras.models import load_model
-from keras import Sequential
-from sklearn.metrics import f1_score, roc_auc_score, accuracy_score, log_loss, fowlkes_mallows_score, cohen_kappa_score, precision_score, recall_score
 from datetime import datetime
 from contextlib import redirect_stdout
-from keras.layers.embeddings import Embedding
-from keras.preprocessing import sequence
+import keras
+from keras import layers
+from keras.callbacks import EarlyStopping, ReduceLROnPlateau
+from keras_self_attention import SeqSelfAttention
 
-def tisrover():
-    model = Sequential()
 
-    model.add(Conv1D(filters=50, kernel_size=3, activation='relu', input_shape=(200, 8)))
-    model.add(Dropout(0.2))
-
-    model.add(Conv1D(filters=62, kernel_size=3, activation='relu'))
-    model.add(MaxPooling1D(2))
-    model.add(Dropout(0.2))
-
-    model.add(Conv1D(filters=75, kernel_size=3, activation='relu'))
-    model.add(MaxPooling1D(2))
-    model.add(Dropout(0.2))
-
-    model.add(Conv1D(filters=87, kernel_size=3, activation='relu'))
-    model.add(MaxPooling1D(2))
-    model.add(Dropout(0.2))
-
-    model.add(Conv1D(filters=100, kernel_size=3, activation='relu'))
-    model.add(MaxPooling1D(2))
-    model.add(Dropout(0.2))
-
-    model.add(Flatten())
-    model.add(Dense(128))
-    model.add(Dropout(0.5))
-    model.add(Dense(1, activation = 'sigmoid'))
+def lstm_att():
+    model = keras.models.Sequential()
     
-    model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.001), loss=keras.losses.BinaryCrossentropy(), metrics=["accuracy", "AUC"])
+    model.add(keras.layers.Bidirectional(keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=(200,4))))
+    model.add(layers.Dropout(0.75))
+    model.add(SeqSelfAttention(units=64, attention_activation='sigmoid'))
+    model.add(layers.Dropout(0.75))
+    model.add(layers.Flatten())
+    model.add(keras.layers.Dense(units=64, activation='relu'))
+    model.add(layers.Dropout(0.5))
+    model.add(keras.layers.Dense(units=1, activation='sigmoid'))
+
+    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=["accuracy", 'AUC'])
 
     return model
 
-
-
-    
-     
 if __name__ == "__main__":
     seed = 42
     np.random.seed(seed)
@@ -88,6 +55,17 @@ if __name__ == "__main__":
     X_test_file.close()
     y_test_file.close()
 
+    X_train = X_train[:,:,:4]
+    X_val = X_val[:,:,:4]
+    X_test = X_test[:,:,:4]
+
+    y_train = y_train.reshape(*y_train.shape, 1)
+    y_val = y_val.reshape(*y_val.shape, 1)
+    y_test = y_test.reshape(*y_test.shape, 1)
+
+    print(X_train.shape)
+    print(y_train.shape)
+
     if len(sys.argv) < 2:
         run_id = str(datetime.now()).replace(" ", "_").replace("-", "_").replace(":", "_").split(".")[0]
     else:
@@ -98,30 +76,35 @@ if __name__ == "__main__":
     hist_file = "logs/"+run_id+".pkl"
     plot_file = "logs/"+run_id+".png"
 
-    model = tisrover()
-
+    model = lstm_att()
+    model.build(X_train.shape)
+    model.summary()
+    
     with open(log_file, 'w') as f:
         with redirect_stdout(f):
-            #model.summary()
+            model.summary()
 
             for layer in model.layers:
                 print(layer.get_config())
             early_stopping_monitor = EarlyStopping( monitor='val_loss', min_delta=0, patience=10, 
                                                     verbose=1, mode='min', baseline=None,
                                                     restore_best_weights=True)
-            reduce_lr_loss = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, verbose=1, min_delta=1e-4, mode='min')
+            reduce_lr_loss = ReduceLROnPlateau(monitor='val_auc', factor=0.5, patience=3, verbose=1, min_delta=1e-4, mode='max')
 
             history = model.fit(X_train, y_train,
                                 shuffle=True,
                                 batch_size=32,
-                                epochs=50,
+                                epochs=100,
                                 verbose=True,
                                 validation_data=(X_val, y_val),
                                 callbacks=[early_stopping_monitor, reduce_lr_loss])
-            print("Train results:")
+            print("Train results:\n")
             test_results(X_train, y_train, model)
-            print("Test results:")
+            print("Val results:\n")
+            test_results(X_val, y_val, model)
+            print("Test results:\n")
             test_results(X_test, y_test, model)
+            
 
     with open(hist_file, 'wb') as file_pi:
         pickle.dump(history.history, file_pi)

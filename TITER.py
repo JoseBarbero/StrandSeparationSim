@@ -7,8 +7,7 @@ import matplotlib.pyplot as plt
 import sys
 import pickle
 import keras
-import tensorflow as tf
-from Attention import Attention
+import tensorflow as tf 
 from keras.models import Sequential, Model
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from keras.layers import Dense, Activation, Dropout, Flatten, Conv1D, Conv2D, MaxPooling1D, MaxPooling2D, AveragePooling2D, LayerNormalization

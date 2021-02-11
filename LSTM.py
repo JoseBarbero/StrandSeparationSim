@@ -8,7 +8,6 @@ import sys
 import pickle
 import keras
 import tensorflow as tf
-from attention import Attention
 from keras.models import Sequential
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from keras.layers import Dense, Activation, Dropout, Flatten, Conv2D, MaxPooling2D, AveragePooling2D, LayerNormalization
@@ -32,7 +31,7 @@ def lstm_net():
     model = tf.keras.models.Sequential()
     #model.add(Embedding(5, 4, input_length=200))
     model.add(LSTM(32, return_sequences=True))
-    model.add(Attention(name='attention_weight'))
+    #model.add(Attention(name='attention_weight'))
     model.add(Dense(256, activation='relu'))
     model.add(Dense(1, activation='sigmoid'))
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=["accuracy", "AUC"])
@@ -66,7 +65,7 @@ if __name__ == "__main__":
     y_val = np.concatenate((y_val_pos, y_val_neg))
     y_test = np.concatenate((y_test_pos, y_test_neg))
 
-
+    print(X_train.shape)
     if len(sys.argv) < 2:
         run_id = str(datetime.now()).replace(" ", "_").replace("-", "_").replace(":", "_").split(".")[0]
     else:
