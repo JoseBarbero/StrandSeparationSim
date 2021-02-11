@@ -16,7 +16,7 @@ from keras_self_attention import SeqSelfAttention
 
 
 def lstmattxtisrover3():
-    seq = keras.models.Sequential()
+    seq = Sequential()
     
     seq.add(Bidirectional(LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=(200,4))))
     seq.add(Dropout(0.75))
@@ -117,19 +117,19 @@ if __name__ == "__main__":
                                                     restore_best_weights=True)
             reduce_lr_loss = ReduceLROnPlateau(monitor='val_auc', factor=0.5, patience=3, verbose=1, min_delta=1e-4, mode='max')
 
-            history = model.fit(X_train, y_train,
+            history = model.fit([X_train_seq, X_train_cnn], y_train,
                                 shuffle=True,
                                 batch_size=32,
                                 epochs=100,
                                 verbose=True,
-                                validation_data=(X_val, y_val),
+                                validation_data=([X_val_seq, X_val_cnn], y_val),
                                 callbacks=[early_stopping_monitor, reduce_lr_loss])
             print("Train results:\n")
-            test_results(X_train, y_train, model)
+            test_results([X_train_seq, X_train_cnn], y_train, model)
             print("Val results:\n")
-            test_results(X_val, y_val, model)
+            test_results([X_val_seq, X_val_cnn], y_val, model)
             print("Test results:\n")
-            test_results(X_test, y_test, model)
+            test_results([X_test_seq, X_test_cnn], y_test, model)
             
 
     with open(hist_file, 'wb') as file_pi:
