@@ -24,7 +24,7 @@ def lstmattxtisrover3():
     lstm.add(Dropout(0.75))
     lstm.add(SeqSelfAttention(units=64, attention_activation='sigmoid'))
     lstm.add(Dropout(0.75))
-    lstm.add(Flatten(lstm.output_shape))
+    lstm.add(Flatten(input_shape=lstm.output_shape))
     lstm.add(Dense(units=64, activation='relu'))
     lstm.add(Dropout(0.5))
     lstm.add(Flatten())
