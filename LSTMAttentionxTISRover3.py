@@ -27,7 +27,7 @@ def lstmattxtisrover3():
     seq.add(Flatten())
     seq.add(Dense(units=64, activation='relu'))
     seq.add(Dropout(0.5))
-    #seq.add(Flatten())
+    seq.add(Flatten())
 
     probs = Sequential()
     probs.add(Conv2D(filters=50, kernel_size=(2, 2), activation='relu', input_shape=(28,200,5)))
@@ -111,7 +111,9 @@ if __name__ == "__main__":
     plot_file = "logs/"+run_id+".png"
 
     model = lstmattxtisrover3()
+    model.build([X_train_seq.shape, X_train_cnn.shape])
     
+    model.summary()
     with open(log_file, 'w') as f:
         with redirect_stdout(f):
             
