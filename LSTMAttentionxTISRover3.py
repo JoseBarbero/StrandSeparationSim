@@ -109,8 +109,6 @@ if __name__ == "__main__":
     plot_file = "logs/"+run_id+".png"
 
     model = lstmattxtisrover3()
-    model.build(X_train.shape)
-    model.summary()
     
     with open(log_file, 'w') as f:
         with redirect_stdout(f):
