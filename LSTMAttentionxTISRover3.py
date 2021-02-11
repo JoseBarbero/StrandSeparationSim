@@ -9,7 +9,7 @@ from Results import report_results_imagedata, make_spider_by_temp, report_result
 from datetime import datetime
 from contextlib import redirect_stdout
 import keras
-from keras import Sequential, Model
+from keras.models import Sequential, Model
 from keras.layers import Bidirectional, LSTM, Dropout, Flatten, Dense, Conv2D, MaxPooling2D, Conv1D, concatenate
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from keras_self_attention import SeqSelfAttention
