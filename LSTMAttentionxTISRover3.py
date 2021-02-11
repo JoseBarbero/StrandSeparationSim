@@ -20,14 +20,14 @@ from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 def lstmattxtisrover3():
     lstm = Sequential()
     
-    #lstm.add(Bidirectional(LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=(200, 4))))
+    lstm.add(Bidirectional(LSTM(units=64, return_sequences=True, dropout=0.3), input_shape=(200, 4)))
     lstm.add(LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=(200, 4)))
-    #lstm.add(Dropout(0.75))
-    #lstm.add(SeqSelfAttention(units=64, attention_activation='sigmoid'))
-    #lstm.add(Dropout(0.75))
-    #lstm.add(Flatten())
+    lstm.add(Dropout(0.75))
+    lstm.add(SeqSelfAttention(units=64, attention_activation='sigmoid'))
+    lstm.add(Dropout(0.75))
+    lstm.add(Flatten())
     lstm.add(Dense(units=64, activation='relu'))
-    #lstm.add(Dropout(0.5))
+    lstm.add(Dropout(0.5))
     lstm.add(Flatten())
 
     cnn = Sequential()
