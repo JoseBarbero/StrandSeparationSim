@@ -92,7 +92,7 @@ if __name__ == "__main__":
     X_val_seq = X_val[:,1,:,5:13]
     print(X_val_seq.shape)
     X_val_cnn = X_val[:,:,:,:5]
-    print(X_train_seq.shape)
+    print(X_val_cnn.shape)
     X_test_seq = X_test[:,1,:,5:13]
     print(X_test_seq.shape)
     X_test_cnn = X_test[:,:,:,:5]
