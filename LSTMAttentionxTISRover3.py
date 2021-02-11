@@ -15,22 +15,6 @@ from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from keras_self_attention import SeqSelfAttention
 
 
-def lstm_att():
-    model = keras.models.Sequential()
-    
-    model.add(keras.layers.Bidirectional(keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=(200,4))))
-    model.add(layers.Dropout(0.75))
-    model.add(SeqSelfAttention(units=64, attention_activation='sigmoid'))
-    model.add(layers.Dropout(0.75))
-    model.add(layers.Flatten())
-    model.add(keras.layers.Dense(units=64, activation='relu'))
-    model.add(layers.Dropout(0.5))
-    model.add(keras.layers.Dense(units=1, activation='sigmoid'))
-
-    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=["accuracy", 'AUC'])
-
-    return model
-
 def lstmattxtisrover3():
     seq = keras.models.Sequential()
     
