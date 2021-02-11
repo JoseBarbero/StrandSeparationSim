@@ -12,7 +12,7 @@ from contextlib import redirect_stdout
 from keras_self_attention import SeqSelfAttention
 import keras
 from keras.models import Sequential, Model
-from keras.layers import Bidirectional, LSTM, Dropout, Flatten, Dense, Conv2D, MaxPooling2D, Conv1D, concatenate, Input
+from keras.layers import Bidirectional, LSTM, Dropout, Flatten, Dense, Conv2D, MaxPooling2D, Conv1D, concatenate, GlobalAveragePooling1D
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 
 
@@ -20,18 +20,16 @@ from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 def lstmattxtisrover3():
     lstm = Sequential()
     
-    lstm.add(Input(shape=(200, 4)))
-    lstm.add(Bidirectional(LSTM(units=64, return_sequences=True, dropout=0.3)))
+    lstm.add(Bidirectional(LSTM(units=64, return_sequences=True, dropout=0.3), input_shape=(200, 4)))
     lstm.add(Dropout(0.75))
     lstm.add(SeqSelfAttention(units=64, attention_activation='sigmoid'))
     lstm.add(Dropout(0.75))
-    lstm.add(Flatten())
+    lstm.add(GlobalAveragePooling1D())
     lstm.add(Dense(units=64, activation='relu'))
     lstm.add(Dropout(0.5))
     lstm.add(Flatten())
 
     cnn = Sequential()
-    
     cnn.add(Conv2D(filters=50, kernel_size=(2, 2), activation='relu', input_shape=(28,200,5)))
     cnn.add(Dropout(0.2))
     cnn.add(Conv2D(filters=62, kernel_size=(2, 2), activation='relu'))
