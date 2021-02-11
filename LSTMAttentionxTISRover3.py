@@ -19,7 +19,7 @@ from keras import Sequential
 def lstmattxtisrover3():
     seq = Sequential()
     
-    seq.add(Bidirectional(LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=(200, 4))))
+    seq.add(Bidirectional(LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=(1, 200, 4))))
     seq.add(Dropout(0.75))
     seq.add(SeqSelfAttention(units=64, attention_activation='sigmoid'))
     seq.add(Dropout(0.75))
@@ -86,15 +86,15 @@ if __name__ == "__main__":
     X_test_file.close()
     y_test_file.close()
 
-    X_train_seq = X_train[:,1,:,5:9]
+    X_train_seq = X_train[:,0,:,5:9]
     print(X_train_seq.shape)
     X_train_cnn = X_train[:,:,:,:5]
     print(X_train_cnn.shape)
-    X_val_seq = X_val[:,1,:,5:9]
+    X_val_seq = X_val[:,0,:,5:9]
     print(X_val_seq.shape)
     X_val_cnn = X_val[:,:,:,:5]
     print(X_val_cnn.shape)
-    X_test_seq = X_test[:,1,:,5:9]
+    X_test_seq = X_test[:,0,:,5:9]
     print(X_test_seq.shape)
     X_test_cnn = X_test[:,:,:,:5]
     print(X_test_cnn.shape)
