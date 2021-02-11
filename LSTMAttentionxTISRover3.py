@@ -9,7 +9,7 @@ from Results import report_results_imagedata, make_spider_by_temp, report_result
 from datetime import datetime
 from contextlib import redirect_stdout
 import keras
-from keras.models import Sequential, Model
+from keras import Sequential, Model
 from keras.layers import Bidirectional, LSTM, Dropout, Flatten, Dense, Conv2D, MaxPooling2D, Conv1D, concatenate
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from keras_self_attention import SeqSelfAttention
@@ -18,7 +18,7 @@ from keras_self_attention import SeqSelfAttention
 def lstmattxtisrover3():
     seq = Sequential()
     
-    seq.add(Bidirectional(LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=(200, 8, 1))))
+    seq.add(Bidirectional(LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=(200, 8))))
     seq.add(Dropout(0.75))
     seq.add(SeqSelfAttention(units=64, attention_activation='sigmoid'))
     seq.add(Dropout(0.75))
