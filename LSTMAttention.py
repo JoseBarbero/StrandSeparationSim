@@ -9,24 +9,47 @@ from Results import report_results_imagedata, make_spider_by_temp, report_result
 from datetime import datetime
 from contextlib import redirect_stdout
 import keras
+import tensorflow as tf
 from keras import layers
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from keras_self_attention import SeqSelfAttention
 
 
-def lstm_att():
+
+def lstm_att_ref():
     model = keras.models.Sequential()
     
     model.add(keras.layers.Bidirectional(keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=(200,4))))
-    model.add(layers.Dropout(0.75))
+    #model.add(keras.layers.Dropout(0.75))
     model.add(SeqSelfAttention(units=64, attention_activation='sigmoid'))
-    model.add(layers.Dropout(0.75))
-    model.add(layers.Flatten())
+    model.add(keras.layers.Bidirectional(keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3,)))
+    #model.add(keras.layers.Dropout(0.75))
+    model.add(keras.layers.Flatten())
     model.add(keras.layers.Dense(units=64, activation='relu'))
-    model.add(layers.Dropout(0.5))
+    model.add(keras.layers.Dropout(0.75))
     model.add(keras.layers.Dense(units=1, activation='sigmoid'))
 
+    #model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.0001), loss='binary_crossentropy', metrics=["accuracy", 'AUC'])
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=["accuracy", 'AUC'])
+
+    return model
+
+def lstm_att():
+    sequence_input = keras.layers.Input(shape=(200,4))
+
+    x = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True, input_shape=(200,4)))(sequence_input)
+    x = tf.keras.layers.Attention()([x, x])
+    x = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True))(x)
+    x = tf.leras.layers.Dropout(0.75)
+    x = tf.keras.layers.Dense(256)(x)
+    x = tf.keras.layers.Activation('relu')(x)
+    x = tf.keras.layers.Flatten()(x)
+    output = keras.layers.Dense(1)(x)
+    output = keras.layers.Activation('sigmoid')(output)
+
+    model = keras.Model(inputs=sequence_input, outputs=output)
+    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=["accuracy", 'AUC'])
+    
 
     return model
 
@@ -76,7 +99,7 @@ if __name__ == "__main__":
     hist_file = "logs/"+run_id+".pkl"
     plot_file = "logs/"+run_id+".png"
 
-    model = lstm_att()
+    model = lstm_att_ref()
     model.build(X_train.shape)
     model.summary()
     
