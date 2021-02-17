@@ -18,43 +18,43 @@ from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 
 
 def lstmattxtisrover3():
-    lstm = Sequential()
-    
-    lstm.add(Bidirectional(LSTM(units=64, return_sequences=True, dropout=0.3), input_shape=(200, 4)))
-    lstm.add(Dropout(0.75))
-    lstm.add(SeqSelfAttention(units=64, attention_activation='sigmoid'))
-    lstm.add(Dropout(0.75))
-    lstm.add(GlobalAveragePooling1D())
-    lstm.add(Dense(units=64, activation='relu'))
-    lstm.add(Dropout(0.5))
-    lstm.add(Flatten())
+        
+    seq_input = keras.layers.Input(shape=(200,4))
+    x = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=(200,4)))(sequence_input)
+    x = tf.keras.layers.Attention()([x, x])
+    x = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3))(x)
+    x = tf.keras.layers.Dropout(0.5)(x)
+    x = tf.keras.layers.Flatten()(x)
+    x = keras.layers.Dense(1)(x)
+    seq_output = keras.layers.Activation('sigmoid')(x)
 
-    cnn = Sequential()
-    cnn.add(Conv2D(filters=50, kernel_size=(2, 2), activation='relu', input_shape=(28,200,5)))
-    cnn.add(Dropout(0.2))
-    cnn.add(Conv2D(filters=62, kernel_size=(2, 2), activation='relu'))
-    cnn.add(MaxPooling2D((2,2)))
-    cnn.add(Dropout(0.2))
-    cnn.add(Conv2D(filters=75, kernel_size=(2, 2), activation='relu'))
-    cnn.add(MaxPooling2D((2,2)))
-    cnn.add(Dropout(0.2))
-    cnn.add(Conv2D(filters=87, kernel_size=(2, 2), activation='relu'))
-    cnn.add(MaxPooling2D((2,2)))
-    cnn.add(Dropout(0.2))
-    cnn.add(Conv1D(filters=100, kernel_size=2, activation='relu'))
-    cnn.add(MaxPooling2D((2,2)))
-    cnn.add(Dropout(0.2))
-    cnn.add(Flatten())
-    cnn.add(Dense(128, activation='relu'))
-    cnn.add(Dropout(0.5))
-    cnn.add(Flatten())
+
+    cnn_input = keras.layers.Input(shape=(28,200,5))
+    x = tf.keras.Conv2D(filters=50, kernel_size=(2, 2), activation='relu')
+    x = tf.keras.Dropout(0.2)
+    x = tf.keras.Conv2D(filters=62, kernel_size=(2, 2), activation='relu')
+    x = tf.keras.MaxPooling2D((2,2))
+    x = tf.keras.Dropout(0.2)
+    x = tf.keras.Conv2D(filters=75, kernel_size=(2, 2), activation='relu')
+    x = tf.keras.MaxPooling2D((2,2))
+    x = tf.keras.Dropout(0.2)
+    x = tf.keras.Conv2D(filters=87, kernel_size=(2, 2), activation='relu')
+    x = tf.keras.MaxPooling2D((2,2))
+    x = tf.keras.Dropout(0.2)
+    x = tf.keras.Conv1D(filters=100, kernel_size=2, activation='relu')
+    x = tf.keras.MaxPooling2D((2,2))
+    x = tf.keras.Dropout(0.2)
+    x = tf.keras.Flatten()
+    x = tf.keras.Dense(128, activation='relu')
+    x = tf.keras.Dropout(0.5)
+    cnn_output = tf.keras.Flatten()
     
-    merged = concatenate([lstm.output, cnn.output])
+    merged = concatenate([seq_output, cnn_output])
     z = Dense(1024, activation="relu")(merged)
     z = Dropout(0.5)(merged)
     z = Dense(1, activation="sigmoid")(merged)
 
-    model = Model(inputs=[lstm.input, cnn.input], outputs=z)
+    model = Model(inputs=[seq_input, cnn_input], outputs=z)
 
     model.compile(optimizer='adam',
                 loss='binary_crossentropy',
@@ -122,7 +122,7 @@ if __name__ == "__main__":
             early_stopping_monitor = EarlyStopping( monitor='val_loss', min_delta=0, patience=10, 
                                                     verbose=1, mode='min', baseline=None,
                                                     restore_best_weights=True)
-            reduce_lr_loss = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, verbose=1, min_delta=1e-4, mode='min')
+            reduce_lr_loss = ReduceLROnPlateau(monitor='val_auc', factor=0.5, patience=3, verbose=1, min_delta=1e-4, mode='max')
 
             history = model.fit([X_train_seq, X_train_cnn], y_train,
                                 shuffle=True,

@@ -19,6 +19,7 @@ from keras_self_attention import SeqSelfAttention
 def lstm_att_ref():
     model = keras.models.Sequential()
     
+    # Esto así tal cual sobreajusta mucho
     model.add(keras.layers.Bidirectional(keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=(200,4))))
     #model.add(keras.layers.Dropout(0.75))
     model.add(SeqSelfAttention(units=64, attention_activation='sigmoid'))
@@ -35,14 +36,14 @@ def lstm_att_ref():
     return model
 
 def lstm_att():
-    sequence_input = keras.layers.Input(shape=(200,4))
+    sequence_input = tf.keras.layers.Input(shape=(200,4))
 
-    x = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True, input_shape=(200,4)))(sequence_input)
+    x = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=(200,4)))(sequence_input)
     x = tf.keras.layers.Attention()([x, x])
-    x = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True))(x)
-    x = tf.leras.layers.Dropout(0.75)
-    x = tf.keras.layers.Dense(256)(x)
-    x = tf.keras.layers.Activation('relu')(x)
+    x = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3))(x)
+    x = tf.keras.layers.Dropout(0.5)(x)
+    #x = tf.keras.layers.Dense(64)(x)
+    #x = tf.keras.layers.Activation('relu')(x)
     x = tf.keras.layers.Flatten()(x)
     output = keras.layers.Dense(1)(x)
     output = keras.layers.Activation('sigmoid')(output)
@@ -99,7 +100,7 @@ if __name__ == "__main__":
     hist_file = "logs/"+run_id+".pkl"
     plot_file = "logs/"+run_id+".png"
 
-    model = lstm_att_ref()
+    model = lstm_att()
     model.build(X_train.shape)
     model.summary()
     
