@@ -45,12 +45,11 @@ def lstm_att():
     #x = tf.keras.layers.Dense(64)(x)
     #x = tf.keras.layers.Activation('relu')(x)
     x = tf.keras.layers.Flatten()(x)
-    output = keras.layers.Dense(1)(x)
-    output = keras.layers.Activation('sigmoid')(output)
+    output = tf.keras.layers.Dense(1)(x)
+    output = tf.keras.layers.Activation('sigmoid')(output)
 
-    model = keras.Model(inputs=sequence_input, outputs=output)
+    model = tf.keras.Model(inputs=sequence_input, outputs=output)
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=["accuracy", 'AUC'])
-    
 
     return model
 

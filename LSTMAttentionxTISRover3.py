@@ -24,9 +24,9 @@ def lstmattxtisrover3():
     x = tf.keras.layers.Attention()([x, x])
     x = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3))(x)
     x = tf.keras.layers.Dropout(0.5)(x)
-    x = tf.keras.layers.Flatten()(x)
-    x = keras.layers.Dense(1)(x)
-    seq_output = keras.layers.Activation('sigmoid')(x)
+    seq_output = tf.keras.layers.Flatten()(x)
+    #x = keras.layers.Dense(1)(x)
+    #seq_output = keras.layers.Activation('sigmoid')(x)
 
 
     cnn_input = keras.layers.Input(shape=(28,200,5))
@@ -44,14 +44,14 @@ def lstmattxtisrover3():
     x = tf.keras.layers.Conv1D(filters=100, kernel_size=2, activation='relu')(x)
     x = tf.keras.layers.MaxPooling2D((2,2))(x)
     x = tf.keras.layers.Dropout(0.2)(x)
-    x = tf.keras.layers.Flatten()(x)
-    x = tf.keras.layers.Dense(128, activation='relu')(x)
-    x = tf.keras.layers.Dropout(0.5)(x)
+    #x = tf.keras.layers.Flatten()(x)
+    #x = tf.keras.layers.Dense(128, activation='relu')(x)
+    #x = tf.keras.layers.Dropout(0.5)(x)
     cnn_output = tf.keras.layers.Flatten()(x)
     
     merged = concatenate([seq_output, cnn_output])
-    z = Dense(1024, activation="relu")(merged)
-    z = Dropout(0.5)(merged)
+    #z = Dense(1024, activation="relu")(merged)
+    #z = Dropout(0.5)(merged)
     z = Dense(1, activation="sigmoid")(merged)
 
     model = Model(inputs=[seq_input, cnn_input], outputs=z)
