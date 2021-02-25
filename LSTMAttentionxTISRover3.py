@@ -50,8 +50,7 @@ def lstmattxtisrover3():
     cnn_output = tf.keras.layers.Flatten()(x)
     
     merged = concatenate([seq_output, cnn_output])
-    #z = Dense(1024, activation="relu")(merged)
-    #z = Dropout(0.5)(merged)
+    z = Dense(1024, activation="relu")(merged)
     z = Dense(1, activation="sigmoid")(merged)
 
     model = Model(inputs=[seq_input, cnn_input], outputs=z)
