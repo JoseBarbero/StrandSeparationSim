@@ -44,9 +44,9 @@ def lstmattxtisrover3():
     x = tf.keras.layers.Conv1D(filters=100, kernel_size=2, activation='relu')(x)
     x = tf.keras.layers.MaxPooling2D((2,2))(x)
     x = tf.keras.layers.Dropout(0.2)(x)
-    #x = tf.keras.layers.Flatten()(x)
-    #x = tf.keras.layers.Dense(128, activation='relu')(x)
-    #x = tf.keras.layers.Dropout(0.5)(x)
+    x = tf.keras.layers.Flatten()(x)
+    x = tf.keras.layers.Dense(128, activation='relu')(x)
+    x = tf.keras.layers.Dropout(0.5)(x)
     cnn_output = tf.keras.layers.Flatten()(x)
     
     merged = concatenate([seq_output, cnn_output])
