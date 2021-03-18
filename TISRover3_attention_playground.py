@@ -9,54 +9,70 @@ from ReadData import read_data_as_img, read_data_structured, read_data_st, seq_t
 from Results import report_results_imagedata, make_spider_by_temp, report_results_st, test_results, plot_train_history
 from datetime import datetime
 from contextlib import redirect_stdout
-from tensorflow import keras
-from tensorflow.keras import layers
-from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
+from keras_self_attention import SeqSelfAttention
+import keras
+from keras.models import Sequential, Model
+from keras.layers import Bidirectional, LSTM, Dropout, Flatten, Dense, Conv2D, MaxPooling2D, Conv1D, concatenate, GlobalAveragePooling1D
+from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 
 
-def tisrover():
-    inputs = layers.Input(shape=(200,8))
+
+def lstmattxtisrover3():
+        
+    seq_input = keras.layers.Input(shape=(200,4))
+    x = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=(200,4)))(seq_input)
+    x = tf.keras.layers.Attention()([x, x])
+    x = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3))(x)
+    x = tf.keras.layers.Dropout(0.5)(x)
+    seq_output = tf.keras.layers.Flatten()(x)
+    #x = keras.layers.Dense(1)(x)
+    #seq_output = keras.layers.Activation('sigmoid')(x)
+
+
+    cnn_input = keras.layers.Input(shape=(28,200, 1))
+    x = tf.keras.layers.Conv2D(filters=50, kernel_size=(2, 2), activation='relu')(cnn_input)
+    x = tf.keras.layers.Dropout(0.2)(x)
+    x = tf.keras.layers.Conv2D(filters=62, kernel_size=(2, 2), activation='relu')(x)
+    x = tf.keras.layers.MaxPooling2D((2,2))(x)
+    x = tf.keras.layers.Dropout(0.2)(x)
+    x = tf.keras.layers.Conv2D(filters=75, kernel_size=(2, 2), activation='relu')(x)
+    x = tf.keras.layers.MaxPooling2D((2,2))(x)
+    x = tf.keras.layers.Dropout(0.2)(x)
+    x = tf.keras.layers.Conv2D(filters=87, kernel_size=(2, 2), activation='relu')(x)
+    x = tf.keras.layers.MaxPooling2D((2,2))(x)
+    x = tf.keras.layers.Dropout(0.2)(x)
+    x = tf.keras.layers.Conv1D(filters=100, kernel_size=2, activation='relu')(x)
+    x = tf.keras.layers.MaxPooling2D((2,2))(x)
+    x = tf.keras.layers.Dropout(0.2)(x)
+    x = tf.keras.layers.Flatten()(x)
+    x = tf.keras.layers.Dense(128, activation='relu')(x)
+    x = tf.keras.layers.Dropout(0.5)(x)
+    cnn_output = tf.keras.layers.Flatten()(x)
     
-    x = layers.Conv1D(filters=50, kernel_size=3, activation='relu')(inputs)
-    x = layers.Dropout(0.2)(x)
-    x = layers.Conv1D(filters=62, kernel_size=3, activation='relu')(x)
-    x = layers.MaxPooling1D(2)(x)
-    x = layers.Dropout(0.2)(x)
+    merged = concatenate([seq_output, cnn_output])
+    z = Dense(512, activation="relu")(merged)
+    z = Dense(512, activation="relu")(merged)
+    z = Dense(512, activation="relu")(merged)
+    z = Dense(1, activation="sigmoid")(merged)
 
-    x = layers.MultiHeadAttention(num_heads=4, key_dim=8)(x,x)
+    model = Model(inputs=[seq_input, cnn_input], outputs=z)
 
-    x = layers.Conv1D(filters=75, kernel_size=3, activation='relu')(x)
-    x = layers.MaxPooling1D(2)(x)
-    x = layers.Dropout(0.2)(x)
-    x = layers.Conv1D(filters=87, kernel_size=3, activation='relu')(x)
-    x = layers.MaxPooling1D(2)(x)
-    x = layers.Dropout(0.2)(x)
-    x = layers.Conv1D(filters=100, kernel_size=3, activation='relu')(x)
-    x = layers.MaxPooling1D(2)(x)
-    x = layers.Dropout(0.2)(x)
-    x = layers.Flatten()(x)
-    x = layers.Dense(128)(x)
-    x = layers.Dropout(0.5)(x)
-    outputs = layers.Dense(1, activation = 'sigmoid')(x)
-
-    model = keras.Model(inputs=inputs, outputs=outputs)
-
-    model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.001), loss=keras.losses.BinaryCrossentropy(), metrics=["accuracy", "AUC"])
+    model.compile(optimizer='adam',
+                loss='binary_crossentropy',
+                metrics=['accuracy', "AUC"])
 
     return model
 
-    
-     
 if __name__ == "__main__":
     seed = 42
     np.random.seed(seed)
 
-    X_train_file = open('../data/serialized/X_train_onlyseq.pkl', 'rb')
-    y_train_file = open('../data/serialized/y_train_onlyseq.pkl', 'rb')
-    X_val_file = open('../data/serialized/X_val_onlyseq.pkl', 'rb')
-    y_val_file = open('../data/serialized/y_val_onlyseq.pkl', 'rb')
-    X_test_file = open('../data/serialized/X_test_onlyseq.pkl', 'rb')
-    y_test_file = open('../data/serialized/y_test_onlyseq.pkl', 'rb')
+    X_train_file = open('../data/serialized/X_train_channels_onehot_noAA.pkl', 'rb')
+    y_train_file = open('../data/serialized/y_train_channels_onehot_noAA.pkl', 'rb')
+    X_val_file = open('../data/serialized/X_val_channels_onehot_noAA.pkl', 'rb')
+    y_val_file = open('../data/serialized/y_val_channels_onehot_noAA.pkl', 'rb')
+    X_test_file = open('../data/serialized/X_test_channels_onehot_noAA.pkl', 'rb')
+    y_test_file = open('../data/serialized/y_test_channels_onehot_noAA.pkl', 'rb')
 
     X_train = pickle.load(X_train_file)
     y_train = pickle.load(y_train_file)
@@ -72,7 +88,19 @@ if __name__ == "__main__":
     X_test_file.close()
     y_test_file.close()
 
-    
+    X_train_seq = X_train[:,0,:,5:9]
+    print(X_train_seq.shape)
+    X_train_cnn = X_train[:,:,:,0]
+    print(X_train_cnn.shape)
+    X_val_seq = X_val[:,0,:,5:9]
+    print(X_val_seq.shape)
+    X_val_cnn = X_val[:,:,:,0]
+    print(X_val_cnn.shape)
+    X_test_seq = X_test[:,0,:,5:9]
+    print(X_test_seq.shape)
+    X_test_cnn = X_test[:,:,:,0]
+    print(X_test_cnn.shape)
+
     if len(sys.argv) < 2:
         run_id = str(datetime.now()).replace(" ", "_").replace("-", "_").replace(":", "_").split(".")[0]
     else:
@@ -83,30 +111,34 @@ if __name__ == "__main__":
     hist_file = "logs/"+run_id+".pkl"
     plot_file = "logs/"+run_id+".png"
 
-    model = tisrover()
-
+    model = lstmattxtisrover3()
+    model.build([X_train_seq.shape, X_train_cnn.shape])
+    
+    model.summary()
     with open(log_file, 'w') as f:
         with redirect_stdout(f):
-            #model.summary()
-
-            for layer in model.layers:
-                print(layer.get_config())
+            
+            #for layer in model.layers:
+            #    print(layer.get_config())
             early_stopping_monitor = EarlyStopping( monitor='val_loss', min_delta=0, patience=10, 
                                                     verbose=1, mode='min', baseline=None,
                                                     restore_best_weights=True)
-            reduce_lr_loss = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, verbose=1, min_delta=1e-4, mode='min')
+            reduce_lr_loss = ReduceLROnPlateau(monitor='val_auc', factor=0.5, patience=3, verbose=1, min_delta=1e-4, mode='max')
 
-            history = model.fit(X_train, y_train,
+            history = model.fit([X_train_seq, X_train_cnn], y_train,
                                 shuffle=True,
-                                batch_size=16,
-                                epochs=50,
+                                batch_size=32,
+                                epochs=100,
                                 verbose=True,
-                                validation_data=(X_val, y_val),
+                                validation_data=([X_val_seq, X_val_cnn], y_val),
                                 callbacks=[early_stopping_monitor, reduce_lr_loss])
-            print("Train results:")
-            test_results(X_train, y_train, model)
-            print("Test results:")
-            test_results(X_test, y_test, model)
+            print("Train results:\n")
+            test_results([X_train_seq, X_train_cnn], y_train, model)
+            print("Val results:\n")
+            test_results([X_val_seq, X_val_cnn], y_val, model)
+            print("Test results:\n")
+            test_results([X_test_seq, X_test_cnn], y_test, model)
+            
 
     with open(hist_file, 'wb') as file_pi:
         pickle.dump(history.history, file_pi)
