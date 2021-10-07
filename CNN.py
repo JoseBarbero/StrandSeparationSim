@@ -1,7 +1,6 @@
 import numpy as np
 import re
 import os
-import autokeras as ak
 import pandas as pd
 import matplotlib.pyplot as plt
 import sys
@@ -28,21 +27,28 @@ from contextlib import redirect_stdout
 from keras.layers.embeddings import Embedding
 from keras.preprocessing import sequence
 
-def titer():
+def cnn():
     model = Sequential()
 
-    model.add(Conv1D(filters=32, kernel_size=3, activation='relu', input_shape=(200, 4)))
-    model.add(MaxPooling1D(3))
-    model.add(Dropout(0.5))
+    model.add(Conv1D(filters=32, kernel_size=5, data_format='channels_last', strides=1, activation='relu', input_shape=(28, 200, 4)))
+    model.add(MaxPooling1D(4))
+
+    model.add(Conv1D(filters=32, kernel_size=5, strides=1, activation='relu'))
+    model.add(MaxPooling1D(4))
+
+    model.add(Conv1D(filters=32, kernel_size=5, strides=1, activation='relu'))
+    model.add(MaxPooling1D(4))
+
+    model.add(Dense(1024, activation = 'relu'))
+    model.add(Dropout(0.2))
+    model.add(Dense(512, activation = 'relu'))
+    model.add(Dropout(0.2))
+    model.add(Dense(128, activation = 'relu'))
+    model.add(Dropout(0.2))
+
     model.add(Flatten())
-    model.add(Dense(128))
+
     model.add(Dense(1, activation = 'sigmoid'))
-    
-    model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.001), loss=keras.losses.BinaryCrossentropy(), metrics=["accuracy", "AUC"])
-
-    return model
-
-
 
     
      
@@ -50,12 +56,12 @@ if __name__ == "__main__":
     seed = 42
     np.random.seed(seed)
 
-    X_train_file = open('../data/serialized/X_train_channels_onehot_noAA.pkl', 'rb')
-    y_train_file = open('../data/serialized/y_train_channels_onehot_noAA.pkl', 'rb')
-    X_val_file = open('../data/serialized/X_val_channels_onehot_noAA.pkl', 'rb')
-    y_val_file = open('../data/serialized/y_val_channels_onehot_noAA.pkl', 'rb')
-    X_test_file = open('../data/serialized/X_test_channels_onehot_noAA.pkl', 'rb')
-    y_test_file = open('../data/serialized/y_test_channels_onehot_noAA.pkl', 'rb')
+    X_train_file = open('../data/serialized/X_train_onlybub10.pkl', 'rb')
+    y_train_file = open('../data/serialized/y_train__onlybub10.pkl', 'rb')
+    X_val_file = open('../data/serialized/X_val_onlybub10.pkl', 'rb')
+    y_val_file = open('../data/serialized/y_val_onlybub10.pkl', 'rb')
+    X_test_file = open('../data/serialized/X_test_onlybub10.pkl', 'rb')
+    y_test_file = open('../data/serialized/y_test_onlybub10.pkl', 'rb')
 
     X_train = pickle.load(X_train_file)
     y_train = pickle.load(y_train_file)
@@ -97,10 +103,10 @@ if __name__ == "__main__":
 
             for layer in model.layers:
                 print(layer.get_config())
-            early_stopping_monitor = EarlyStopping( monitor='val_loss', min_delta=0, patience=13, 
-                                                    verbose=1, mode='min', baseline=None,
-                                                    restore_best_weights=True)
-            reduce_lr_loss = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=6, verbose=1, min_delta=1e-4, mode='min')
+            early_stopping_monitor = EarlyStopping( monitor='val_loss', min_delta=0, patience=10, 
+                                                        verbose=1, mode='min', baseline=None,
+                                                        restore_best_weights=True)
+                reduce_lr_loss = ReduceLROnPlateau(monitor='val_auc', factor=0.5, patience=3, verbose=1, min_delta=1e-4, mode='max')
 
             history = model.fit(X_train, y_train,
                                 shuffle=True,
