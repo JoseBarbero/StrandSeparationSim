@@ -5,8 +5,9 @@ from datetime import datetime
 
 
 # Creo este script para no tener que procesar todo cada ejecución y poder guardarlo en unos pocos ficheros más manejables.
-data_dir = "../data/prueba"
-categories = ["OPN", "BUB8", "BUB10", "BUB12", "VRNORM"]
+data_dir = "../data/prueba/"
+#categories = ["OPN", "BUB8", "BUB10", "BUB12", "VRNORM"]
+categories = ["BUB8"]
 temperatures = ['308.0', '308.3', '308.6', '308.9', 
                 '309.2', '309.5', '309.8', 
                 '310', '310.1', '310.4', '310.7', 
@@ -18,14 +19,14 @@ for part in ['train', 'val', 'test']:
     # Train
     print('Reading '+part+' data... '+'['+datetime.now().strftime("%m/%d/%Y, %H:%M:%S")+']')
     
-    X, y = read_data_channels_for_lstmxlstm(data_dir, part, temperatures, categories)
+    X, y = read_data_st(data_dir, part, categories)
 
     print('Writing '+part+' data... '+'['+datetime.now().strftime("%m/%d/%Y, %H:%M:%S")+']')
-    X_file = open('../data/serialized/X_'+part+'_channels_lstmxlstm.pkl', 'wb')
+    X_file = open('../data/serialized/X_'+part+'_onlybub10.pkl', 'wb')
     pickle.dump(X, X_file, protocol=4)  # protocol=4 allows to serialize larger files than 4gb
     X_file.close()
 
-    y_file = open('../data/serialized/y_'+part+'_channels_lstmxlstm.pkl', 'wb')
+    y_file = open('../data/serialized/y_'+part+'_onlybub10.pkl', 'wb')
     pickle.dump(y, y_file, protocol=4)
     y_file.close()
 
