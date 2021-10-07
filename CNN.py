@@ -1,31 +1,19 @@
+import sys
+sys.path.append("../utils")
 import numpy as np
 import re
 import os
-import pandas as pd
-import matplotlib.pyplot as plt
-import sys
 import pickle
-import keras
-import tensorflow as tf
-from Attention import Attention
-from keras.models import Sequential, Model
-from keras.callbacks import EarlyStopping, ReduceLROnPlateau
-from keras.layers import Dense, Activation, Dropout, Flatten, Conv1D, Conv2D, MaxPooling1D, MaxPooling2D, AveragePooling2D, LayerNormalization
-from keras.layers import Conv3D, MaxPooling3D, AveragePooling3D
-from keras.layers import LSTM
-from keras.layers import concatenate
-from ReadData import read_data_as_img, read_data_structured, read_data_st, seq_to_array, seq_to_onehot_array
-from Preprocessing import ros, smote, adasyn
-from Results import report_results_imagedata, make_spider_by_temp, report_results_st, test_results, plot_train_history
-from keras import backend as K
-from sklearn.model_selection import train_test_split
-from tensorflow.keras.models import load_model
-from keras import Sequential
-from sklearn.metrics import f1_score, roc_auc_score, accuracy_score, log_loss, fowlkes_mallows_score, cohen_kappa_score, precision_score, recall_score
+from Results import test_results, plot_train_history
 from datetime import datetime
 from contextlib import redirect_stdout
-from keras.layers.embeddings import Embedding
-from keras.preprocessing import sequence
+import keras
+import tensorflow as tf
+from keras import layers
+from keras.models import Sequential
+from keras.layers import Conv1D, Conv2D, Conv3D, Dropout, MaxPooling1D, MaxPooling2D, Flatten, Dense
+from keras.callbacks import EarlyStopping, ReduceLROnPlateau
+from keras.callbacks import LearningRateScheduler
 
 def cnn():
     model = Sequential()
