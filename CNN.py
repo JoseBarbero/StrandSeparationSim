@@ -90,12 +90,12 @@ if __name__ == "__main__":
         seed = 42
         np.random.seed(seed)
 
-        X_train_file = open('../data/serialized/X_train_onlybub10.pkl', 'rb')
-        y_train_file = open('../data/serialized/y_train_onlybub10.pkl', 'rb')
-        X_val_file = open('../data/serialized/X_val_onlybub10.pkl', 'rb')
-        y_val_file = open('../data/serialized/y_val_onlybub10.pkl', 'rb')
-        X_test_file = open('../data/serialized/X_test_onlybub10.pkl', 'rb')
-        y_test_file = open('../data/serialized/y_test_onlybub10.pkl', 'rb')
+        X_train_file = open('../databubbles/serialized/X_train_onlybub10.pkl', 'rb')
+        y_train_file = open('../databubbles/serialized/y_train_onlybub10.pkl', 'rb')
+        X_val_file = open('../databubbles/serialized/X_val_onlybub10.pkl', 'rb')
+        y_val_file = open('../databubbles/serialized/y_val_onlybub10.pkl', 'rb')
+        X_test_file = open('../databubbles/serialized/X_test_onlybub10.pkl', 'rb')
+        y_test_file = open('../databubbles/serialized/y_test_onlybub10.pkl', 'rb')
 
         X_train = pickle.load(X_train_file)
         X_train = X_train[::2]
