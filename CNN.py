@@ -90,7 +90,8 @@ def single_train(model_definition, X_train, X_val, X_test, y_train, y_val, y_tes
     plot_train_history(history.history, plot_file)
 
 if __name__ == "__main__":
-    with tf.device('/device:GPU:2'):
+    strategy = tf.distribute.MirroredStrategy(devices=["/gpu:0", "/gpu:1", "/gpu:2"])
+    with strategy.scope():
         seed = 42
         np.random.seed(seed)
 
@@ -118,8 +119,6 @@ if __name__ == "__main__":
         X_test_file.close()
         y_test_file.close()
 
-        print('X train shape', X_train.shape)
-        print('X train instance 0 shape', X_train[0].shape)
         
         if len(sys.argv) < 2:
             run_id = str(datetime.now()).replace(" ", "_").replace("-", "_").replace(":", "_").split(".")[0]
