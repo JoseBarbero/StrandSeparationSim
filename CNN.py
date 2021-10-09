@@ -102,13 +102,13 @@ if __name__ == "__main__":
         y_test_file = open('../databubbles/serialized/y_test_onlybub10.pkl', 'rb')
 
         X_train = pickle.load(X_train_file)
-        np.expand_dims(X_train, axis=1)
+        np.expand_dims(X_train, axis=3)
         y_train = pickle.load(y_train_file)
         X_val = pickle.load(X_val_file)
-        np.expand_dims(X_val, axis=1)
+        np.expand_dims(X_val, axis=3)
         y_val = pickle.load(y_val_file)
         X_test = pickle.load(X_test_file)
-        np.expand_dims(X_test, axis=1)
+        np.expand_dims(X_test, axis=3)
         y_test = pickle.load(y_test_file)
 
         X_train_file.close()
