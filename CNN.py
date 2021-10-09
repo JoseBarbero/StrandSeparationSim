@@ -109,7 +109,7 @@ if __name__ == "__main__":
         X_val = np.reshape(X_val, (*X_val.shape, 1))
         y_val = pickle.load(y_val_file)
         X_test = pickle.load(X_test_file)
-        X_val = np.reshape(X_test, (*X_test.shape, 1))
+        X_test = np.reshape(X_test, (*X_test.shape, 1))
         y_test = pickle.load(y_test_file)
 
         X_train_file.close()
