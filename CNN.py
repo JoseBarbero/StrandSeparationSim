@@ -102,10 +102,13 @@ if __name__ == "__main__":
         y_test_file = open('../databubbles/serialized/y_test_onlybub10.pkl', 'rb')
 
         X_train = pickle.load(X_train_file)
+        X_train.reshape((*X_train.shape, 1))
         y_train = pickle.load(y_train_file)
         X_val = pickle.load(X_val_file)
+        X_val.reshape((*X_val.shape, 1))
         y_val = pickle.load(y_val_file)
         X_test = pickle.load(X_test_file)
+        X_test.reshape((*X_test.shape, 1))
         y_test = pickle.load(y_test_file)
 
         X_train_file.close()
