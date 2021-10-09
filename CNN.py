@@ -102,13 +102,9 @@ if __name__ == "__main__":
         y_test_file = open('../databubbles/serialized/y_test_onlybub10.pkl', 'rb')
 
         X_train = pickle.load(X_train_file)
-        X_train = X_train[::2]
         y_train = pickle.load(y_train_file)
-        y_train = y_train[::2]
         X_val = pickle.load(X_val_file)
-        X_val = X_val[::2]
         y_val = pickle.load(y_val_file)
-        y_val = y_val[::2]
         X_test = pickle.load(X_test_file)
         y_test = pickle.load(y_test_file)
 
@@ -118,6 +114,9 @@ if __name__ == "__main__":
         y_val_file.close()
         X_test_file.close()
         y_test_file.close()
+
+        print('X train shape', X_train.shape)
+        print('X train instance 0 shape', X_train[0].shape)
         
         if len(sys.argv) < 2:
             run_id = str(datetime.now()).replace(" ", "_").replace("-", "_").replace(":", "_").split(".")[0]
