@@ -18,7 +18,7 @@ from keras.callbacks import LearningRateScheduler
 def cnn():
     model = Sequential()
 
-    model.add(Conv2D(filters=32, kernel_size=3, data_format='channels_last', strides=1, activation='relu', input_shape=(28, 200, 4)))
+    model.add(Conv2D(filters=32, kernel_size=3, data_format='channels_last', strides=1, activation='relu', input_shape=(28, 200, 1)))
     #model.add(MaxPooling2D(2))
 
     model.add(Conv2D(filters=32, kernel_size=3, strides=1, activation='relu'))
