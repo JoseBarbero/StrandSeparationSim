@@ -112,10 +112,10 @@ if __name__ == "__main__":
         X_train = pickle.load(X_train_file)[:,:,:4]
         #X_train = np.reshape(X_train, (*X_train.shape, 1))
         y_train = pickle.load(y_train_file)
-        X_val = pickle.load(X_val_file)
+        X_val = pickle.load(X_val_file)[:,:,:4]
         #X_val = np.reshape(X_val, (*X_val.shape, 1))
         y_val = pickle.load(y_val_file)
-        X_test = pickle.load(X_test_file)
+        X_test = pickle.load(X_test_file)[:,:,:4]
         #X_test = np.reshape(X_test, (*X_test.shape, 1))
         y_test = pickle.load(y_test_file)
 
