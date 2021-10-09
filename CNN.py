@@ -102,7 +102,7 @@ if __name__ == "__main__":
         X_test_file = open('../databubbles/serialized/X_test_onlyseq.pkl', 'rb')
         y_test_file = open('../databubbles/serialized/y_test_onlyseq.pkl', 'rb')
 
-        X_train = pickle.load(X_train_file)[:,:,:,:4]
+        X_train = pickle.load(X_train_file)[:,:,:4]
         #X_train = np.reshape(X_train, (*X_train.shape, 1))
         y_train = pickle.load(y_train_file)
         X_val = pickle.load(X_val_file)
