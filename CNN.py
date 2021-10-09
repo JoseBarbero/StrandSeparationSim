@@ -37,6 +37,8 @@ def cnn():
     model.add(Flatten())
 
     model.add(Dense(1, activation = 'sigmoid'))
+    
+    return model
 
 def single_train(model_definition, X_train, X_val, X_test, y_train, y_val, y_test, run_id):
 
