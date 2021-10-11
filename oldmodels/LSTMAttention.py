@@ -3,7 +3,7 @@ import re
 import os
 import sys
 import pickle
-from Results import report_results_imagedata, make_spider_by_temp, report_results_st, test_results, plot_train_history
+from Results import test_results, plot_train_history
 from datetime import datetime
 from contextlib import redirect_stdout
 import keras
