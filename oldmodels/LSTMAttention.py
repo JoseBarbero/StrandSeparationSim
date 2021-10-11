@@ -54,12 +54,12 @@ if __name__ == "__main__":
     seed = 42
     np.random.seed(seed)
 
-    X_train_file = open('../data/serialized/X_train_onlyseq.pkl', 'rb')
-    y_train_file = open('../data/serialized/y_train_onlyseq.pkl', 'rb')
-    X_val_file = open('../data/serialized/X_val_onlyseq.pkl', 'rb')
-    y_val_file = open('../data/serialized/y_val_onlyseq.pkl', 'rb')
-    X_test_file = open('../data/serialized/X_test_onlyseq.pkl', 'rb')
-    y_test_file = open('../data/serialized/y_test_onlyseq.pkl', 'rb')
+    X_train_file = open('../databubbles/serialized/X_train_onlyseq.pkl', 'rb')
+    y_train_file = open('../databubbles/serialized/y_train_onlyseq.pkl', 'rb')
+    X_val_file = open('../databubbles/serialized/X_val_onlyseq.pkl', 'rb')
+    y_val_file = open('../databubbles/serialized/y_val_onlyseq.pkl', 'rb')
+    X_test_file = open('../databubbles/serialized/X_test_onlyseq.pkl', 'rb')
+    y_test_file = open('../databubbles/serialized/y_test_onlyseq.pkl', 'rb')
 
     X_train = pickle.load(X_train_file)
     y_train = pickle.load(y_train_file)
