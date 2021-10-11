@@ -115,6 +115,10 @@ if __name__ == "__main__":
     X_val = X_val[:,:,:4]
     X_test = X_test[:,:,:4]
 
+    X_train = X_train.astype(int)
+    X_val = X_val.astype(int)
+    X_test = X_test.astype(int)
+
     y_train = y_train.reshape(*y_train.shape, 1)
     y_val = y_val.reshape(*y_val.shape, 1)
     y_test = y_test.reshape(*y_test.shape, 1)
