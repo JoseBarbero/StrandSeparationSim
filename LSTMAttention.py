@@ -17,9 +17,9 @@ from keras.callbacks import LearningRateScheduler
 
 def lstm_att():
 
-    sequence_input = tf.keras.layers.Input(shape=(200,4))
+    sequence_input = tf.keras.layers.Input(shape=(200,8))
     
-    x = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=(200,4)))(sequence_input)
+    x = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=(200,8)))(sequence_input)
     x = tf.keras.layers.MultiHeadAttention(num_heads=2, key_dim=2, attention_axes=(1,2))(x, x)
     x = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3,))(x)
     x = tf.keras.layers.Flatten()(x)
@@ -111,9 +111,9 @@ if __name__ == "__main__":
         X_test_file.close()
         y_test_file.close()
 
-        X_train = X_train[:,:,:4]
-        X_val = X_val[:,:,:4]
-        X_test = X_test[:,:,:4]
+        #X_train = X_train[:,:,:4]
+        #X_val = X_val[:,:,:4]
+        #X_test = X_test[:,:,:4]
 
         X_train = X_train.astype(int)
         X_val = X_val.astype(int)
