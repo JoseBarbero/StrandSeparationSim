@@ -45,6 +45,7 @@ def single_train(model_definition, X_train, X_val, X_test, y_train, y_val, y_tes
         os.mkdir(logdir)
 
     model = model_definition
+    model.build(X_train.shape)
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=["accuracy", 'AUC'])
     
 
