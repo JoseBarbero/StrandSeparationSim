@@ -16,19 +16,21 @@ from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from keras.callbacks import LearningRateScheduler
 
 def lstm_att():
-    sequence_input = tf.keras.layers.Input(shape=(200,4))
+    model = keras.models.Sequential()
+    
+    # Esto así tal cual sobreajusta mucho
+    model.add(keras.layers.Bidirectional(keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=(200,4))))
+    #model.add(keras.layers.Dropout(0.75))
+    model.add(keras.layers.MultiHeadAttention(num_heads=2, key_dim=2, attention_axes=(1,2)))
+    model.add(keras.layers.Bidirectional(keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3,)))
+    #model.add(keras.layers.Dropout(0.75))
+    model.add(keras.layers.Flatten())
+    model.add(keras.layers.Dense(units=64, activation='relu'))
+    model.add(keras.layers.Dropout(0.75))
+    model.add(keras.layers.Dense(units=1, activation='sigmoid'))
 
-    x = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=(200,4)))(sequence_input)
-    x = tf.keras.layers.Attention()([x, x])
-    x = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3))(x)
-    x = tf.keras.layers.Dropout(0.5)(x)
-    #x = tf.keras.layers.Dense(64)(x)
-    #x = tf.keras.layers.Activation('relu')(x)
-    x = tf.keras.layers.Flatten()(x)
-    output = tf.keras.layers.Dense(1)(x)
-    output = tf.keras.layers.Activation('sigmoid')(output)
-
-    model = tf.keras.Model(inputs=sequence_input, outputs=output)
+    #model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.0001), loss='binary_crossentropy', metrics=["accuracy", 'AUC'])
+    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=["accuracy", 'AUC'])
 
     return model
 
@@ -45,7 +47,6 @@ def single_train(model_definition, X_train, X_val, X_test, y_train, y_val, y_tes
         os.mkdir(logdir)
 
     model = model_definition
-    model.build(X_train.shape)
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=["accuracy", 'AUC'])
     
 
