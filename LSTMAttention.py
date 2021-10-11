@@ -29,9 +29,6 @@ def lstm_att():
     model.add(keras.layers.Dropout(0.75))
     model.add(keras.layers.Dense(units=1, activation='sigmoid'))
 
-    #model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.0001), loss='binary_crossentropy', metrics=["accuracy", 'AUC'])
-    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=["accuracy", 'AUC'])
-
     return model
 
 
