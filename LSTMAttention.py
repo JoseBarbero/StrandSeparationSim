@@ -82,52 +82,52 @@ def single_train(model_definition, X_train, X_val, X_test, y_train, y_val, y_tes
 
 
 if __name__ == "__main__":
-    #strategy = tf.distribute.MirroredStrategy(devices=["/gpu:0", "/gpu:1", "/gpu:2"])
-    #with strategy.scope():
-    seed = 42
-    np.random.seed(seed)
+    strategy = tf.distribute.MirroredStrategy(devices=["/gpu:1", "/gpu:2"])
+    with strategy.scope():
+        seed = 42
+        np.random.seed(seed)
 
-    X_train_file = open('../databubbles/serialized/X_train_onlyseq.pkl', 'rb')
-    y_train_file = open('../databubbles/serialized/y_train_onlyseq.pkl', 'rb')
-    X_val_file = open('../databubbles/serialized/X_val_onlyseq.pkl', 'rb')
-    y_val_file = open('../databubbles/serialized/y_val_onlyseq.pkl', 'rb')
-    X_test_file = open('../databubbles/serialized/X_test_onlyseq.pkl', 'rb')
-    y_test_file = open('../databubbles/serialized/y_test_onlyseq.pkl', 'rb')
+        X_train_file = open('../databubbles/serialized/X_train_onlyseq.pkl', 'rb')
+        y_train_file = open('../databubbles/serialized/y_train_onlyseq.pkl', 'rb')
+        X_val_file = open('../databubbles/serialized/X_val_onlyseq.pkl', 'rb')
+        y_val_file = open('../databubbles/serialized/y_val_onlyseq.pkl', 'rb')
+        X_test_file = open('../databubbles/serialized/X_test_onlyseq.pkl', 'rb')
+        y_test_file = open('../databubbles/serialized/y_test_onlyseq.pkl', 'rb')
 
-    X_train = pickle.load(X_train_file)
-    X_train = np.reshape(X_train, (*X_train.shape, 1))
-    y_train = pickle.load(y_train_file)
-    X_val = pickle.load(X_val_file)
-    X_val = np.reshape(X_val, (*X_val.shape, 1))
-    y_val = pickle.load(y_val_file)
-    X_test = pickle.load(X_test_file)
-    X_test = np.reshape(X_test, (*X_test.shape, 1))
-    y_test = pickle.load(y_test_file)
+        X_train = pickle.load(X_train_file)
+        X_train = np.reshape(X_train, (*X_train.shape, 1))
+        y_train = pickle.load(y_train_file)
+        X_val = pickle.load(X_val_file)
+        X_val = np.reshape(X_val, (*X_val.shape, 1))
+        y_val = pickle.load(y_val_file)
+        X_test = pickle.load(X_test_file)
+        X_test = np.reshape(X_test, (*X_test.shape, 1))
+        y_test = pickle.load(y_test_file)
 
-    X_train_file.close()
-    y_train_file.close()
-    X_val_file.close()
-    y_val_file.close()
-    X_test_file.close()
-    y_test_file.close()
+        X_train_file.close()
+        y_train_file.close()
+        X_val_file.close()
+        y_val_file.close()
+        X_test_file.close()
+        y_test_file.close()
 
-    X_train = X_train[:,:,:4]
-    X_val = X_val[:,:,:4]
-    X_test = X_test[:,:,:4]
+        X_train = X_train[:,:,:4]
+        X_val = X_val[:,:,:4]
+        X_test = X_test[:,:,:4]
 
-    X_train = X_train.astype(int)
-    X_val = X_val.astype(int)
-    X_test = X_test.astype(int)
+        X_train = X_train.astype(int)
+        X_val = X_val.astype(int)
+        X_test = X_test.astype(int)
 
-    y_train = y_train.reshape(*y_train.shape, 1)
-    y_val = y_val.reshape(*y_val.shape, 1)
-    y_test = y_test.reshape(*y_test.shape, 1)
-    
-    if len(sys.argv) < 2:
-        run_id = str(datetime.now()).replace(" ", "_").replace("-", "_").replace(":", "_").split(".")[0]
-    else:
-        run_id = sys.argv[1]
-        #run_id = "".join(categories)
+        y_train = y_train.reshape(*y_train.shape, 1)
+        y_val = y_val.reshape(*y_val.shape, 1)
+        y_test = y_test.reshape(*y_test.shape, 1)
+        
+        if len(sys.argv) < 2:
+            run_id = str(datetime.now()).replace(" ", "_").replace("-", "_").replace(":", "_").split(".")[0]
+        else:
+            run_id = sys.argv[1]
+            #run_id = "".join(categories)
 
-    
-    single_train(lstm_att(), X_train, X_val, X_test, y_train, y_val, y_test, run_id)
+        
+        single_train(lstm_att(), X_train, X_val, X_test, y_train, y_val, y_test, run_id)
