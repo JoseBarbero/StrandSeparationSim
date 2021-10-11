@@ -19,15 +19,16 @@ def lstm_att():
     model = keras.models.Sequential()
     
     # Esto así tal cual sobreajusta mucho
-    model.add(keras.layers.Bidirectional(keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=(200,4))))
-    #model.add(keras.layers.Dropout(0.75))
-    model.add(keras.layers.MultiHeadAttention(num_heads=2, key_dim=2, attention_axes=(1,2)))
-    model.add(keras.layers.Bidirectional(keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3,)))
-    #model.add(keras.layers.Dropout(0.75))
-    model.add(keras.layers.Flatten())
-    model.add(keras.layers.Dense(units=64, activation='relu'))
-    model.add(keras.layers.Dropout(0.75))
-    model.add(keras.layers.Dense(units=1, activation='sigmoid'))
+    model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=(200,4))))
+    model.add(tf.keras.layers.MultiHeadAttention(num_heads=2, key_dim=2, attention_axes=(1,2)))
+    model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3,)))
+    model.add(tf.keras.layers.Flatten())
+    model.add(tf.keras.layers.Dense(units=64, activation='relu'))
+    model.add(tf.keras.layers.Dropout(0.75))
+    model.add(tf.keras.layers.Dense(units=1, activation='sigmoid'))
+
+    model = tf.keras.Model(inputs=sequence_input, outputs=output)
+    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=["accuracy", 'AUC'])
 
     return model
 
