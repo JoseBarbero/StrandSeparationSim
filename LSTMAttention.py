@@ -16,16 +16,18 @@ from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from keras.callbacks import LearningRateScheduler
 
 def lstm_att():
-    model = keras.models.Sequential()
+
+    sequence_input = tf.keras.layers.Input(shape=(200,4))
     
     # Esto así tal cual sobreajusta mucho
-    model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=(200,4))))
-    model.add(tf.keras.layers.MultiHeadAttention(num_heads=2, key_dim=2, attention_axes=(1,2)))
-    model.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3,)))
-    model.add(tf.keras.layers.Flatten())
-    model.add(tf.keras.layers.Dense(units=64, activation='relu'))
-    model.add(tf.keras.layers.Dropout(0.75))
-    model.add(tf.keras.layers.Dense(units=1, activation='sigmoid'))
+    x = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=(200,4)))
+    x = tf.keras.layers.MultiHeadAttention(num_heads=2, key_dim=2, attention_axes=(1,2))
+    x = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3,))
+    x = tf.keras.layers.Flatten()
+    x = tf.keras.layers.Dense(units=64, activation='relu')
+    x = tf.keras.layers.Dropout(0.75)
+    output = tf.keras.layers.Dense(1)(x)
+    output = tf.keras.layers.Activation('sigmoid')(output)
 
     model = tf.keras.Model(inputs=sequence_input, outputs=output)
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=["accuracy", 'AUC'])
