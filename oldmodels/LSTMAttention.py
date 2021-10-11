@@ -10,28 +10,27 @@ import keras
 import tensorflow as tf
 from keras import layers
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
-from keras_self_attention import SeqSelfAttention
 
 
 
-def lstm_att_ref():
-    model = keras.models.Sequential()
+# def lstm_att_ref():
+#     model = keras.models.Sequential()
     
-    # Esto así tal cual sobreajusta mucho
-    model.add(keras.layers.Bidirectional(keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=(200,4))))
-    #model.add(keras.layers.Dropout(0.75))
-    model.add(SeqSelfAttention(units=64, attention_activation='sigmoid'))
-    model.add(keras.layers.Bidirectional(keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3,)))
-    #model.add(keras.layers.Dropout(0.75))
-    model.add(keras.layers.Flatten())
-    model.add(keras.layers.Dense(units=64, activation='relu'))
-    model.add(keras.layers.Dropout(0.75))
-    model.add(keras.layers.Dense(units=1, activation='sigmoid'))
+#     # Esto así tal cual sobreajusta mucho
+#     model.add(keras.layers.Bidirectional(keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=(200,4))))
+#     #model.add(keras.layers.Dropout(0.75))
+#     model.add(SeqSelfAttention(units=64, attention_activation='sigmoid'))
+#     model.add(keras.layers.Bidirectional(keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3,)))
+#     #model.add(keras.layers.Dropout(0.75))
+#     model.add(keras.layers.Flatten())
+#     model.add(keras.layers.Dense(units=64, activation='relu'))
+#     model.add(keras.layers.Dropout(0.75))
+#     model.add(keras.layers.Dense(units=1, activation='sigmoid'))
 
-    #model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.0001), loss='binary_crossentropy', metrics=["accuracy", 'AUC'])
-    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=["accuracy", 'AUC'])
+#     #model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.0001), loss='binary_crossentropy', metrics=["accuracy", 'AUC'])
+#     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=["accuracy", 'AUC'])
 
-    return model
+#     return model
 
 def lstm_att():
     sequence_input = tf.keras.layers.Input(shape=(200,4))
