@@ -1,7 +1,6 @@
 import numpy as np
 import re
 import os
-import pandas as pd
 import sys
 import pickle
 from ReadData import read_data_as_img, read_data_structured, read_data_st, seq_to_array, seq_to_onehot_array
