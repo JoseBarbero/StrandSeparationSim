@@ -112,10 +112,6 @@ if __name__ == "__main__":
         X_train = X_train[:,:,:4]
         X_val = X_val[:,:,:4]
         X_test = X_test[:,:,:4]
-
-        y_train = y_train.reshape(*y_train.shape, 1)
-        y_val = y_val.reshape(*y_val.shape, 1)
-        y_test = y_test.reshape(*y_test.shape, 1)
         
         if len(sys.argv) < 2:
             run_id = str(datetime.now()).replace(" ", "_").replace("-", "_").replace(":", "_").split(".")[0]
