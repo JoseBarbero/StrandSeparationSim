@@ -79,13 +79,10 @@ if __name__ == "__main__":
         y_test_file = open('../databubbles/serialized/y_test.pkl', 'rb')
 
         X_train = pickle.load(X_train_file)
-        #X_train = np.reshape(X_train, (*X_train.shape, 1))
         y_train = pickle.load(y_train_file)
         X_val = pickle.load(X_val_file)
-        #X_val = np.reshape(X_val, (*X_val.shape, 1))
         y_val = pickle.load(y_val_file)
         X_test = pickle.load(X_test_file)
-        #X_test = np.reshape(X_test, (*X_test.shape, 1))
         y_test = pickle.load(y_test_file)
 
         X_train_file.close()
@@ -95,11 +92,7 @@ if __name__ == "__main__":
         X_test_file.close()
         y_test_file.close()
         
-        print('print(X_train.shape)', X_train.shape)
-        print('print(get_seq.shape)', get_seq(X_train).shape)
-        print('print(get_bub8_probs.shape)', get_bub8_probs(X_train).shape)
         X_train = np.concatenate((get_seq(X_train), get_bub8_probs(X_train)), axis=3)
-        print(X_train.shape)
         X_val = np.concatenate((get_seq(X_val), get_bub8_probs(X_val)), axis=3)
         X_test = np.concatenate((get_seq(X_test), get_bub8_probs(X_test)), axis=3)
 
