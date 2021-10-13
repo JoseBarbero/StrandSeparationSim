@@ -266,6 +266,14 @@ def read_data_channels_onehot(directory, partition, temperatures, categories=["O
             seq_data_fw, seq_data_rv = seq_to_onehot_array(seq_file)
             #aa_fw_rf1, aa_fw_rf2, aa_fw_rf3, aa_rv_rf1, aa_rv_rf2, aa_rv_rf3 = seq_to_onehot_aminoacids(seq_file)
             
+            print("opn_data shape:", opn_data.shape)
+            print("bub8_data shape:", bub8_data.shape)
+            print("bub10_data shape:", bub10_data.shape)
+            print("bub12_data shape:", bub12_data.shape)
+            print("vrnorm_data shape:", vrnorm_data.shape)
+            print("seq_data_fw shape:", seq_data_fw.shape)
+            print("seq_data_rv shape:", seq_data_rv.shape)
+
             combined_data = np.asarray([opn_data,
                                         bub8_data,
                                         bub10_data,
@@ -291,86 +299,6 @@ def read_data_channels_onehot(directory, partition, temperatures, categories=["O
     instances_pos = np.moveaxis(instances_pos, 1, -1)
     instances_neg = np.moveaxis(instances_neg, 1, -1)
             
-    X = np.concatenate((instances_neg, instances_pos))
-    y = np.concatenate((np.zeros((instances_neg.shape[0])), np.ones(instances_pos.shape[0])))
-
-    return X, y
-
-
-def read_data_channels(directory, partition, temperatures, categories=["OPN", "BUB8", "BUB10", "BUB12", "VRNORM"]):
-    """
-    Reads csv data to numpy stacking temperatures.
-
-    Args:
-        directory (str): Directory containing the files to read.
-        partition (str): train, test or val.
-        temperatures (list): List of temperatures to read.
-        categories (str) : ["OPN", "BUB10", "BUB12", "BUB8", "VRNORM"]
-
-    Returns:
-        tuple: (np.array, np.array): X, Y data.
-    
-    Returned X extra info:
-    Size 28 (temperatures) x 200 (bases) x 13 (channels)
-        Channel 0: OPN probabilities.
-        Channel 1: BUB8 probabilities.
-        Channel 2: BUB10 probabilities.
-        Channel 3: BUB12 probabilities.
-        Channel 4: VRNORM probabilities.
-        Channels 5, 6, 7, 8: Forward sequence one-hot encoded.
-        Channels 9, 10, 11, 12: Reversed sequence one-hot encoded. 
-    """
-
-    X = []
-    y = []
-
-    data_pos = []
-    data_neg = []
-
-    for temp in temperatures:
-        for tag in ['pos', 'neg']:
-            hg = '16' if partition in ['train', 'val'] else '17'
-            
-            opn_file = directory+'/OPNat'+temp+'K.hg'+hg+'-'+partition+'.'+tag
-            bub8_file = directory+'/BUB8at'+temp+'K.hg'+hg+'-'+partition+'.'+tag
-            bub10_file = directory+'/BUB10at'+temp+'K.hg'+hg+'-'+partition+'.'+tag
-            bub12_file = directory+'/BUB12at'+temp+'K.hg'+hg+'-'+partition+'.'+tag
-            vrnorm_file = directory+'/VRNORMat'+temp+'K.hg'+hg+'-'+partition+'.'+tag
-            seq_file = directory+'/onlyseq.TSS'+tag+'FineGrained.hg'+hg+'-'+partition+'.'+tag
-
-            opn_data = file_to_array(opn_file)[0]
-            bub8_data = file_to_array(bub8_file)[0]
-            bub10_data = file_to_array(bub10_file)[0]
-            bub12_data = file_to_array(bub12_file)[0]
-            vrnorm_data = file_to_array(vrnorm_file)[0]
-            seq_data_fw, seq_data_rv = seq_to_array(seq_file)
-            aa_fw_rf1, aa_fw_rf2, aa_fw_rf3, aa_rv_rf1, aa_rv_rf2, aa_rv_rf3 = seq_to_aminoacids(seq_file)
-            
-            combined_data = np.asarray([opn_data,
-                                        bub8_data,
-                                        bub10_data,
-                                        bub12_data,
-                                        vrnorm_data,
-                                        seq_data_fw,
-                                        seq_data_rv,
-                                        aa_fw_rf1.reshape(aa_fw_rf1.shape[:-1]),
-                                        aa_fw_rf2.reshape(aa_fw_rf2.shape[:-1]),
-                                        aa_fw_rf3.reshape(aa_fw_rf3.shape[:-1]),
-                                        aa_rv_rf1.reshape(aa_rv_rf1.shape[:-1]),
-                                        aa_rv_rf2.reshape(aa_rv_rf2.shape[:-1]),
-                                        aa_rv_rf3.reshape(aa_rv_rf3.shape[:-1])])
-            if tag == "pos":
-                data_pos.append((temp, combined_data))
-            elif tag == "neg":
-                data_neg.append((temp, combined_data))
-    
-    instances_pos = np.asarray([instances for temp, instances in sorted(data_pos)])
-    instances_neg = np.asarray([instances for temp, instances in sorted(data_neg)])
-    instances_pos = np.swapaxes(instances_pos, 0, 2)
-    instances_neg = np.swapaxes(instances_neg, 0, 2)
-    instances_pos = np.moveaxis(instances_pos, 1, -1)
-    instances_neg = np.moveaxis(instances_neg, 1, -1)
-    
     X = np.concatenate((instances_neg, instances_pos))
     y = np.concatenate((np.zeros((instances_neg.shape[0])), np.ones(instances_pos.shape[0])))
 
@@ -519,6 +447,8 @@ def seqfile_to_instances(seqfile):
         return np.array(_seqfile.read().split('\n')[:-1])
 
 
+
+
 """
 Size 28 (temperatures) x 200 (bases) x 13 (channels)
         Channel 0: OPN probabilities.
@@ -529,7 +459,6 @@ Size 28 (temperatures) x 200 (bases) x 13 (channels)
         Channels 5, 6, 7, 8: Forward sequence one-hot encoded.
         Channels 9, 10, 11, 12: Reversed sequence one-hot encoded.
 """
-
 
 def get_seq(X):
     return X[:,:,5:9]
