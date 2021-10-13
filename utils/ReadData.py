@@ -267,16 +267,7 @@ def read_data_channels_onehot(directory, partition, temperatures, categories=["O
             #aa_fw_rf1, aa_fw_rf2, aa_fw_rf3, aa_rv_rf1, aa_rv_rf2, aa_rv_rf3 = seq_to_onehot_aminoacids(seq_file)
             seq_data_fw = seq_data_fw[:,50:-50,:]
             seq_data_rv = seq_data_rv[:,50:-50,:]
-            
-            print("opn_data shape:", opn_data.shape)
-            print("bub8_data shape:", bub8_data.shape)
-            print("bub10_data shape:", bub10_data.shape)
-            print("bub12_data shape:", bub12_data.shape)
-            print("vrnorm_data shape:", vrnorm_data.shape)
-            print("seq_data_fw shape:", seq_data_fw.shape)
-            print("seq_data_rv shape:", seq_data_rv.shape)
-
-            
+           
 
             combined_data = np.asarray([opn_data,
                                         bub8_data,
