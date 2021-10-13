@@ -63,35 +63,6 @@ def split_instance(instance, size):
     return new_instances
     
 
-
-def read_data_as_img(directory, filter_str):
-    """
-    Reads csv data to numpy as if it was an image.
-
-    Args:
-        directory (str): Directory containing the files to read.
-        filter_str (str): Regular expression to filter files in the directory.
-
-    Returns:
-        tuple: (np.array, np.array): X, Y data
-    """
-
-    # Read the data    
-    data = read_from_directory(directory, filter_str)
-    
-    # Create instances with equal dimensions
-    X = []
-    y = []
-    chunk_size = 200 # Pongo 200 para hacer los ejemplos cuadrados porque son 200 columnas
-    
-    for instance, tag in data:
-        splitted_data = split_instance(instance, chunk_size)
-        X.extend(splitted_data)
-        y.extend([tag] * len(splitted_data))
-    
-    return (np.asarray(X), np.asarray(y))       # TODO esto no es nada eficiente
-
-
 def read_data_structured(directory, filter_str):
 
     X = []
@@ -148,24 +119,6 @@ def read_data_st(directory, partition, categories):
 
     return np.asarray(X), np.asarray(y)
     
-
-def seq_to_array(seqfile):
-    X_fw = []
-    X_rv = []
-    basetovalue_fw = {'A': 1, 'T': 2, 'G': 3, 'C': 4}
-    basetovalue_rv = {'A': basetovalue_fw['T'], 'T': basetovalue_fw['A'], 'G': basetovalue_fw['C'], 'C': basetovalue_fw['G']}
-    with open(seqfile, "r") as _file:
-        for line in _file:
-            line_values_fw = []
-            line_values_rv = []
-            for base in line[:-1]:
-                line_values_fw.append(basetovalue_fw.get(base.upper(), 0))     # Aquí no estoy diferenciando entre caps y no, por lo tanto no diferencio entre secuencia 3' y 5'.
-                line_values_rv.append(basetovalue_rv.get(base.upper(), 0))
-            X_fw.append(line_values_fw)
-            X_rv.append(line_values_rv)
-    return np.asarray(X_fw), np.asarray(X_rv)
-
-
 def seq_to_onehot_array(seqfile):
     X_fw = []
     X_rv = []
@@ -264,87 +217,6 @@ def seq_to_onehot_aminoacids(seqfile):
     return np.asarray(X_fw_rf_1), np.asarray(X_fw_rf_2), np.asarray(X_fw_rf_3), np.asarray(X_rv_rf_1), np.asarray(X_rv_rf_2), np.asarray(X_rv_rf_3)
 
 
-def seq_to_aminoacids(seqfile):
-
-    X_fw_rf_1 = []
-    X_rv_rf_1 = []
-    X_fw_rf_2 = []
-    X_rv_rf_2 = []
-    X_fw_rf_3 = []
-    X_rv_rf_3 = []
-    
-    codon_dict_fw = {'ATA':'I', 'ATC':'I', 'ATT':'I', 'ATG':'M',
-                     'ACA':'T', 'ACC':'T', 'ACG':'T', 'ACT':'T',
-                     'AAC':'N', 'AAT':'N', 'AAA':'K', 'AAG':'K',
-                     'AGC':'S', 'AGT':'S', 'AGA':'R', 'AGG':'R',
-                     'CTA':'L', 'CTC':'L', 'CTG':'L', 'CTT':'L',
-                     'CCA':'P', 'CCC':'P', 'CCG':'P', 'CCT':'P',
-                     'CAC':'H', 'CAT':'H', 'CAA':'Q', 'CAG':'Q',
-                     'CGA':'R', 'CGC':'R', 'CGG':'R', 'CGT':'R',
-                     'GTA':'V', 'GTC':'V', 'GTG':'V', 'GTT':'V',
-                     'GCA':'A', 'GCC':'A', 'GCG':'A', 'GCT':'A',
-                     'GAC':'D', 'GAT':'D', 'GAA':'E', 'GAG':'E',
-                     'GGA':'G', 'GGC':'G', 'GGG':'G', 'GGT':'G',
-                     'TCA':'S', 'TCC':'S', 'TCG':'S', 'TCT':'S',
-                     'TTC':'F', 'TTT':'F', 'TTA':'L', 'TTG':'L',
-                     'TAC':'Y', 'TAT':'Y', 'TAA':'_', 'TAG':'_',
-                     'TGC':'C', 'TGT':'C', 'TGA':'_', 'TGG':'W'}
-
-    aminoacid_dict = {'I': 1,
-                      'M': 2,
-                      'T': 3,
-                      'N': 4,
-                      'K': 5,
-                      'R': 6,
-                      'L': 7,
-                      'P': 8,
-                      'H': 9,
-                      'Q': 10,
-                      'R': 11,
-                      'V': 12,
-                      'A': 13,
-                      'D': 14,
-                      'E': 15,
-                      'G': 16,
-                      'S': 17,
-                      'F': 18,
-                      'Y': 19,
-                      '_': 20,
-                      'C': 21,
-                      'W': 22,
-                      '?': 0
-                      }
-
-    # Meto cada aminoacido por triplicado para cada codon.
-    # Cuando salen codones (al principio y al final) de menos de 3 bases, los meto tantas veces como bases tenga ese "codon"
-    with open(seqfile, "r") as _file:
-        for line in _file:
-            line = '??'+line[:-1]+'??'
-            line_values_fw_rf1 = []
-            line_values_fw_rf2 = []
-            line_values_fw_rf3 = []
-            line_values_rv_rf1 = []
-            line_values_rv_rf2 = []
-            line_values_rv_rf3 = []
-            for i in range(0, len(line), 3):
-                codon_rf1 = line[i:i+3]
-                codon_rf2 = line[i+1:i+4]
-                codon_rf3 = line[i+2:i+5]
-                line_values_fw_rf1.extend(np.tile(aminoacid_dict[codon_dict_fw.get(codon_rf1, '?')], (len(re.findall(r'[ACGT]', codon_rf1)), 1)))
-                line_values_fw_rf2.extend(np.tile(aminoacid_dict[codon_dict_fw.get(codon_rf2, '?')], (len(re.findall(r'[ACGT]', codon_rf2)), 1)))
-                line_values_fw_rf3.extend(np.tile(aminoacid_dict[codon_dict_fw.get(codon_rf3, '?')], (len(re.findall(r'[ACGT]', codon_rf3)), 1)))
-                line_values_rv_rf1.extend(np.tile(aminoacid_dict[codon_dict_fw.get(Seq(codon_rf1).reverse_complement(), '?')], (len(re.findall(r'[ACGT]', codon_rf1)), 1)))
-                line_values_rv_rf2.extend(np.tile(aminoacid_dict[codon_dict_fw.get(Seq(codon_rf2).reverse_complement(), '?')], (len(re.findall(r'[ACGT]', codon_rf2)), 1)))
-                line_values_rv_rf3.extend(np.tile(aminoacid_dict[codon_dict_fw.get(Seq(codon_rf3).reverse_complement(), '?')], (len(re.findall(r'[ACGT]', codon_rf3)), 1)))
-            X_fw_rf_1.append(line_values_fw_rf1)
-            X_fw_rf_2.append(line_values_fw_rf2)
-            X_fw_rf_3.append(line_values_fw_rf3)
-            X_rv_rf_1.append(line_values_fw_rf1)
-            X_rv_rf_2.append(line_values_fw_rf2)
-            X_rv_rf_3.append(line_values_fw_rf3)
-    return np.asarray(X_fw_rf_1), np.asarray(X_fw_rf_2), np.asarray(X_fw_rf_3), np.asarray(X_rv_rf_1), np.asarray(X_rv_rf_2), np.asarray(X_rv_rf_3)
-
-
 def read_data_channels_onehot(directory, partition, temperatures, categories=["OPN", "BUB8", "BUB10", "BUB12", "VRNORM"]):
     """
     Reads csv data to numpy stacking temperatures.
@@ -360,13 +232,13 @@ def read_data_channels_onehot(directory, partition, temperatures, categories=["O
     
     Returned X extra info:
     Size 28 (temperatures) x 200 (bases) x 13 (channels)
-        Channel 1: OPN probabilities.
-        Channel 2: BUB8 probabilities.
-        Channel 3: BUB10 probabilities.
-        Channel 4: BUB12 probabilities.
-        Channel 5: VRNORM probabilities.
-        Channels 6, 7, 8, 9: Forward sequence one-hot encoded.
-        Channels 10, 11, 12, 13: Reversed sequence one-hot encoded. 
+        Channel 0: OPN probabilities.
+        Channel 1: BUB8 probabilities.
+        Channel 2: BUB10 probabilities.
+        Channel 3: BUB12 probabilities.
+        Channel 4: VRNORM probabilities.
+        Channels 5, 6, 7, 8: Forward sequence one-hot encoded.
+        Channels 9, 10, 11, 12: Reversed sequence one-hot encoded. 
     """
 
     X = []
