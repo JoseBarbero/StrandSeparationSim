@@ -442,8 +442,6 @@ def seqfile_to_instances(seqfile):
         return np.array(_seqfile.read().split('\n')[:-1])
 
 
-
-
 """
 Size 28 (temperatures) x 200 (bases) x 13 (channels)
         Channel 0: OPN probabilities.

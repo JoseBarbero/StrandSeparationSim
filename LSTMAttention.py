@@ -6,6 +6,7 @@ import os
 import pickle
 from Results import test_results, plot_train_history
 from datetime import datetime
+from ReadData import get_seq,  get_reversed_seq, get_opn_probs, get_bub8_probs, get_bub10_probs, get_bub12_probs, get_vrnorm_probs
 from contextlib import redirect_stdout
 import keras
 import tensorflow as tf
@@ -82,7 +83,7 @@ def single_train(model_definition, X_train, X_val, X_test, y_train, y_val, y_tes
 
 
 if __name__ == "__main__":
-    strategy = tf.distribute.MirroredStrategy(devices=["/gpu:1", "/gpu:2"])
+    strategy = tf.distribute.MirroredStrategy(devices=["/gpu:0", "/gpu:1", "/gpu:2"])
     with strategy.scope():
         seed = 42
         np.random.seed(seed)
@@ -111,9 +112,9 @@ if __name__ == "__main__":
         X_test_file.close()
         y_test_file.close()
 
-        #X_train = X_train[:,:,:4]
-        #X_val = X_val[:,:,:4]
-        #X_test = X_test[:,:,:4]
+        X_train = np.concatenate((get_seq(X_train), get_bub8_probs(X_train)), axis=2)
+        X_val = np.concatenate((get_seq(X_val), get_bub8_probs(X_val)), axis=2)
+        X_test = np.concatenate((get_seq(X_test), get_bub8_probs(X_test)), axis=2)
 
         X_train = X_train.astype(int)
         X_val = X_val.astype(int)
