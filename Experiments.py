@@ -15,25 +15,7 @@ from keras.models import Sequential
 from keras.layers import Conv1D, Conv2D, Conv3D, Dropout, MaxPooling1D, MaxPooling2D, Flatten, Dense
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from keras.callbacks import LearningRateScheduler
-
-def lstm_att():
-
-    sequence_input = tf.keras.layers.Input(shape=(200,4))
-    
-    x = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=(200,4)))(sequence_input)
-    x = tf.keras.layers.MultiHeadAttention(num_heads=2, key_dim=2, attention_axes=(1,2))(x, x)
-    x = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3,))(x)
-    x = tf.keras.layers.Flatten()(x)
-    x = tf.keras.layers.Dense(units=64, activation='relu')(x)
-    x = tf.keras.layers.Dropout(0.75)(x)
-    output = tf.keras.layers.Dense(1)(x)
-    output = tf.keras.layers.Activation('sigmoid')(output)
-
-    model = tf.keras.Model(inputs=sequence_input, outputs=output)
-    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=["accuracy", 'AUC'])
-
-    return model
-
+from Models import lstm_att, cnn
 
 def single_train(model_definition, X_train, X_val, X_test, y_train, y_val, y_test, run_id):
 
@@ -82,18 +64,19 @@ def single_train(model_definition, X_train, X_val, X_test, y_train, y_val, y_tes
     plot_train_history(history.history, plot_file)
 
 
+
 if __name__ == "__main__":
     strategy = tf.distribute.MirroredStrategy(devices=["/gpu:0", "/gpu:1", "/gpu:2"])
     with strategy.scope():
         seed = 42
         np.random.seed(seed)
 
-        X_train_file = open('../databubbles/serialized/X_train_onlyseq.pkl', 'rb')
-        y_train_file = open('../databubbles/serialized/y_train_onlyseq.pkl', 'rb')
-        X_val_file = open('../databubbles/serialized/X_val_onlyseq.pkl', 'rb')
-        y_val_file = open('../databubbles/serialized/y_val_onlyseq.pkl', 'rb')
-        X_test_file = open('../databubbles/serialized/X_test_onlyseq.pkl', 'rb')
-        y_test_file = open('../databubbles/serialized/y_test_onlyseq.pkl', 'rb')
+        X_train_file = open('../databubbles/serialized/X_train.pkl', 'rb')
+        y_train_file = open('../databubbles/serialized/y_train.pkl', 'rb')
+        X_val_file = open('../databubbles/serialized/X_val.pkl', 'rb')
+        y_val_file = open('../databubbles/serialized/y_val.pkl', 'rb')
+        X_test_file = open('../databubbles/serialized/X_test.pkl', 'rb')
+        y_test_file = open('../databubbles/serialized/y_test.pkl', 'rb')
 
         X_train = pickle.load(X_train_file)
         X_train = np.reshape(X_train, (*X_train.shape, 1))
@@ -128,7 +111,6 @@ if __name__ == "__main__":
             run_id = str(datetime.now()).replace(" ", "_").replace("-", "_").replace(":", "_").split(".")[0]
         else:
             run_id = sys.argv[1]
-            #run_id = "".join(categories)
 
         
-        single_train(lstm_att(), X_train, X_val, X_test, y_train, y_val, y_test, run_id)
+        single_train(lstm_att(X_train.shape[1:]), X_train, X_val, X_test, y_train, y_val, y_test, run_id)
