@@ -11,8 +11,8 @@ from contextlib import redirect_stdout
 import keras
 import tensorflow as tf
 from keras import layers
-from keras.models import Sequential
-from keras.layers import Conv1D, Conv2D, Conv3D, Dropout, MaxPooling1D, MaxPooling2D, Flatten, Dense
+from keras.models import Sequential, Model
+from keras.layers import Conv1D, Conv2D, Conv3D, Dropout, MaxPooling1D, MaxPooling2D, Flatten, Dense, concatenate
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from keras.callbacks import LearningRateScheduler
 
@@ -66,4 +66,45 @@ def cnn(inputshape):
 
     model.add(Dense(1, activation = 'sigmoid'))
     
+    return model
+
+
+def cnnxlstm(seqshape, inputshape):
+    
+    sequence_input = tf.keras.layers.Input(shape=seqshape)
+    
+    lstm = Sequential() 
+    lstm.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=seqshape)))
+    lstm.add(tf.keras.layers.MultiHeadAttention(num_heads=2, key_dim=2, attention_axes=(1,2)))
+    lstm.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3,)))
+    lstm.add(Flatten())
+    
+
+    cnn = Sequential()
+    cnn.add(Conv2D(filters=32, kernel_size=3, data_format='channels_last', strides=1, activation='relu', input_shape=inputshape))
+    cnn.add(MaxPooling2D(2))
+    cnn.add(Conv2D(filters=32, kernel_size=3, strides=1, activation='relu'))
+    cnn.add(MaxPooling2D(2))
+    cnn.add(Conv2D(filters=32, kernel_size=3, strides=1, activation='relu'))
+    cnn.add(MaxPooling2D(3))
+    cnn.add(Flatten())
+    cnn.add(Dense(1024, activation = 'relu'))
+    cnn.add(Dropout(0.2))
+    cnn.add(Dense(512, activation = 'relu'))
+    cnn.add(Dropout(0.2))
+    cnn.add(Dense(128, activation = 'relu'))
+    cnn.add(Dropout(0.2))
+    cnn.add(Flatten())
+
+
+    merged = concatenate([lstm.output, cnn.output])
+    z = Dense(1024, activation="relu")(merged)
+    z = Dense(1, activation="sigmoid")(merged)
+
+    model = Model(inputs=[lstm.input, cnn.input], outputs=z)
+
+    model.compile(optimizer='adam',
+                loss='binary_crossentropy',
+                metrics=['accuracy', "AUC"])
+
     return model

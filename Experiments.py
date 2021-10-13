@@ -11,11 +11,11 @@ from contextlib import redirect_stdout
 import keras
 import tensorflow as tf
 from keras import layers
-from keras.models import Sequential
+from keras.models import Sequential, Model
 from keras.layers import Conv1D, Conv2D, Conv3D, Dropout, MaxPooling1D, MaxPooling2D, Flatten, Dense
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from keras.callbacks import LearningRateScheduler
-from Models import lstm_att, cnn
+from Models import lstm_att, cnn, cnnxlstm
 
 def single_train(model_definition, X_train, X_val, X_test, y_train, y_val, y_test, run_id):
 
@@ -110,4 +110,4 @@ if __name__ == "__main__":
             run_id = sys.argv[1]
 
         
-        single_train(lstm_att(X_train.shape[1:]), X_train, X_val, X_test, y_train, y_val, y_test, run_id)
+        single_train(cnnxlstm((28, 200, 4), (28, 200, 1)), X_train, X_val, X_test, y_train, y_val, y_test, run_id)
