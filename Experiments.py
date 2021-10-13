@@ -95,7 +95,9 @@ if __name__ == "__main__":
         X_test_file.close()
         y_test_file.close()
         
-        print(X_train.shape)
+        print('print(X_train.shape)', X_train.shape)
+        print('print(get_seq.shape)', get_seq(X_train).shape)
+        print('print(get_bub8_probs.shape)', get_bub8_probs(X_train).shape)
         X_train = np.concatenate((get_seq(X_train), get_bub8_probs(X_train)), axis=3)
         print(X_train.shape)
         X_val = np.concatenate((get_seq(X_val), get_bub8_probs(X_val)), axis=3)
