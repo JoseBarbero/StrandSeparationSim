@@ -372,22 +372,22 @@ Size 28 (temperatures) x 200 (bases) x 13 (channels)
 """
 
 def get_seq(X):
-    return X[:,:,5:9]
+    return X[:,:,:,5:9]
 
 def get_reversed_seq(X):
-    return X[:,:,9:13]
+    return X[:,:,:,9:13]
 
 def get_opn_probs(X):
-    return X[:,:,0]
+    return X[:,:,:,0]
 
 def get_bub8_probs(X):
-    return X[:,:,1]
+    return X[:,:,:,1]
 
 def get_bub10_probs(X):
-    return X[:,:,2]
+    return X[:,:,:,2]
 
 def get_bub12_probs(X):
-    return X[:,:,3]
+    return X[:,:,:,3]
 
 def get_vrnorm_probs(X):
-    return X[:,:,4]
+    return X[:,:,:,4]
