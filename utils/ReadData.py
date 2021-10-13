@@ -378,16 +378,26 @@ def get_reversed_seq(X):
     return X[:,:,:,9:13]
 
 def get_opn_probs(X):
-    return X[:,:,:,0]
+    X = X[:,:,:,0]
+    X = np.reshape(X, (*X.shape, 1))
+    return X
 
 def get_bub8_probs(X):
-    return X[:,:,:,1]
+    X = X[:,:,:,1]
+    X = np.reshape(X, (*X.shape, 1))
+    return X
 
 def get_bub10_probs(X):
-    return X[:,:,:,2]
+    X = X[:,:,:,2]
+    X = np.reshape(X, (*X.shape, 1))
+    return X
 
 def get_bub12_probs(X):
-    return X[:,:,:,3]
+    X = X[:,:,:,3]
+    X = np.reshape(X, (*X.shape, 1))
+    return X
 
 def get_vrnorm_probs(X):
-    return X[:,:,:,4]
+    X = X[:,:,:,4]
+    X = np.reshape(X, (*X.shape, 1))
+    return X
