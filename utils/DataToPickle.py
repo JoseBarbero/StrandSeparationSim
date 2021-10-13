@@ -22,11 +22,11 @@ for part in ['train', 'val', 'test']:
     X, y = read_data_channels_onehot(data_dir, part, temperatures, categories)
 
     print('Writing '+part+' data... '+'['+datetime.now().strftime("%m/%d/%Y, %H:%M:%S")+']')
-    X_file = open('../data/serialized/X_'+part+'.pkl', 'wb')
+    X_file = open('../../databubbles/serialized/X_'+part+'.pkl', 'wb')
     pickle.dump(X, X_file, protocol=4)  # protocol=4 allows to serialize larger files than 4gb
     X_file.close()
 
-    y_file = open('../data/serialized/y_'+part+'.pkl', 'wb')
+    y_file = open('../../databubbles/serialized/y_'+part+'.pkl', 'wb')
     pickle.dump(y, y_file, protocol=4)
     y_file.close()
 
