@@ -264,7 +264,7 @@ def read_data_channels_onehot(directory, partition, temperatures, categories=["O
             bub12_data = file_to_array(bub12_file)[0]
             vrnorm_data = file_to_array(vrnorm_file)[0]
             seq_data_fw, seq_data_rv = seq_to_onehot_array(seq_file)
-            aa_fw_rf1, aa_fw_rf2, aa_fw_rf3, aa_rv_rf1, aa_rv_rf2, aa_rv_rf3 = seq_to_onehot_aminoacids(seq_file)
+            #aa_fw_rf1, aa_fw_rf2, aa_fw_rf3, aa_rv_rf1, aa_rv_rf2, aa_rv_rf3 = seq_to_onehot_aminoacids(seq_file)
             
             combined_data = np.asarray([opn_data,
                                         bub8_data,
@@ -272,13 +272,13 @@ def read_data_channels_onehot(directory, partition, temperatures, categories=["O
                                         bub12_data,
                                         vrnorm_data,
                                         *[seq_data_fw[:, :, i] for i in range(seq_data_fw.shape[2])],
-                                        *[seq_data_rv[:, :, i] for i in range(seq_data_rv.shape[2])],
-                                        *[aa_fw_rf1[:, :, i] for i in range(aa_fw_rf1.shape[2])],
-                                        *[aa_fw_rf2[:, :, i] for i in range(aa_fw_rf2.shape[2])],
-                                        *[aa_fw_rf3[:, :, i] for i in range(aa_fw_rf3.shape[2])],
-                                        *[aa_rv_rf1[:, :, i] for i in range(aa_rv_rf1.shape[2])],
-                                        *[aa_rv_rf2[:, :, i] for i in range(aa_rv_rf2.shape[2])],
-                                        *[aa_rv_rf3[:, :, i] for i in range(aa_rv_rf3.shape[2])]])
+                                        *[seq_data_rv[:, :, i] for i in range(seq_data_rv.shape[2])])
+                                        #*[aa_fw_rf1[:, :, i] for i in range(aa_fw_rf1.shape[2])],
+                                        #*[aa_fw_rf2[:, :, i] for i in range(aa_fw_rf2.shape[2])],
+                                        #*[aa_fw_rf3[:, :, i] for i in range(aa_fw_rf3.shape[2])],
+                                        #*[aa_rv_rf1[:, :, i] for i in range(aa_rv_rf1.shape[2])],
+                                        #*[aa_rv_rf2[:, :, i] for i in range(aa_rv_rf2.shape[2])],
+                                        #*[aa_rv_rf3[:, :, i] for i in range(aa_rv_rf3.shape[2])]])
             if tag == "pos":
                 data_pos.append((temp, combined_data))
             elif tag == "neg":
