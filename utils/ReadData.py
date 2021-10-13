@@ -1,7 +1,6 @@
 import numpy as np
 import os
 import re
-from Bio.Seq import Seq
 from datetime import datetime
 
 def file_to_array(inputfile):
@@ -134,86 +133,6 @@ def seq_to_onehot_array(seqfile):
             X_rv.append(line_values_rv)
     return np.asarray(X_fw), np.asarray(X_rv)
 
-
-def seq_to_onehot_aminoacids(seqfile):
-
-    X_fw_rf_1 = []
-    X_rv_rf_1 = []
-    X_fw_rf_2 = []
-    X_rv_rf_2 = []
-    X_fw_rf_3 = []
-    X_rv_rf_3 = []
-    
-    codon_dict_fw = {'ATA':'I', 'ATC':'I', 'ATT':'I', 'ATG':'M',
-                     'ACA':'T', 'ACC':'T', 'ACG':'T', 'ACT':'T',
-                     'AAC':'N', 'AAT':'N', 'AAA':'K', 'AAG':'K',
-                     'AGC':'S', 'AGT':'S', 'AGA':'R', 'AGG':'R',
-                     'CTA':'L', 'CTC':'L', 'CTG':'L', 'CTT':'L',
-                     'CCA':'P', 'CCC':'P', 'CCG':'P', 'CCT':'P',
-                     'CAC':'H', 'CAT':'H', 'CAA':'Q', 'CAG':'Q',
-                     'CGA':'R', 'CGC':'R', 'CGG':'R', 'CGT':'R',
-                     'GTA':'V', 'GTC':'V', 'GTG':'V', 'GTT':'V',
-                     'GCA':'A', 'GCC':'A', 'GCG':'A', 'GCT':'A',
-                     'GAC':'D', 'GAT':'D', 'GAA':'E', 'GAG':'E',
-                     'GGA':'G', 'GGC':'G', 'GGG':'G', 'GGT':'G',
-                     'TCA':'S', 'TCC':'S', 'TCG':'S', 'TCT':'S',
-                     'TTC':'F', 'TTT':'F', 'TTA':'L', 'TTG':'L',
-                     'TAC':'Y', 'TAT':'Y', 'TAA':'_', 'TAG':'_',
-                     'TGC':'C', 'TGT':'C', 'TGA':'_', 'TGG':'W'}
-
-    aminoacid_dict = {'I': np.array([1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]),
-                      'M': np.array([0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]),
-                      'T': np.array([0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]),
-                      'N': np.array([0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]),
-                      'K': np.array([0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]),
-                      'R': np.array([0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]),
-                      'L': np.array([0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]),
-                      'P': np.array([0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0]),
-                      'H': np.array([0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0]),
-                      'Q': np.array([0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0]),
-                      'R': np.array([0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0]),
-                      'V': np.array([0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0]),
-                      'A': np.array([0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0]),
-                      'D': np.array([0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0]),
-                      'E': np.array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0]),
-                      'G': np.array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0]),
-                      'S': np.array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0]),
-                      'F': np.array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0]),
-                      'Y': np.array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0]),
-                      '_': np.array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0]),
-                      'C': np.array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0]),
-                      'W': np.array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]),
-                      '?': np.array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
-                      }
-
-    # Meto cada aminoacido por triplicado para cada codon.
-    # Cuando salen codones (al principio y al final) de menos de 3 bases, los meto tantas veces como bases tenga ese "codon"
-    with open(seqfile, "r") as _file:
-        for line in _file:
-            line = '??'+line[:-1]+'??'
-            line_values_fw_rf1 = []
-            line_values_fw_rf2 = []
-            line_values_fw_rf3 = []
-            line_values_rv_rf1 = []
-            line_values_rv_rf2 = []
-            line_values_rv_rf3 = []
-            for i in range(0, len(line), 3):
-                codon_rf1 = line[i:i+3]
-                codon_rf2 = line[i+1:i+4]
-                codon_rf3 = line[i+2:i+5]
-                line_values_fw_rf1.extend(np.tile(aminoacid_dict[codon_dict_fw.get(codon_rf1, '?')], (len(re.findall(r'[ACGT]', codon_rf1)), 1)))
-                line_values_fw_rf2.extend(np.tile(aminoacid_dict[codon_dict_fw.get(codon_rf2, '?')], (len(re.findall(r'[ACGT]', codon_rf2)), 1)))
-                line_values_fw_rf3.extend(np.tile(aminoacid_dict[codon_dict_fw.get(codon_rf3, '?')], (len(re.findall(r'[ACGT]', codon_rf3)), 1)))
-                line_values_rv_rf1.extend(np.tile(aminoacid_dict[codon_dict_fw.get(Seq(codon_rf1).reverse_complement(), '?')], (len(re.findall(r'[ACGT]', codon_rf1)), 1)))
-                line_values_rv_rf2.extend(np.tile(aminoacid_dict[codon_dict_fw.get(Seq(codon_rf2).reverse_complement(), '?')], (len(re.findall(r'[ACGT]', codon_rf2)), 1)))
-                line_values_rv_rf3.extend(np.tile(aminoacid_dict[codon_dict_fw.get(Seq(codon_rf3).reverse_complement(), '?')], (len(re.findall(r'[ACGT]', codon_rf3)), 1)))
-            X_fw_rf_1.append(line_values_fw_rf1)
-            X_fw_rf_2.append(line_values_fw_rf2)
-            X_fw_rf_3.append(line_values_fw_rf3)
-            X_rv_rf_1.append(line_values_fw_rf1)
-            X_rv_rf_2.append(line_values_fw_rf2)
-            X_rv_rf_3.append(line_values_fw_rf3)
-    return np.asarray(X_fw_rf_1), np.asarray(X_fw_rf_2), np.asarray(X_fw_rf_3), np.asarray(X_rv_rf_1), np.asarray(X_rv_rf_2), np.asarray(X_rv_rf_3)
 
 
 def read_data_channels_onehot(directory, partition, temperatures, categories=["OPN", "BUB8", "BUB10", "BUB12", "VRNORM"]):
