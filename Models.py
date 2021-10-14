@@ -4,12 +4,11 @@ import numpy as np
 import re
 import os
 import pickle
+import tensorflow as tf
 from Results import test_results, plot_train_history
 from datetime import datetime
 from ReadData import get_seq,  get_reversed_seq, get_opn_probs, get_bub8_probs, get_bub10_probs, get_bub12_probs, get_vrnorm_probs
 from contextlib import redirect_stdout
-import tensorflow as tf
-from tf.keras import layers
 from tf.keras.models import Sequential, Model
 from tf.keras.layers import Conv1D, Conv2D, Conv3D, Dropout, MaxPooling1D, MaxPooling2D, Flatten, Dense, concatenate, \
                             Input, Bidirectional, MultiHeadAttention, LSTM
