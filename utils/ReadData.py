@@ -372,10 +372,10 @@ Size 28 (temperatures) x 200 (bases) x 13 (channels)
 """
 
 def get_seq(X):
-    return X[:,:,:,5:9]
+    return X[:,0,:,5:9]
 
 def get_reversed_seq(X):
-    return X[:,:,:,9:13]
+    return X[:,0,:,9:13]
 
 def get_opn_probs(X):
     X = X[:,:,:,0]
