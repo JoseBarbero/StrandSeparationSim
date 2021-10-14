@@ -29,6 +29,8 @@ def lstm(inputshape):
     model = tf.keras.Model(inputs=sequence_input, outputs=output)
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=["accuracy", 'AUC'])
 
+    return model
+
 def att(inputshape):
 
     sequence_input = tf.keras.layers.Input(shape=inputshape)
