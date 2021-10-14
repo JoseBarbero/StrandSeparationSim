@@ -29,6 +29,22 @@ def lstm(inputshape):
     model = tf.keras.Model(inputs=sequence_input, outputs=output)
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=["accuracy", 'AUC'])
 
+def att(inputshape):
+
+    sequence_input = tf.keras.layers.Input(shape=inputshape)
+    
+    x = tf.keras.layers.MultiHeadAttention(num_heads=2, key_dim=2, attention_axes=(1,2))(sequence_input, sequence_input)
+    x = tf.keras.layers.Flatten()(x)
+    x = tf.keras.layers.Dense(units=64, activation='relu')(x)
+    x = tf.keras.layers.Dropout(0.75)(x)
+    output = tf.keras.layers.Dense(1)(x)
+    output = tf.keras.layers.Activation('sigmoid')(output)
+
+    model = tf.keras.Model(inputs=sequence_input, outputs=output)
+    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=["accuracy", 'AUC'])
+
+    return model
+
 def lstm_att(inputshape):
 
     sequence_input = tf.keras.layers.Input(shape=inputshape)
