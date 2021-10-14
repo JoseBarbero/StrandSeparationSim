@@ -4,17 +4,16 @@ import numpy as np
 import re
 import os
 import pickle
-import keras
 import tensorflow as tf
 from Results import test_results, plot_train_history
 from datetime import datetime
 from ReadData import get_seq,  get_reversed_seq, get_opn_probs, get_bub8_probs, get_bub10_probs, get_bub12_probs, get_vrnorm_probs
 from contextlib import redirect_stdout
-from tf.keras.models import Sequential, Model
-from tf.keras.layers import Conv1D, Conv2D, Conv3D, Dropout, MaxPooling1D, MaxPooling2D, Flatten, Dense, concatenate, \
-                            Input, Bidirectional, MultiHeadAttention, LSTM
-from tf.keras.callbacks import EarlyStopping, ReduceLROnPlateau
-from tf.keras.callbacks import LearningRateScheduler
+from tensorflow.keras.models import Sequential, Model
+from tensorflow.keras.layers import Conv1D, Conv2D, Conv3D, Dropout, MaxPooling1D, MaxPooling2D, Flatten, Dense, concatenate, \
+                                    Input, Bidirectional, MultiHeadAttention, LSTM
+from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
+from tensorflow.keras.callbacks import LearningRateScheduler
 
 def lstm_att(inputshape):
 
