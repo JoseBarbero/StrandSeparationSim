@@ -119,7 +119,7 @@ if __name__ == "__main__":
         #             (X_test_seq, X_test_probs), 
         #             y_train, y_val, y_test, run_id)
         
-        single_train(att(X_train_seq.shape[1:]), 
+        single_train(lstm(X_train_seq.shape[1:]), 
                     X_train_seq, 
                     X_val_seq, 
                     X_test_seq, 
