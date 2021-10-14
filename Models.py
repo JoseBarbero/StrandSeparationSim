@@ -8,13 +8,13 @@ from Results import test_results, plot_train_history
 from datetime import datetime
 from ReadData import get_seq,  get_reversed_seq, get_opn_probs, get_bub8_probs, get_bub10_probs, get_bub12_probs, get_vrnorm_probs
 from contextlib import redirect_stdout
-import keras
 import tensorflow as tf
-from keras import layers
-from keras.models import Sequential, Model
-from keras.layers import Conv1D, Conv2D, Conv3D, Dropout, MaxPooling1D, MaxPooling2D, Flatten, Dense, concatenate
-from keras.callbacks import EarlyStopping, ReduceLROnPlateau
-from keras.callbacks import LearningRateScheduler
+from tf.keras import layers
+from tf.keras.models import Sequential, Model
+from tf.keras.layers import Conv1D, Conv2D, Conv3D, Dropout, MaxPooling1D, MaxPooling2D, Flatten, Dense, concatenate, \
+                            Input, Bidirectional, MultiHeadAttention, LSTM
+from tf.keras.callbacks import EarlyStopping, ReduceLROnPlateau
+from tf.keras.callbacks import LearningRateScheduler
 
 def lstm_att(inputshape):
 
@@ -69,42 +69,38 @@ def cnn(inputshape):
     return model
 
 
-def cnnxlstm(seqshape, inputshape):
+def cnnxlstm(seqshape, probsshape):
     
-    sequence_input = tf.keras.layers.Input(shape=seqshape)
+    lstm_in = Input(shape=seqshape)
+    lstm_x = Bidirectional(LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=seqshape))(sequence_input)
+    lstm_x = MultiHeadAttention(num_heads=2, key_dim=2, attention_axes=(1,2))(lstm_x, lstm_x)
+    lstm_x = Bidirectional(LSTM(units=64, return_sequences=True, dropout=0.3,))(lstm_x)
+    lstm_x = Flatten()(lstm_x)
+    lstm_x = Dense(units=64, activation='relu')(lstm_x)
+    lstm_out = Dropout(0.75)(lstm_x)
     
-    lstm = Sequential() 
-    lstm.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=seqshape)))
-    lstm.add(tf.keras.layers.MultiHeadAttention(num_heads=2, key_dim=2, attention_axes=(1,2)))
-    lstm.add(tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3,)))
-    lstm.add(Flatten())
-    
-
-    cnn = Sequential()
-    cnn.add(Conv2D(filters=32, kernel_size=3, data_format='channels_last', strides=1, activation='relu', input_shape=inputshape))
-    cnn.add(MaxPooling2D(2))
-    cnn.add(Conv2D(filters=32, kernel_size=3, strides=1, activation='relu'))
-    cnn.add(MaxPooling2D(2))
-    cnn.add(Conv2D(filters=32, kernel_size=3, strides=1, activation='relu'))
-    cnn.add(MaxPooling2D(3))
-    cnn.add(Flatten())
-    cnn.add(Dense(1024, activation = 'relu'))
-    cnn.add(Dropout(0.2))
-    cnn.add(Dense(512, activation = 'relu'))
-    cnn.add(Dropout(0.2))
-    cnn.add(Dense(128, activation = 'relu'))
-    cnn.add(Dropout(0.2))
-    cnn.add(Flatten())
+    cnn_in = Input(shape=probsshape)
+    cnn_x = Conv2D(filters=32, kernel_size=3, data_format='channels_last', strides=1, activation='relu', input_shape=inputshape)(cnn_x)
+    cnn_x = MaxPooling2D(2)(cnn_x)
+    cnn_x = Conv2D(filters=32, kernel_size=3, strides=1, activation='relu')(cnn_x)
+    cnn_x = MaxPooling2D(2)(cnn_x)
+    cnn_x = Conv2D(filters=32, kernel_size=3, strides=1, activation='relu')(cnn_x)
+    cnn_x = MaxPooling2D(3)(cnn_x)
+    cnn_x = Flatten()(cnn_x)
+    cnn_x = Dense(1024, activation = 'relu')(cnn_x)
+    cnn_x = Dropout(0.2)(cnn_x)
+    cnn_x = Dense(512, activation = 'relu')(cnn_x)
+    cnn_x = Dropout(0.2)(cnn_x)
+    cnn_x = Dense(128, activation = 'relu')(cnn_x)
+    cnn_x = Dropout(0.2)(cnn_x)
+    cnn_out = Flatten()(cnn_x)
 
 
-    merged = concatenate([lstm.output, cnn.output])
+    merged = concatenate([lstm_out, cnn_out])
     z = Dense(1024, activation="relu")(merged)
     z = Dense(1, activation="sigmoid")(merged)
 
-    model = Model(inputs=[lstm.input, cnn.input], outputs=z)
-
-    model.compile(optimizer='adam',
-                loss='binary_crossentropy',
-                metrics=['accuracy', "AUC"])
+    model = tf.keras.Model(inputs=[lstm_in, cnn_in], outputs=z)
+    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=["accuracy", 'AUC'])
 
     return model
