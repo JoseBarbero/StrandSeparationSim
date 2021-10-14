@@ -92,9 +92,12 @@ if __name__ == "__main__":
         X_test_file.close()
         y_test_file.close()
         
-        X_train = np.concatenate((get_seq(X_train), get_bub8_probs(X_train)), axis=3)
-        X_val = np.concatenate((get_seq(X_val), get_bub8_probs(X_val)), axis=3)
-        X_test = np.concatenate((get_seq(X_test), get_bub8_probs(X_test)), axis=3)
+        X_train_seq = get_seq(X_train)
+        X_train_probs = get_bub8_probs(X_train)
+        X_val_seq = get_seq(X_val)
+        X_val_probs = get_bub8_probs(X_val)
+        X_test_seq = get_seq(X_test)
+        X_test_probs = get_bub8_probs(X_test)
 
         X_train = X_train.astype(int)
         X_val = X_val.astype(int)
@@ -110,4 +113,8 @@ if __name__ == "__main__":
             run_id = sys.argv[1]
 
         
-        single_train(cnnxlstm((28, 200, 4), (28, 200, 1)), X_train, X_val, X_test, y_train, y_val, y_test, run_id)
+        single_train(cnnxlstm(X_train_seq.shape[1:], X_train_probs.shape[1:]), 
+                    (X_train_seq, X_train_probs), 
+                    (X_val_seq, X_val_probs), 
+                    (X_test_seq, X_test_probs), 
+                    y_train, y_val, y_test, run_id)

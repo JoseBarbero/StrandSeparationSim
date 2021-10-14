@@ -71,7 +71,7 @@ def cnn(inputshape):
 def cnnxlstm(seqshape, probsshape):
     
     lstm_in = Input(shape=seqshape)
-    lstm_x = Bidirectional(LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=seqshape))(sequence_input)
+    lstm_x = Bidirectional(LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=seqshape))(lstm_in)
     lstm_x = MultiHeadAttention(num_heads=2, key_dim=2, attention_axes=(1,2))(lstm_x, lstm_x)
     lstm_x = Bidirectional(LSTM(units=64, return_sequences=True, dropout=0.3,))(lstm_x)
     lstm_x = Flatten()(lstm_x)
@@ -79,7 +79,7 @@ def cnnxlstm(seqshape, probsshape):
     lstm_out = Dropout(0.75)(lstm_x)
     
     cnn_in = Input(shape=probsshape)
-    cnn_x = Conv2D(filters=32, kernel_size=3, data_format='channels_last', strides=1, activation='relu', input_shape=inputshape)(cnn_x)
+    cnn_x = Conv2D(filters=32, kernel_size=3, data_format='channels_last', strides=1, activation='relu', input_shape=probsshape)(cnn_in)
     cnn_x = MaxPooling2D(2)(cnn_x)
     cnn_x = Conv2D(filters=32, kernel_size=3, strides=1, activation='relu')(cnn_x)
     cnn_x = MaxPooling2D(2)(cnn_x)
