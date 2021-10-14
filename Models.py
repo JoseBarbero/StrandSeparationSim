@@ -15,7 +15,7 @@ from tensorflow.keras.layers import Conv1D, Conv2D, Conv3D, Dropout, MaxPooling1
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from tensorflow.keras.callbacks import LearningRateScheduler
 
-def lstm_att(inputshape):
+def lstm(inputshape):
 
     sequence_input = tf.keras.layers.Input(shape=inputshape)
     
@@ -33,8 +33,7 @@ def lstm_att(inputshape):
 
     sequence_input = tf.keras.layers.Input(shape=inputshape)
     
-    x = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=inputshape))(sequence_input)
-    x = tf.keras.layers.MultiHeadAttention(num_heads=2, key_dim=2, attention_axes=(1,2))(x, x)
+    x = tf.keras.layers.MultiHeadAttention(num_heads=2, key_dim=2, attention_axes=(1,2))(sequence_input, sequence_input)
     x = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3,))(x)
     x = tf.keras.layers.Flatten()(x)
     x = tf.keras.layers.Dense(units=64, activation='relu')(x)
