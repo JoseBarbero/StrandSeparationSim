@@ -93,12 +93,12 @@ if __name__ == "__main__":
         X_test_file.close()
         y_test_file.close()
         
-        X_train_seq = get_seq(X_train)
-        #X_train_probs = get_bub8_probs(X_train)
-        X_val_seq = get_seq(X_val)
-        #X_val_probs = get_bub8_probs(X_val)
-        X_test_seq = get_seq(X_test)
-        #X_test_probs = get_bub8_probs(X_test)
+        #X_train_seq = get_seq(X_train)
+        X_train_probs = get_bub8_probs(X_train)
+        #X_val_seq = get_seq(X_val)
+        X_val_probs = get_bub8_probs(X_val)
+        #X_test_seq = get_seq(X_test)
+        X_test_probs = get_bub8_probs(X_test)
         del X_train
         del X_val
         del X_test
@@ -119,8 +119,8 @@ if __name__ == "__main__":
         #             (X_test_seq, X_test_probs), 
         #             y_train, y_val, y_test, run_id)
         
-        single_train(lstm(X_train_seq.shape[1:]), 
-                    X_train_seq, 
-                    X_val_seq, 
-                    X_test_seq, 
+        single_train(lstm(X_train_probs.shape[1:]), 
+                    X_train_probs, 
+                    X_val_probs, 
+                    X_test_probs, 
                     y_train, y_val, y_test, run_id)
