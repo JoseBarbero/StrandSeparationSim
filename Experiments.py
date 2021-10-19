@@ -99,6 +99,9 @@ if __name__ == "__main__":
         X_val_probs = get_bub8_probs(X_val)[:,7,:,:]
         X_test_seq = get_seq(X_test)
         X_test_probs = get_bub8_probs(X_test)[:,7,:,:]
+        
+        print(X_train_seq.shape)
+        print(X_train_probs.shape)
 
         X_train = np.concatenate((X_train_seq, X_train_probs), axis=1)
         X_val = np.concatenate((X_val_seq, X_val_probs), axis=1)
