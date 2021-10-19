@@ -103,10 +103,14 @@ if __name__ == "__main__":
         print(X_train_seq.shape)
         print(X_train_probs.shape)
 
-        X_train = np.concatenate((X_train_seq, X_train_probs), axis=1)
-        X_val = np.concatenate((X_val_seq, X_val_probs), axis=1)
-        X_test = np.concatenate((X_test_seq, X_test_probs), axis=1)
+        X_train = np.concatenate((X_train_seq, X_train_probs), axis=2)
+        X_val = np.concatenate((X_val_seq, X_val_probs), axis=2)
+        X_test = np.concatenate((X_test_seq, X_test_probs), axis=2)
         
+        # del X_train
+        # del X_val
+        # del X_test
+
         y_train = y_train.reshape(*y_train.shape, 1)
         y_val = y_val.reshape(*y_val.shape, 1)
         y_test = y_test.reshape(*y_test.shape, 1)
