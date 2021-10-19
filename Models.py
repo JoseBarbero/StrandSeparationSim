@@ -66,10 +66,7 @@ def lstm_att(inputshape):
 
 def cnn(inputshape):
     model = Sequential()
-
-    model.add(Conv2D(filters=32, kernel_size=3, data_format='channels_last', strides=1, activation='relu', input_shape=(28, 200, 1)))
-    model.add(Conv2D(filters=32, kernel_size=3, data_format='channels_last', strides=1, activation='relu', input_shape=(200, 4)))
-    
+    model.add(Conv2D(filters=32, kernel_size=3, data_format='channels_last', strides=1, activation='relu', input_shape=inputshape))
     model.add(MaxPooling2D(2))
     model.add(Conv2D(filters=32, kernel_size=3, strides=1, activation='relu'))
     model.add(MaxPooling2D(2))
@@ -88,7 +85,7 @@ def cnn(inputshape):
     model.add(Flatten())
 
     model.add(Dense(1, activation = 'sigmoid'))
-    
+
     return model
 
 

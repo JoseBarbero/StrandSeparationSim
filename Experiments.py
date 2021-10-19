@@ -94,11 +94,11 @@ if __name__ == "__main__":
         y_test_file.close()
         
         #X_train_seq = get_seq(X_train)
-        X_train_probs = get_bub8_probs(X_train)
+        X_train_probs = get_bub8_probs(X_train)[:,7,:,:]
         #X_val_seq = get_seq(X_val)
-        X_val_probs = get_bub8_probs(X_val)
+        X_val_probs = get_bub8_probs(X_val)[:,7,:,:]
         #X_test_seq = get_seq(X_test)
-        X_test_probs = get_bub8_probs(X_test)
+        X_test_probs = get_bub8_probs(X_test)[:,7,:,:]
         del X_train
         del X_val
         del X_test

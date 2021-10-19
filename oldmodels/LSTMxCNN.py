@@ -9,7 +9,7 @@ import pickle
 import keras
 import tensorflow as tf
 from attention import Attention
-from keras.models import Sequential, Model
+from keras.models import Sequential
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from keras.layers import Dense, Activation, Dropout, Flatten, Conv2D, MaxPooling2D, AveragePooling2D, LayerNormalization
 from keras.layers import Conv3D, MaxPooling3D, AveragePooling3D
