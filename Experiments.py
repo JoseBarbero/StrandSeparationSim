@@ -106,6 +106,8 @@ if __name__ == "__main__":
         X_train = np.concatenate((X_train_seq, X_train_probs), axis=2)
         X_val = np.concatenate((X_val_seq, X_val_probs), axis=2)
         X_test = np.concatenate((X_test_seq, X_test_probs), axis=2)
+
+        print(X_train.shape)
         
         # del X_train
         # del X_val
