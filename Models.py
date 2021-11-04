@@ -111,12 +111,11 @@ def cnnxlstm(seqshape, probsshape):
     cnn_x = Dropout(0.2)(cnn_x)
     cnn_x = Dense(512, activation = 'relu')(cnn_x)
     cnn_x = Dropout(0.2)(cnn_x)
-    cnn_x = Dense(128, activation = 'relu')(cnn_x)
+    cnn_x = Dense(64, activation = 'relu')(cnn_x)
     cnn_out = Dropout(0.2)(cnn_x)
 
 
     merged = Add()([lstm_out, cnn_out])
-    z = Dense(1024, activation="relu")(merged)
     z = Dense(1, activation="sigmoid")(merged)
 
     model = tf.keras.Model(inputs=[lstm_in, cnn_in], outputs=z)
