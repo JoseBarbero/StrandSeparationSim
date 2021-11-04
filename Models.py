@@ -60,7 +60,7 @@ def lstm_att(inputshape):
     output = tf.keras.layers.Activation('sigmoid')(output)
 
     model = tf.keras.Model(inputs=sequence_input, outputs=output)
-    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=["accuracy", 'AUC'])
+    model.compile(tf.keras.optimizers.Adam(learning_rate=10e-3), loss='binary_crossentropy', metrics=["accuracy", 'AUC'])
 
     return model
 
