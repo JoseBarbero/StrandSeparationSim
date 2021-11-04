@@ -66,9 +66,9 @@ def single_train(model_definition, X_train, X_val, X_test, y_train, y_val, y_tes
 
 
 if __name__ == "__main__":
-    # strategy = tf.distribute.MirroredStrategy(devices=["/gpu:1", "/gpu:2"])
-    with tf.device('/device:GPU:0'):
-    # with strategy.scope():
+    strategy = tf.distribute.MirroredStrategy(devices=["/gpu:1", "/gpu:2"])
+    #with tf.device('/device:GPU:0'):
+    with strategy.scope():
         seed = 42
         np.random.seed(seed)
 
@@ -123,14 +123,14 @@ if __name__ == "__main__":
             run_id = sys.argv[1]
 
         
-        # single_train(cnnxlstm(X_train_seq.shape[1:], X_train_probs.shape[1:]), 
-        #             (X_train_seq, X_train_probs), 
-        #             (X_val_seq, X_val_probs), 
-        #             (X_test_seq, X_test_probs), 
-        #             y_train, y_val, y_test, run_id)
-        
-        single_train(lstm_att(X_train.shape[1:]), 
-                    X_train, 
-                    X_val, 
-                    X_test, 
+        single_train(cnnxlstm(X_train_seq.shape[1:], X_train_probs.shape[1:]), 
+                    (X_train_seq, X_train_probs), 
+                    (X_val_seq, X_val_probs), 
+                    (X_test_seq, X_test_probs), 
                     y_train, y_val, y_test, run_id)
+        
+        #single_train(lstm_att(X_train.shape[1:]), 
+        #            X_train, 
+        #            X_val, 
+        #            X_test, 
+        #            y_train, y_val, y_test, run_id)

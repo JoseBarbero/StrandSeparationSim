@@ -11,7 +11,7 @@ from ReadData import get_seq,  get_reversed_seq, get_opn_probs, get_bub8_probs, 
 from contextlib import redirect_stdout
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import Conv1D, Conv2D, Conv3D, Dropout, MaxPooling1D, MaxPooling2D, Flatten, Dense, concatenate, \
-                                    Input, Bidirectional, MultiHeadAttention, LSTM
+                                    Input, Bidirectional, MultiHeadAttention, LSTM, Add
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from tensorflow.keras.callbacks import LearningRateScheduler
 
@@ -51,16 +51,16 @@ def lstm_att(inputshape):
 
     sequence_input = tf.keras.layers.Input(shape=inputshape)
     
-    x = tf.keras.layers.MultiHeadAttention(num_heads=4, key_dim=2, attention_axes=(2))(sequence_input, sequence_input)
-    x = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=256, return_sequences=True, dropout=0.5,))(x)
+    x = tf.keras.layers.MultiHeadAttention(num_heads=32, key_dim=2, attention_axes=(2))(sequence_input, sequence_input)
+    x = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3,))(x)
     x = tf.keras.layers.Flatten()(x)
-    x = tf.keras.layers.Dense(units=128, activation='relu')(x)
+    x = tf.keras.layers.Dense(units=64, activation='relu')(x)
     x = tf.keras.layers.Dropout(0.75)(x)
     output = tf.keras.layers.Dense(1)(x)
     output = tf.keras.layers.Activation('sigmoid')(output)
 
     model = tf.keras.Model(inputs=sequence_input, outputs=output)
-    model.compile(tf.keras.optimizers.Adam(learning_rate=10e-3), loss='binary_crossentropy', metrics=["accuracy", 'AUC'])
+    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=["accuracy", 'AUC'])
 
     return model
 
@@ -112,11 +112,10 @@ def cnnxlstm(seqshape, probsshape):
     cnn_x = Dense(512, activation = 'relu')(cnn_x)
     cnn_x = Dropout(0.2)(cnn_x)
     cnn_x = Dense(128, activation = 'relu')(cnn_x)
-    cnn_x = Dropout(0.2)(cnn_x)
-    cnn_out = Flatten()(cnn_x)
+    cnn_out = Dropout(0.2)(cnn_x)
 
 
-    merged = concatenate([lstm_out, cnn_out])
+    merged = Add()([lstm_out, cnn_out])
     z = Dense(1024, activation="relu")(merged)
     z = Dense(1, activation="sigmoid")(merged)
 
@@ -124,3 +123,6 @@ def cnnxlstm(seqshape, probsshape):
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=["accuracy", 'AUC'])
 
     return model
+
+
+    
