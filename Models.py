@@ -51,11 +51,11 @@ def lstm_att(inputshape):
 
     sequence_input = tf.keras.layers.Input(shape=inputshape)
     
-    x = tf.keras.layers.MultiHeadAttention(num_heads=32, key_dim=2, attention_axes=(2))(sequence_input, sequence_input)
-    x = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=64, return_sequences=True, dropout=0.3,))(x)
+    x = tf.keras.layers.MultiHeadAttention(num_heads=4, key_dim=2, attention_axes=(2))(sequence_input, sequence_input)
+    x = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(units=32, return_sequences=True, dropout=0.75,))(x)
     x = tf.keras.layers.Flatten()(x)
     x = tf.keras.layers.Dense(units=64, activation='relu')(x)
-    x = tf.keras.layers.Dropout(0.75)(x)
+    x = tf.keras.layers.Dropout(0.25)(x)
     output = tf.keras.layers.Dense(1)(x)
     output = tf.keras.layers.Activation('sigmoid')(output)
 
