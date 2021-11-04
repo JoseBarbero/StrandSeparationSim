@@ -116,6 +116,7 @@ def cnnxlstm(seqshape, probsshape):
 
 
     merged = Add()([lstm_out, cnn_out])
+    z = Dense(128, activation="relu")(merged)
     z = Dense(1, activation="sigmoid")(merged)
 
     model = tf.keras.Model(inputs=[lstm_in, cnn_in], outputs=z)
