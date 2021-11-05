@@ -152,6 +152,7 @@ def cnnxlstm(seqshape, probsshape):
 
 
     merged = Add()([lstm_out, cnn_out])
+    # merged = Concatenate()([lstm_out, cnn_out])
     z = Dense(512, activation="relu")(merged)
     z = Dense(1, activation="sigmoid")(merged)
 
