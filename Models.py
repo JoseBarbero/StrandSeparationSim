@@ -128,11 +128,11 @@ def cnnxlstm09310(seqshape, probsshape):
 def cnnxlstm(seqshape, probsshape):
     
     lstm_in = Input(shape=seqshape)
-    lstm_x = Bidirectional(LSTM(units=256, return_sequences=True, dropout=0.3, input_shape=seqshape))(lstm_in)
+    lstm_x = Bidirectional(LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=seqshape))(lstm_in)
     lstm_x = MultiHeadAttention(num_heads=2, key_dim=2, attention_axes=(1,2))(lstm_x, lstm_x)
-    lstm_x = Bidirectional(LSTM(units=256, return_sequences=True, dropout=0.3,))(lstm_x)
+    lstm_x = Bidirectional(LSTM(units=64, return_sequences=True, dropout=0.3,))(lstm_x)
     lstm_x = Flatten()(lstm_x)
-    lstm_out = Dense(units=1024, activation='relu')(lstm_x)
+    lstm_x = Dense(units=64, activation='relu')(lstm_x)
     lstm_out = Dropout(0.75)(lstm_x)
     
     cnn_in = Input(shape=probsshape)
@@ -145,19 +145,19 @@ def cnnxlstm(seqshape, probsshape):
     cnn_x = Flatten()(cnn_x)
     cnn_x = Dense(1024, activation = 'relu')(cnn_x)
     cnn_x = Dropout(0.2)(cnn_x)
-    cnn_x = Dense(1024, activation = 'relu')(cnn_x)
+    cnn_x = Dense(512, activation = 'relu')(cnn_x)
     cnn_x = Dropout(0.2)(cnn_x)
-    cnn_x = Dense(1024, activation = 'relu')(cnn_x)
+    cnn_x = Dense(64, activation = 'relu')(cnn_x)
     cnn_out = Dropout(0.2)(cnn_x)
 
 
     merged = Add()([lstm_out, cnn_out])
-    # merged = Concatenate()([lstm_out, cnn_out])
-    z = Dense(512, activation="relu")(merged)
+    z = Dense(128, activation="relu")(merged)
     z = Dense(1, activation="sigmoid")(merged)
 
     model = tf.keras.Model(inputs=[lstm_in, cnn_in], outputs=z)
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=["accuracy", 'AUC'])
+
 
     return model
 
