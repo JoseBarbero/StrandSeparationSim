@@ -123,7 +123,7 @@ if __name__ == "__main__":
             run_id = sys.argv[1]
 
         
-        single_train(cnnxlstm09310(X_train_seq.shape[1:], X_train_probs.shape[1:]), 
+        single_train(cnnxlstm(X_train_seq.shape[1:], X_train_probs.shape[1:]), 
                     (X_train_seq, X_train_probs), 
                     (X_val_seq, X_val_probs), 
                     (X_test_seq, X_test_probs), 
