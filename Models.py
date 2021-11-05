@@ -145,9 +145,9 @@ def cnnxlstm(seqshape, probsshape):
     cnn_x = Flatten()(cnn_x)
     cnn_x = Dense(1024, activation = 'relu')(cnn_x)
     cnn_x = Dropout(0.2)(cnn_x)
-    cnn_x = Dense(512, activation = 'relu')(cnn_x)
+    cnn_x = Dense(1024, activation = 'relu')(cnn_x)
     cnn_x = Dropout(0.2)(cnn_x)
-    cnn_x = Dense(64, activation = 'relu')(cnn_x)
+    cnn_x = Dense(1024, activation = 'relu')(cnn_x)
     cnn_out = Dropout(0.2)(cnn_x)
 
 
