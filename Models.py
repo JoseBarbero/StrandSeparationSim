@@ -151,8 +151,8 @@ def cnnxlstm(seqshape, probsshape):
     cnn_out = Dropout(0.2)(cnn_x)
 
 
-    merged = Add()([lstm_out, cnn_out])
-    # merged = Concatenate()([lstm_out, cnn_out])
+    #merged = Add()([lstm_out, cnn_out])
+    merged = Concatenate()([lstm_out, cnn_out])
     # merged = Average()([lstm_out, cnn_out])
     # merged = Maximum()([lstm_out, cnn_out])
     # merged = Minimum()([lstm_out, cnn_out])
