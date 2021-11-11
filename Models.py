@@ -11,7 +11,7 @@ from ReadData import get_seq,  get_reversed_seq, get_opn_probs, get_bub8_probs, 
 from contextlib import redirect_stdout
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import Conv1D, Conv2D, Conv3D, Dropout, MaxPooling1D, MaxPooling2D, Flatten, Dense, concatenate, \
-                                    Input, Bidirectional, MultiHeadAttention, LSTM, Add, Concatenate, Average, Maximum, Minimum, Multiply, Dot, Substract
+                                    Input, Bidirectional, MultiHeadAttention, LSTM, Add, Concatenate, Average, Maximum, Minimum, Multiply, Dot, Subtract
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from tensorflow.keras.callbacks import LearningRateScheduler
 
