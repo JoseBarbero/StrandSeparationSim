@@ -94,23 +94,26 @@ if __name__ == "__main__":
         y_test_file.close()
         
         X_train_seq = get_seq(X_train)
-        X_train_probs = np.concatenate((get_bub8_probs(X_train), 
-                                        get_bub10_probs(X_train),
-                                        get_bub12_probs(X_train),
-                                        get_vrnorm_probs(X_train),
-                                        get_opn_probs(X_train)), axis=2)
+        X_train_probs = get_bub8_probs(X_train)
+        # X_train_probs = np.concatenate((get_bub8_probs(X_train), 
+        #                                 get_bub10_probs(X_train),
+        #                                 get_bub12_probs(X_train),
+        #                                 get_vrnorm_probs(X_train),
+        #                                 get_opn_probs(X_train)), axis=2)
         X_val_seq = get_seq(X_val)
-        X_val_probs = np.concatenate((get_bub8_probs(X_val), 
-                                        get_bub10_probs(X_val),
-                                        get_bub12_probs(X_val),
-                                        get_vrnorm_probs(X_val),
-                                        get_opn_probs(X_val)), axis=2)
+        X_val_probs = get_bub8_probs(X_val)
+        # X_val_probs = np.concatenate((get_bub8_probs(X_val), 
+                                        # get_bub10_probs(X_val),
+                                        # get_bub12_probs(X_val),
+                                        # get_vrnorm_probs(X_val),
+                                        # get_opn_probs(X_val)), axis=2)
         X_test_seq = get_seq(X_test)
-        X_test_probs = np.concatenate((get_bub8_probs(X_test), 
-                                        get_bub10_probs(X_test),
-                                        get_bub12_probs(X_test),
-                                        get_vrnorm_probs(X_test),
-                                        get_opn_probs(X_test)), axis=2)
+        X_test_probs = get_bub8_probs(X_test)
+        # X_test_probs = np.concatenate((get_bub8_probs(X_test), 
+        #                                 get_bub10_probs(X_test),
+        #                                 get_bub12_probs(X_test),
+        #                                 get_vrnorm_probs(X_test),
+        #                                 get_opn_probs(X_test)), axis=2)
         
         print(X_train_seq.shape)
         print(X_train_probs.shape)

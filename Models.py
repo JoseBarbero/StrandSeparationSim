@@ -11,7 +11,7 @@ from ReadData import get_seq,  get_reversed_seq, get_opn_probs, get_bub8_probs, 
 from contextlib import redirect_stdout
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import Conv1D, Conv2D, Conv3D, Dropout, MaxPooling1D, MaxPooling2D, Flatten, Dense, concatenate, \
-                                    Input, Bidirectional, MultiHeadAttention, LSTM, Add
+                                    Input, Bidirectional, MultiHeadAttention, LSTM, Add, Concatenate, Average, Maximum, Minimum, Multiply, Dot, Substract
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from tensorflow.keras.callbacks import LearningRateScheduler
 
@@ -152,6 +152,13 @@ def cnnxlstm(seqshape, probsshape):
 
 
     merged = Add()([lstm_out, cnn_out])
+    # merged = Concatenate()([lstm_out, cnn_out])
+    # merged = Average()([lstm_out, cnn_out])
+    # merged = Maximum()([lstm_out, cnn_out])
+    # merged = Minimum()([lstm_out, cnn_out])
+    # merged = Multiply()([lstm_out, cnn_out])
+    # merged = Dot()([lstm_out, cnn_out])
+    # merged = Substract()([lstm_out, cnn_out])
     z = Dense(128, activation="relu")(merged)
     z = Dense(1, activation="sigmoid")(merged)
 
