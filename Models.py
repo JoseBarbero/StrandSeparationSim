@@ -137,11 +137,11 @@ def cnnxlstm(seqshape, probsshape):
     
     cnn_in = Input(shape=probsshape)
     cnn_x = Conv2D(filters=32, kernel_size=3, data_format='channels_last', strides=1, activation='relu', input_shape=probsshape)(cnn_in)
-    cnn_x = MaxPooling2D(2)(cnn_x)
+    #cnn_x = MaxPooling2D(2)(cnn_x)
     cnn_x = Conv2D(filters=32, kernel_size=3, strides=1, activation='relu')(cnn_x)
-    cnn_x = MaxPooling2D(2)(cnn_x)
+    #cnn_x = MaxPooling2D(2)(cnn_x)
     cnn_x = Conv2D(filters=32, kernel_size=3, strides=1, activation='relu')(cnn_x)
-    cnn_x = MaxPooling2D(3)(cnn_x)
+    #cnn_x = MaxPooling2D(3)(cnn_x)
     cnn_x = Flatten()(cnn_x)
     cnn_x = Dense(1024, activation = 'relu')(cnn_x)
     cnn_x = Dropout(0.2)(cnn_x)
@@ -150,15 +150,8 @@ def cnnxlstm(seqshape, probsshape):
     cnn_x = Dense(64, activation = 'relu')(cnn_x)
     cnn_out = Dropout(0.2)(cnn_x)
 
-
-    # merged = Add()([lstm_out, cnn_out])
-    # merged = Concatenate()([lstm_out, cnn_out])
-    # merged = Average()([lstm_out, cnn_out])
-    # merged = Maximum()([lstm_out, cnn_out])
-    # merged = Minimum()([lstm_out, cnn_out])
-    # merged = Multiply()([lstm_out, cnn_out])
-    # merged = Dot()([lstm_out, cnn_out])
-    merged = Subtract()([lstm_out, cnn_out])
+    merged = Multiply()([lstm_out, cnn_out])
+    
     z = Dense(128, activation="relu")(merged)
     z = Dense(1, activation="sigmoid")(merged)
 
