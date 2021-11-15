@@ -40,7 +40,7 @@ def single_train(model_definition, X_train, X_val, X_test, y_train, y_val, y_tes
             early_stopping_monitor = EarlyStopping( monitor='val_loss', min_delta=0, patience=10, 
                                                     verbose=1, mode='min', baseline=None,
                                                     restore_best_weights=True)
-            reduce_lr_loss = ReduceLROnPlateau(monitor='val_auc', factor=0.5, patience=3, verbose=1, min_delta=1e-4, mode='max')
+            reduce_lr_loss = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, verbose=1, min_delta=1e-4, mode='min')
 
             history = model.fit(X_train, y_train,
                                 shuffle=True,
