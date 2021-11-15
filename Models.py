@@ -157,8 +157,8 @@ def cnnxlstm(seqshape, probsshape):
     # merged = Maximum()([lstm_out, cnn_out])
     # merged = Minimum()([lstm_out, cnn_out])
     # merged = Multiply()([lstm_out, cnn_out])
-    merged = Dot()([lstm_out, cnn_out])
-    # merged = Substract()([lstm_out, cnn_out])
+    # merged = Dot()([lstm_out, cnn_out])
+    merged = Subtract()([lstm_out, cnn_out])
     z = Dense(128, activation="relu")(merged)
     z = Dense(1, activation="sigmoid")(merged)
 
