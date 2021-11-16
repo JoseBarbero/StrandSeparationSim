@@ -177,7 +177,7 @@ def cnnxlstm_allprobs(seqshape, opn_shape, bub8_shape, bub10_shape, bub12_shape,
     
     opn_in = Input(shape=opn_shape)
     opn_x = MultiHeadAttention(num_heads=2, key_dim=2, attention_axes=(2))(opn_in, opn_in)
-    opn_x = Conv2D(filters=32, kernel_size=3, data_format='channels_last', strides=1, activation='relu', input_shape=probsshape)(opn_x)
+    opn_x = Conv2D(filters=32, kernel_size=3, data_format='channels_last', strides=1, activation='relu')(opn_x)
     opn_x = MaxPooling2D(2)(opn_x)
     opn_x = Conv2D(filters=32, kernel_size=3, strides=1, activation='relu')(opn_x)
     opn_x = MaxPooling2D(2)(opn_x)
@@ -194,7 +194,7 @@ def cnnxlstm_allprobs(seqshape, opn_shape, bub8_shape, bub10_shape, bub12_shape,
 
     bub8_in = Input(shape=bub8_shape)
     bub8_x = MultiHeadAttention(num_heads=2, key_dim=2, attention_axes=(2))(bub8_in, bub8_in)
-    bub8_x = Conv2D(filters=32, kernel_size=3, data_format='channels_last', strides=1, activation='relu', input_shape=probsshape)(bub8_x)
+    bub8_x = Conv2D(filters=32, kernel_size=3, data_format='channels_last', strides=1, activation='relu')(bub8_x)
     bub8_x = MaxPooling2D(2)(bub8_x)
     bub8_x = Conv2D(filters=32, kernel_size=3, strides=1, activation='relu')(bub8_x)
     bub8_x = MaxPooling2D(2)(bub8_x)
@@ -211,7 +211,7 @@ def cnnxlstm_allprobs(seqshape, opn_shape, bub8_shape, bub10_shape, bub12_shape,
 
     bub10_in = Input(shape=bub10_shape)
     bub10_x = MultiHeadAttention(num_heads=2, key_dim=2, attention_axes=(2))(bub10_in, bub10_in)
-    bub10_x = Conv2D(filters=32, kernel_size=3, data_format='channels_last', strides=1, activation='relu', input_shape=probsshape)(bub10_x)
+    bub10_x = Conv2D(filters=32, kernel_size=3, data_format='channels_last', strides=1, activation='relu')(bub10_x)
     bub10_x = MaxPooling2D(2)(bub10_x)
     bub10_x = Conv2D(filters=32, kernel_size=3, strides=1, activation='relu')(bub10_x)
     bub10_x = MaxPooling2D(2)(bub10_x)
@@ -228,7 +228,7 @@ def cnnxlstm_allprobs(seqshape, opn_shape, bub8_shape, bub10_shape, bub12_shape,
 
     bub12_in = Input(shape=bub12_shape)
     bub12_x = MultiHeadAttention(num_heads=2, key_dim=2, attention_axes=(2))(bub12_in, bub12_in)
-    bub12_x = Conv2D(filters=32, kernel_size=3, data_format='channels_last', strides=1, activation='relu', input_shape=probsshape)(bub12_x)
+    bub12_x = Conv2D(filters=32, kernel_size=3, data_format='channels_last', strides=1, activation='relu')(bub12_x)
     bub12_x = MaxPooling2D(2)(bub12_x)
     bub12_x = Conv2D(filters=32, kernel_size=3, strides=1, activation='relu')(bub12_x)
     bub12_x = MaxPooling2D(2)(bub12_x)
@@ -245,7 +245,7 @@ def cnnxlstm_allprobs(seqshape, opn_shape, bub8_shape, bub10_shape, bub12_shape,
 
     vrnorm_in = Input(shape=vrnorm_shape)
     vrnorm_x = MultiHeadAttention(num_heads=2, key_dim=2, attention_axes=(2))(vrnorm_in, vrnorm_in)
-    vrnorm_x = Conv2D(filters=32, kernel_size=3, data_format='channels_last', strides=1, activation='relu', input_shape=probsshape)(vrnom_x)
+    vrnorm_x = Conv2D(filters=32, kernel_size=3, data_format='channels_last', strides=1, activation='relu')(vrnom_x)
     vrnorm_x = MaxPooling2D(2)(vrnom_x)
     vrnorm_x = Conv2D(filters=32, kernel_size=3, strides=1, activation='relu')(vrnom_x)
     vrnorm_x = MaxPooling2D(2)(vrnom_x)
