@@ -99,7 +99,6 @@ if __name__ == "__main__":
         X_train_bub10 = get_bub10_probs(X_train)
         X_train_bub12 = get_bub12_probs(X_train)
         X_train_vrnom = get_vrnorm_probs(X_train)
-        
 
         X_val_seq = get_seq(X_val)
         X_val_opn = get_opn_probs(X_val)
@@ -108,8 +107,6 @@ if __name__ == "__main__":
         X_val_bub12 = get_bub12_probs(X_val)
         X_val_vrnom = get_vrnorm_probs(X_val)
 
-        
-        X_test_seq = get_seq(X_test)
         X_test_seq = get_seq(X_test)
         X_test_opn = get_opn_probs(X_test)
         X_test_bub8 = get_bub8_probs(X_test)
@@ -119,13 +116,10 @@ if __name__ == "__main__":
 
         
         print(X_train_seq.shape)
-        print(X_train_probs.shape)
 
         #X_train = np.concatenate((X_train_seq, X_train_probs), axis=2)
         #X_val = np.concatenate((X_val_seq, X_val_probs), axis=2)
         #X_test = np.concatenate((X_test_seq, X_test_probs), axis=2)
-
-        print(X_train.shape)
         
         # del X_train
         # del X_val
