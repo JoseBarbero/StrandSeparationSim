@@ -15,7 +15,7 @@ from keras.models import Sequential, Model
 from keras.layers import Conv1D, Conv2D, Conv3D, Dropout, MaxPooling1D, MaxPooling2D, Flatten, Dense
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from keras.callbacks import LearningRateScheduler
-from Models import lstm, lstm_att, cnn, cnnxlstm, att
+from Models import lstm, lstm_att, cnn, cnnxlstm, cnnxlstm, att
 
 def single_train(model_definition, X_train, X_val, X_test, y_train, y_val, y_test, run_id):
 
