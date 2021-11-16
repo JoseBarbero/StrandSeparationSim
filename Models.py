@@ -136,7 +136,7 @@ def cnnxlstm(seqshape, probsshape):
     lstm_out = Dropout(0.75)(lstm_x)
     
     cnn_in = Input(shape=probsshape)
-    cnn_x = MultiHeadAttention(num_heads=2, key_dim=2)(cnn_in, cnn_in)
+    cnn_x = MultiHeadAttention(num_heads=2, key_dim=2, attention_axes=(2))(cnn_in, cnn_in)
     cnn_x = Conv2D(filters=32, kernel_size=3, data_format='channels_last', strides=1, activation='relu', input_shape=probsshape)(cnn_in)
     cnn_x = MaxPooling2D(2)(cnn_x)
     cnn_x = Conv2D(filters=32, kernel_size=3, strides=1, activation='relu')(cnn_x)
@@ -144,7 +144,7 @@ def cnnxlstm(seqshape, probsshape):
     cnn_x = Conv2D(filters=32, kernel_size=3, strides=1, activation='relu')(cnn_x)
     cnn_x = MaxPooling2D(2)(cnn_x)
     cnn_x = Flatten()(cnn_x)
-    # cnn_x = MultiHeadAttention(num_heads=2, key_dim=2, attention_axes=(0))(cnn_x, cnn_x)
+    cnn_x = MultiHeadAttention(num_heads=2, key_dim=2, attention_axes=(0))(cnn_x, cnn_x)
     cnn_x = Dense(1024, activation = 'relu')(cnn_x)
     cnn_x = Dropout(0.2)(cnn_x)
     cnn_x = Dense(512, activation = 'relu')(cnn_x)
