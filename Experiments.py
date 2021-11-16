@@ -94,26 +94,29 @@ if __name__ == "__main__":
         y_test_file.close()
         
         X_train_seq = get_seq(X_train)
-        # X_train_probs = get_bub8_probs(X_train)
-        X_train_probs = np.concatenate((get_bub8_probs(X_train), 
-                                         get_bub10_probs(X_train),
-                                         get_bub12_probs(X_train),
-                                         get_vrnorm_probs(X_train),
-                                         get_opn_probs(X_train)), axis=2)
+        X_train_opn = get_opn_probs(X_train)
+        X_train_bub8 = get_bub8_probs(X_train 
+        X_train_bub10 = get_bub10_probs(X_train)
+        X_train_bub12 = get_bub12_probs(X_train)
+        X_train_vrnom = get_vrnorm_probs(X_train)
+        
+
         X_val_seq = get_seq(X_val)
-        #X_val_probs = get_bub8_probs(X_val)
-        X_val_probs = np.concatenate((get_bub8_probs(X_val), 
-                                        get_bub10_probs(X_val),
-                                        get_bub12_probs(X_val),
-                                        get_vrnorm_probs(X_val),
-                                        get_opn_probs(X_val)), axis=2)
+        X_val_opn = get_opn_probs(X_val)
+        X_val_bub8 = get_bub8_probs(X_val 
+        X_val_bub10 = get_bub10_probs(X_val)
+        X_val_bub12 = get_bub12_probs(X_val)
+        X_val_vrnom = get_vrnorm_probs(X_val)
+
+        
         X_test_seq = get_seq(X_test)
-        #X_test_probs = get_bub8_probs(X_test)
-        X_test_probs = np.concatenate((get_bub8_probs(X_test), 
-                                        get_bub10_probs(X_test),
-                                        get_bub12_probs(X_test),
-                                        get_vrnorm_probs(X_test),
-                                        get_opn_probs(X_test)), axis=2)
+        X_test_seq = get_seq(X_test)
+        X_test_opn = get_opn_probs(X_test)
+        X_test_bub8 = get_bub8_probs(X_test 
+        X_test_bub10 = get_bub10_probs(X_test)
+        X_test_bub12 = get_bub12_probs(X_test)
+        X_test_vrnom = get_vrnorm_probs(X_test)
+
         
         print(X_train_seq.shape)
         print(X_train_probs.shape)
@@ -138,10 +141,10 @@ if __name__ == "__main__":
             run_id = sys.argv[1]
 
         
-        single_train(cnnxlstm(X_train_seq.shape[1:], X_train_probs.shape[1:]), 
-                    (X_train_seq, X_train_probs), 
-                    (X_val_seq, X_val_probs), 
-                    (X_test_seq, X_test_probs), 
+        single_train(cnnxlstm_allprobs(X_train_seq.shape[1:], X_train_opn.shape[1:], X_train_bub8.shape[1:], X_train_bub10.shape[1:], X_train_bub12.shape[1:], X_train_vrnorm.shape[1:]), 
+                    (X_train_seq, X_train_opn, X_train_bub8, X_train_bub10, X_train_bub12, X_train_vrnorm), 
+                    (X_val_seq, X_val_opn, X_val_bub8, X_val_bub10, X_val_bub12, X_val_vrnorm), 
+                    (X_test_seq, X_test_opn, X_test_bub8, X_test_bub10, X_test_bub12, X_test_vrnorm), 
                     y_train, y_val, y_test, run_id)
         
         #single_train(lstm_att(X_train.shape[1:]), 
