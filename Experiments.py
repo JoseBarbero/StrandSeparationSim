@@ -98,21 +98,21 @@ if __name__ == "__main__":
         X_train_bub8 = get_bub8_probs(X_train)
         X_train_bub10 = get_bub10_probs(X_train)
         X_train_bub12 = get_bub12_probs(X_train)
-        X_train_vrnom = get_vrnorm_probs(X_train)
+        X_train_vrnorm = get_vrnorm_probs(X_train)
 
         X_val_seq = get_seq(X_val)
         X_val_opn = get_opn_probs(X_val)
         X_val_bub8 = get_bub8_probs(X_val)
         X_val_bub10 = get_bub10_probs(X_val)
         X_val_bub12 = get_bub12_probs(X_val)
-        X_val_vrnom = get_vrnorm_probs(X_val)
+        X_val_vrnorm = get_vrnorm_probs(X_val)
 
         X_test_seq = get_seq(X_test)
         X_test_opn = get_opn_probs(X_test)
         X_test_bub8 = get_bub8_probs(X_test)
         X_test_bub10 = get_bub10_probs(X_test)
         X_test_bub12 = get_bub12_probs(X_test)
-        X_test_vrnom = get_vrnorm_probs(X_test)
+        X_test_vrnorm = get_vrnorm_probs(X_test)
 
         
         print(X_train_seq.shape)
