@@ -167,7 +167,7 @@ def cnnxlstm(seqshape, probsshape):
 
 def cnnxlstm_allprobs(seqshape, opn_shape, bub8_shape, bub10_shape, bub12_shape, vrnorm_shape):
     
-    seq_in = Input(shape=seqpe)
+    seq_in = Input(shape=seqshape)
     seq_x = Bidirectional(LSTM(units=64, return_sequences=True, dropout=0.3, input_shape=seqshape))(seq_in)
     seq_x = MultiHeadAttention(num_heads=2, key_dim=2, attention_axes=(1,2))(seq_x, seq_x)
     seq_x = Bidirectional(LSTM(units=64, return_sequences=True, dropout=0.3,))(seq_x)
