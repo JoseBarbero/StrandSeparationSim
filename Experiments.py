@@ -95,7 +95,7 @@ if __name__ == "__main__":
         
         X_train_seq = get_seq(X_train)
         X_train_opn = get_opn_probs(X_train)
-        X_train_bub8 = get_bub8_probs(X_train 
+        X_train_bub8 = get_bub8_probs(X_train)
         X_train_bub10 = get_bub10_probs(X_train)
         X_train_bub12 = get_bub12_probs(X_train)
         X_train_vrnom = get_vrnorm_probs(X_train)
