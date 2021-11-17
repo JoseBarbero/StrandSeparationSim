@@ -260,7 +260,7 @@ def cnnxlstm_allprobs(seqshape, opn_shape, bub8_shape, bub10_shape, bub12_shape,
     #vrnorm_x = Dense(64, activation = 'relu')(vrnorm_x)
     #vrnorm_out = Dropout(0.2)(vrnorm_x)
 
-    merged = Concatenate()([seq_out, bub8_out, bub10_out, bub12_out, vrnorm_out])
+    merged = Concatenate()([seq_out, opn_out, bub8_out, bub10_out, bub12_out, vrnorm_out])
     # z = Dense(1024, activation="relu")(merged)
     # z = Dense(1024, activation="relu")(merged)
     # z = Dense(1024, activation="relu")(merged)
@@ -271,3 +271,5 @@ def cnnxlstm_allprobs(seqshape, opn_shape, bub8_shape, bub10_shape, bub12_shape,
 
 
     return model
+
+
