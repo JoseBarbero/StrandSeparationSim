@@ -261,9 +261,9 @@ def cnnxlstm_allprobs(seqshape, opn_shape, bub8_shape, bub10_shape, bub12_shape,
     #vrnorm_out = Dropout(0.2)(vrnorm_x)
 
     merged = Concatenate()([seq_out, bub8_out, bub10_out, bub12_out, vrnorm_out])
-    z = Dense(1024, activation="relu")(merged)
-    z = Dense(1024, activation="relu")(merged)
-    z = Dense(1024, activation="relu")(merged)
+    # z = Dense(1024, activation="relu")(merged)
+    # z = Dense(1024, activation="relu")(merged)
+    # z = Dense(1024, activation="relu")(merged)
     z = Dense(1, activation="sigmoid")(merged)
 
     model = tf.keras.Model(inputs=[seq_in, opn_in, bub8_in, bub10_in, bub12_in, vrnorm_in], outputs=z)
