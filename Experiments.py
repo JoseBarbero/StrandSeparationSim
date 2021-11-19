@@ -115,7 +115,12 @@ if __name__ == "__main__":
         X_test_vrnorm = get_vrnorm_probs(X_test)
 
         
-        print(X_train_seq.shape)
+        print('X_train_seq shape: ', X_train_seq.shape)
+        print('X_train_opn shape: ', X_train_opn.shape)
+        print('X_train_bub8 shape: ', X_train_bub8.shape)
+        print('X_train_bub10 shape: ', X_train_bub10.shape)
+        print('X_train_bub12 shape: ', X_train_bub12.shape)
+        print('X_train_vrnorm shape: ', X_train_vrnorm.shape)
 
         #X_train = np.concatenate((X_train_seq, X_train_probs), axis=2)
         #X_val = np.concatenate((X_val_seq, X_val_probs), axis=2)
