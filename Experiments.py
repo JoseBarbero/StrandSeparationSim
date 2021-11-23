@@ -94,25 +94,25 @@ if __name__ == "__main__":
         y_test_file.close()
         
         X_train_seq = get_seq(X_train)
-        X_train_opn = get_opn_probs(X_train)
-        X_train_bub8 = get_bub8_probs(X_train)
-        X_train_bub10 = get_bub10_probs(X_train)
-        X_train_bub12 = get_bub12_probs(X_train)
-        X_train_vrnorm = get_vrnorm_probs(X_train)
+        X_train_opn = get_opn_probs(X_train)[:,2:18,:,:]
+        X_train_bub8 = get_bub8_probs(X_train)[:,2:18,:,:]
+        X_train_bub10 = get_bub10_probs(X_train)[:,2:18,:,:]
+        X_train_bub12 = get_bub12_probs(X_train)[:,2:18,:,:]
+        X_train_vrnorm = get_vrnorm_probs(X_train)[:,2:18,:,:]
 
         X_val_seq = get_seq(X_val)
-        X_val_opn = get_opn_probs(X_val)
-        X_val_bub8 = get_bub8_probs(X_val)
-        X_val_bub10 = get_bub10_probs(X_val)
-        X_val_bub12 = get_bub12_probs(X_val)
-        X_val_vrnorm = get_vrnorm_probs(X_val)
+        X_val_opn = get_opn_probs(X_val)[:,2:18,:,:]
+        X_val_bub8 = get_bub8_probs(X_val)[:,2:18,:,:]
+        X_val_bub10 = get_bub10_probs(X_val)[:,2:18,:,:]
+        X_val_bub12 = get_bub12_probs(X_val)[:,2:18,:,:]
+        X_val_vrnorm = get_vrnorm_probs(X_val)[:,2:18,:,:]
 
         X_test_seq = get_seq(X_test)
-        X_test_opn = get_opn_probs(X_test)
-        X_test_bub8 = get_bub8_probs(X_test)
-        X_test_bub10 = get_bub10_probs(X_test)
-        X_test_bub12 = get_bub12_probs(X_test)
-        X_test_vrnorm = get_vrnorm_probs(X_test)
+        X_test_opn = get_opn_probs(X_test)[:,2:18,:,:]
+        X_test_bub8 = get_bub8_probs(X_test)[:,2:18,:,:]
+        X_test_bub10 = get_bub10_probs(X_test)[:,2:18,:,:]
+        X_test_bub12 = get_bub12_probs(X_test)[:,2:18,:,:]
+        X_test_vrnorm = get_vrnorm_probs(X_test)[:,2:18,:,:]
 
         
         print('X_train_seq shape: ', X_train_seq.shape)
